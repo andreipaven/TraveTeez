@@ -1,0 +1,123 @@
+import React, { useContext, useEffect, useRef, useState } from "react";
+import {
+  Dimensions,
+  FlatList,
+  Image,
+  Pressable,
+  Text,
+  View,
+} from "react-native";
+import { AuthContext } from "../../Secure/AuthProvider";
+import { useTheme } from "../../Theme/themeContext";
+import { SafeAreaView } from "react-native-safe-area-context";
+import profileAvatar from "../../../assets/profileAvatar.png";
+import { useTranslation } from "react-i18next";
+import CustomButton from "../../components/Buttons/CustomButton";
+import Icon from "@expo/vector-icons/MaterialCommunityIcons";
+import { useNavigation } from "@react-navigation/native";
+import APIService from "../../services/APIService";
+import { config } from "../../services/config";
+import { getAccessToken } from "../../Secure/secureHub";
+
+import ProfileCarousel from "../../components/Carousels/ProfileCarousel";
+
+const ProfileScreen = () => {
+  const { width } = Dimensions.get("screen");
+
+  const { user, loading } = useContext(AuthContext);
+  const theme = useTheme();
+  const { t } = useTranslation();
+  const navigation = useNavigation();
+
+  const [resorts, setResorts] = useState([]);
+  const [resortImages, setResortImages] = useState([]);
+
+  useEffect(() => {
+    async function getResorts() {
+      try {
+        const token = await getAccessToken();
+        const response = await APIService.post(
+          config.endpoints.legacy.resort.getResortsByUser,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+        if (response.data?.error) {
+          console.log("Something wrong happened: " + response.data.error);
+        } else {
+          setResortImages(response.data.allImages);
+          setResorts(response.data.resorts);
+        }
+      } catch (err) {
+        console.error("An error occurred! " + err);
+      }
+    }
+    getResorts();
+  }, []);
+
+  return loading ? (
+    <Text>Loading...</Text>
+  ) : (
+    <SafeAreaView
+      style={{
+        backgroundColor: theme.colors.backgroundPrimary,
+        flex: 1,
+        justifyContent: "start",
+        alignItems: "start",
+        padding: 16,
+        gap: 16, // or not
+      }}
+    >
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "start",
+          width: "100%",
+          gap: 16,
+        }}
+      >
+        <Image
+          source={profileAvatar}
+          borderRadius={64}
+          style={{ width: 64, height: 64 }}
+        />
+        <Text style={{ fontSize: 24 }}>
+          {user.first_name} {user.last_name}
+        </Text>
+      </View>
+      <View
+        style={{ alignItems: "start", justifyContent: "center", width: "100%" }}
+      >
+        <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+          {t(`profileScreen.myResorts`)}
+        </Text>
+
+        <ProfileCarousel
+          resorts={resorts}
+          resortImages={resortImages}
+          theme={theme}
+        />
+      </View>
+      <CustomButton
+        title={t("profileScreen.addResortButton")}
+        backgroundColor={theme.colors.primary}
+        textColor={theme.colors.primaryContrast}
+        fontSize={14}
+        paddingVertical={8}
+        paddingHorizontal={16}
+        width={"50%"}
+        borderRadius={100}
+        iconLeft={
+          <Icon name={"plus"} size={24} color={theme.colors.primaryContrast} />
+        }
+        onPress={() => navigation.navigate("AddResort")}
+      />
+    </SafeAreaView>
+  );
+};
+
+export default ProfileScreen;

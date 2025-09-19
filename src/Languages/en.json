@@ -1,0 +1,60 @@
+{
+  "signIn": {
+    "title": "Welcome Back!",
+    "subtitle": "Please enter your credentials to continue.",
+    "email": "Email",
+    "password": "Password",
+    "button": "Sign In",
+    "forgotPassword": "Forgot password?",
+    "divider": "or Continue with",
+    "noAccount": "Don't have an account?",
+    "noAccountButton": "Register now",
+    "errorRequired": "This field is required",
+    "errorInvalid": "Invalid email or password"
+  },
+  "signUp": {
+    "title": "Create Account",
+    "subtitle": "Fill in the details to get started.",
+    "lastName": "Last name",
+    "firstName": "First name",
+    "email": "Email",
+    "password": "Password",
+    "verifyPassword": "Verify password",
+    "confirmPassword": "Confirm Password",
+    "button": "Sign Up",
+    "divider": "or Continue with",
+    "alreadyHaveAccount": "Already have an account?",
+    "alreadyHaveAccountButton": "Log in ",
+    "errorRequired": "This field is required",
+    "errorInvalidEmail": "Invalid email address",
+    "errorPasswordMismatch": "Passwords do not match",
+    "errorWeakPassword": "Password must be at least 6 characters"
+  },
+  "profileScreen": {
+    "myResorts": "My resorts",
+    "addResortButton": "Add New Resort"
+  },
+  "addResort": {
+    "name": "name",
+    "description": "description...",
+    "country":"country",
+    "county": "county",
+    "city":"city",
+    "type": "select type",
+    "nameLabel": "Name",
+    "descriptionLabel": "Description",
+    "countryLabel":"Country",
+    "countyLabel":"County",
+    "cityLabel":"City",
+    "typeLabel": "Type",
+    "addImageButton": "Upload from gallery",
+    "errorImage": "Add minimum 1 image",
+    "submitButton": "Save Resort",
+    "cancelButton": "Cancel",
+    "fieldsError": "Fill in the required fields",
+    "successSubmitNotify": "Resort added successfully ✅"
+  },
+  "app": {
+    "addNewResortTitle": "Add New Resort"
+  }
+}

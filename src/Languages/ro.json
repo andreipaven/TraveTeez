@@ -1,0 +1,33 @@
+{
+  "signIn": {
+    "title": "Bine ai revenit!",
+    "subtitle": "Te rugăm să introduci datele pentru a continua.",
+    "email": "Adresă de email",
+    "password": "Parolă",
+    "button": "Autentificare",
+    "forgotPassword": "Ai uitat parola?",
+    "divider": "sau continuă cu",
+    "noAccount": "Nu ai cont?",
+    "noAccountButton": "Înregistrează-te",
+    "errorRequired": "Acest câmp este obligatoriu",
+    "errorInvalid": "Email sau parolă incorectă"
+  },
+  "signUp": {
+    "title": "Creează cont",
+    "subtitle": "Completează detaliile pentru a începe.",
+    "lastName": "Nume",
+    "firstName": "Prenume",
+    "email": "Adresă de email",
+    "password": "Parolă",
+    "verifyPassword": "Verifică parola",
+    "confirmPassword": "Confirmă parola",
+    "button": "Înregistrare",
+    "divider": "sau continuă cu",
+    "alreadyHaveAccount": "Ai deja cont?",
+    "alreadyHaveAccountButton": "Autentificare",
+    "errorRequired": "Acest câmp este obligatoriu",
+    "errorInvalidEmail": "Adresă de email invalidă",
+    "errorPasswordMismatch": "Parolele nu coincid",
+    "errorWeakPassword": "Parola trebuie să aibă minim 6 caractere"
+  }
+}
