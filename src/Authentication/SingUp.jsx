@@ -20,7 +20,7 @@ import { config } from "../services/config";
 import { saveAccessToken, saveRefreshToken } from "../Secure/secureHub";
 
 const SingUp = () => {
-  const theme = useTheme();
+  const { theme } = useTheme();
   const navigation = useNavigation();
   const { t } = useTranslation();
   const [user, setUser] = useState({

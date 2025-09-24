@@ -2,7 +2,7 @@ import { BaseToast } from "react-native-toast-message";
 import { useTheme } from "../../Theme/themeContext";
 
 const CustomToast = (props) => {
-  const theme = useTheme();
+  const { theme } = useTheme();
   return (
     <BaseToast
       {...props}
@@ -12,6 +12,8 @@ const CustomToast = (props) => {
         borderRadius: 20,
         height: 72,
         opacity: 0.9,
+        marginHorizontal: 16,
+        width: "auto",
       }}
       contentContainerStyle={{ paddingHorizontal: 8 }}
       text1Style={{

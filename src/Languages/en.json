@@ -37,24 +37,38 @@
   "addResort": {
     "name": "name",
     "description": "description...",
-    "country":"country",
+    "country": "country",
     "county": "county",
-    "city":"city",
+    "city": "city",
     "type": "select type",
     "nameLabel": "Name",
     "descriptionLabel": "Description",
-    "countryLabel":"Country",
-    "countyLabel":"County",
-    "cityLabel":"City",
+    "countryLabel": "Country",
+    "countyLabel": "County",
+    "cityLabel": "City",
     "typeLabel": "Type",
     "addImageButton": "Upload from gallery",
     "errorImage": "Add minimum 1 image",
-    "submitButton": "Save Resort",
+    "submitButton": "Add Resort",
     "cancelButton": "Cancel",
     "fieldsError": "Fill in the required fields",
     "successSubmitNotify": "Resort added successfully ✅"
   },
+  "home": {
+    "searchButtonInput": "Search a resort... "
+  },
   "app": {
-    "addNewResortTitle": "Add New Resort"
+    "addNewResortTitle": "Add New Resort",
+    "editResortTitle": "Edit Resort"
+  },
+  "editResort": {
+    "submitButton": "Save Resort",
+    "deleteButton": "Delete Resort",
+    "successSubmitNotify": "Resort saved successfully ✅",
+    "successDeleteSubmitNotify": "Resort deleted successfully \uD83E\uDDF9",
+    "resetButton": "Reset"
+  },
+  "error": {
+    "catchError": "Something went wrong. Please try again."
   }
 }

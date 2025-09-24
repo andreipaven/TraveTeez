@@ -1,8 +1,10 @@
 export const lightTheme = {
+  mode: "light",
   colors: {
     primary: "#00d3e6",
     primaryContrast: "#fff",
     primaryHover: "#00b383",
+    primaryDelete: "#ff0000",
 
     secondary: "#00B0E0",
     secondaryContrast: "#000",
@@ -20,32 +22,34 @@ export const lightTheme = {
     textDark: "#ffffff",
 
     shadowPrimary: "rgba(0,0,0,0.68)",
-    error: "red", // optional
+    error: "#ff0000", // optional
   },
 };
 
 export const darkTheme = {
+  mode: "dark",
   colors: {
-    primary: "#009cff",
-    primaryContrast: "#ffffff",
-    primaryHover: "#0080ff",
+    primary: "#00d0ff",
+    primaryContrast: "#fff",
+    primaryHover: "#0074b3",
+    primaryDelete: "#ff0000",
 
-    secondary: "#0095c5",
-    secondaryContrast: "#ffffff",
-    secondaryHover: "#1cb0dd",
-    secondarySelected: "#02799f",
+    secondary: "#00B0E0",
+    secondaryContrast: "#fff",
+    secondaryHover: "#13a1cd",
+    secondarySelected: "#00B0E0",
 
-    backgroundPrimary: "#009cff",
-    backgroundSecondary: "#ff00ce",
-    backgroundDefault: "#121212",
-    backgroundPaper: "#2e2e2e",
-    backgroundHover: "#222",
+    backgroundPrimary: "#000",
+    backgroundSecondary: "#0e0e0e",
+    backgroundDefault: "#191919",
+    backgroundPaper: "#323232",
+    backgroundHover: "#ddd",
 
-    textPrimary: "#ffffff",
-    textSecondary: "#e3e3e3",
-    textDark: "#000000",
+    textPrimary: "#fff",
+    textSecondary: "rgb(175,175,175)",
+    textDark: "#000",
 
-    shadowPrimary: "rgba(255,255,255,0.1)",
-    error: "#ff5555",
+    shadowPrimary: "rgba(255,255,255,0.68)",
+    error: "#ff0000",
   },
 };

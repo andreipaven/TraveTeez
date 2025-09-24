@@ -21,7 +21,7 @@ import { saveAccessToken, saveRefreshToken } from "../Secure/secureHub";
 import { AuthContext } from "../Secure/AuthProvider";
 
 export default function SignIn() {
-  const theme = useTheme();
+  const { theme } = useTheme();
   const navigation = useNavigation();
   const { setUser } = useContext(AuthContext);
 

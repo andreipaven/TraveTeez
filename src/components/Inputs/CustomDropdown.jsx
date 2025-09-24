@@ -17,7 +17,7 @@ const CustomDropdown = ({
   backgroundColor,
   error,
 }) => {
-  const theme = useTheme();
+  const { theme } = useTheme();
 
   const handleChange = (item) => {
     if (onValueChange) onValueChange(name, item.value);

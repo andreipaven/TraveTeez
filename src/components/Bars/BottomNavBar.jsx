@@ -2,35 +2,33 @@ import React from "react";
 import { View, Text, StyleSheet, Button } from "react-native";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { useNavigation } from "@react-navigation/native";
+import HomeScreen from "../../screens/Home/HomeScreen";
+import ProfileScreen from "../../screens/Profile/ProfileScreen";
+import CustomTabBar from "./CustomTabBar";
 
 const Tab = createBottomTabNavigator();
 
 const BottomNavBar = () => {
-  const navigation = useNavigation();
   return (
-    <View
-      style={{
-        position: "absolute",
-        marginBottom: "auto",
-        backgroundColor: "white",
-        width: "100%",
-        flexDirection: "row",
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarShowLabel: false,
       }}
+      tabBar={(props) => <CustomTabBar {...props} />}
     >
-      <Button
-        title={"Home"}
-        onPress={() => {
-          navigation.navigate("Home");
-        }}
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{ tabBarLabel: "Home", tabBarIconName: "home" }}
       />
-      <Button
-        title={"Profile"}
-        onPress={() => {
-          navigation.navigate("Profile");
-        }}
+      <Tab.Screen
+        name={"Profile"}
+        options={{ tabBarLabel: "Profile", tabBarIconName: "account" }}
+        component={ProfileScreen}
       />
-    </View>
+    </Tab.Navigator>
   );
 };
+
 export default BottomNavBar;

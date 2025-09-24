@@ -23,7 +23,7 @@ export default function CustomTextInput({
   minHeight,
   maxLength,
 }) {
-  const theme = useTheme();
+  const { theme } = useTheme();
   const [isFocused, setIsFocused] = useState(false);
   const [hidePassword, setHidePassword] = useState(secureTextEntry || false);
 

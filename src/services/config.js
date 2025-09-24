@@ -10,6 +10,10 @@ export const config = {
       resort: {
         addResort: "/resort/add-resort",
         getResortsByUser: "/resort/get-resort-by-user",
+        getResortsById: "/resort/get-resort-by-id",
+        updateResort: "/resort/update-resort",
+        deleteResort: "/resort/delete-resort",
+        getNewResorts: "/resort/get-new-resorts",
       },
     },
   },

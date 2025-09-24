@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import {
   Alert,
   FlatList,
@@ -20,18 +20,18 @@ import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import CustomDropdown from "../../components/Inputs/CustomDropdown";
 import APIService from "../../services/APIService";
 import { config } from "../../services/config";
-import { AuthContext } from "../../Secure/AuthProvider";
 import { getAccessToken } from "../../Secure/secureHub";
 import * as ImageManipulator from "expo-image-manipulator";
 import Toast from "react-native-toast-message";
 import LottieView from "lottie-react-native";
 
+import LoadingButton from "../../components/Loading/LoadingButton";
+
 export default function AddResort() {
   const { t } = useTranslation();
-  const theme = useTheme();
-  const { user } = useContext(AuthContext);
-
+  const { theme } = useTheme();
   const [loadingButton, setLoadingButton] = useState(false);
+  const [loadingImages, setLoadingImages] = useState(false);
 
   const [resort, setResort] = useState({
     name: "",
@@ -99,6 +99,7 @@ export default function AddResort() {
       );
       return;
     }
+    setLoadingImages(true);
     const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ["images"],
       base64: true,
@@ -140,7 +141,7 @@ export default function AddResort() {
 
       return;
     }
-
+    setLoadingImages(true);
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsMultipleSelection: true,
@@ -195,6 +196,7 @@ export default function AddResort() {
       ...prev,
       image: newErrors,
     }));
+    setLoadingImages(false);
     return newErrors === "";
   };
 
@@ -316,13 +318,19 @@ export default function AddResort() {
               text1: t("addResort.successSubmitNotify"),
               position: "bottom",
             });
-            setLoadingButton(false);
           }
         })
         .catch((err) => {
           console.log("An error occurred! " + err);
+          Toast.show({
+            type: "custom",
+            text1: t("error.catchError"),
+            position: "bottom",
+          });
         })
-        .finally(() => {});
+        .finally(() => {
+          setLoadingButton(false);
+        });
     }
   };
   return (
@@ -483,6 +491,7 @@ export default function AddResort() {
                 style={{ marginLeft: 16 }}
                 textColor={theme.colors.primary}
               />
+              {loadingImages && <LoadingButton />}
             </View>
 
             {images.length > 0 && (
