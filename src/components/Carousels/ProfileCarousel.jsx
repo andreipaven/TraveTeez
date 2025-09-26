@@ -3,34 +3,37 @@ import { Dimensions, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import ProfileCarouselCard from "../Cards/ProfileCarouselCard";
 import Animated, { useSharedValue } from "react-native-reanimated";
+import CustomCarouselCard from "../Cards/CustomCarouselCard";
+import Carousel from "react-native-reanimated-carousel";
 
-const ProfileCarousel = ({ resorts, resortImages }) => {
-  const { width } = Dimensions.get("screen") * 0.42;
-  const scrollX = useSharedValue(0);
+const width = Dimensions.get("window").width;
+
+//main function
+const ProfileCarousel = ({ resorts }) => {
+  const ref = useRef(null);
+  const progress = useSharedValue(0);
   return (
-    <Animated.ScrollView
-      horizontal
-      decelerationRate={"fast"}
-      snapToInterval={width}
-      style={{ padding: 4, marginLeft: -4 }}
-      disableIntervalMomentum
-      bounces={false}
-      scrollEventThrottle={12}
-      onScroll={(event) => {
-        scrollX.value = event.nativeEvent.contentOffset.x;
+    <Carousel
+      vertical={false}
+      ref={ref}
+      width={width}
+      loop={false}
+      height={220}
+      data={resorts}
+      onProgressChange={progress}
+      mode="parallax"
+      modeConfig={{
+        parallaxScrollingScale: 0.96,
+        parallaxScrollingOffset: 120,
       }}
-    >
-      {resorts.map((item, index) => (
+      renderItem={({ index, item }) => (
         <ProfileCarouselCard
-          key={index}
           item={item}
-          images={resortImages[index]}
-          scrollX={scrollX}
-          total={resorts.length}
-          id={index}
+          key={index}
+          resortId={item.resort_id}
         />
-      ))}
-    </Animated.ScrollView>
+      )}
+    />
   );
 };
 

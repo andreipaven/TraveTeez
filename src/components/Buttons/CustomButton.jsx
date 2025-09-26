@@ -22,11 +22,12 @@ export default function CustomButton({
   flexDirection,
   alignItems,
   maxHeight,
+  activeOpacity,
 }) {
   return (
     <TouchableOpacity
       onPress={onPress}
-      activeOpacity={0.8}
+      activeOpacity={activeOpacity || 0.8}
       style={[
         {
           flexDirection: flexDirection || "row",

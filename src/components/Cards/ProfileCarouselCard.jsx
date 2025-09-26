@@ -1,99 +1,98 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   Dimensions,
   ImageBackground,
-  Image,
   Pressable,
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
-import Animated, {
-  Extrapolation,
-  interpolate,
-  useAnimatedStyle,
-} from "react-native-reanimated";
-import { interpolateColor } from "react-native-reanimated/src";
+import { useSharedValue } from "react-native-reanimated";
+
 import { useTheme } from "../../Theme/themeContext";
 import { useNavigation } from "@react-navigation/native";
-
-export default function ProfileCarouselCard({
-  item,
-  images,
-  id,
-  total,
-  scrollX,
-}) {
+import APIService from "../../services/APIService";
+import { config } from "../../services/config";
+import Loading from "../Loading/Loading";
+const width = Dimensions.get("window").width;
+export default function ProfileCarouselCard({ item, resortId }) {
   const navigation = useNavigation();
-  const { width } = Dimensions.get("screen");
+
   const { theme } = useTheme();
-  const inputRange = [
-    (id - 1) * (width * 0.42),
-    id * (width * 0.42),
-    (id + 1) * (width * 0.42),
-  ];
-  const translateStyle = useAnimatedStyle(() => {
-    const translate = interpolate(
-      scrollX.value,
-      inputRange,
-      [0.89, 0.97, 0.89],
-      Extrapolation.CLAMP,
-    );
-
-    const borderColor = interpolateColor(scrollX.value, inputRange, [
-      "transparent",
-      theme.colors.primary,
-      "transparent",
-    ]);
-
-    return {
-      transform: [{ scale: translate }],
-      borderWidth: 2,
-      borderColor,
-    };
-  });
+  const ref = useRef(null);
+  const progress = useSharedValue(0);
+  const [images, setImages] = useState([]);
+  const [fetchLoading, setFetchLoading] = useState({ images: false });
+  useEffect(() => {
+    setFetchLoading((prev) => ({
+      ...prev,
+      images: true,
+    }));
+    APIService.post(config.endpoints.legacy.resort.getImagesByResort, {
+      resortId,
+    })
+      .then((response) => {
+        if (response?.data.error) {
+          console.log("Something wrong happened " + response.data.error);
+        } else {
+          setImages(response.data);
+        }
+      })
+      .catch((err) => {
+        console.log("An error occurred " + err);
+      })
+      .finally(() => {
+        setFetchLoading((prev) => ({
+          ...prev,
+          images: false,
+        }));
+      });
+  }, [resortId]);
 
   return (
-    <Animated.View
-      style={[
-        {
-          width: width * 0.5,
-          height: 220,
-          overflow: "hidden",
-          borderRadius: 12,
-          marginRight: id === total - 1 ? width * 0.42 : undefined,
-        },
-        translateStyle,
-      ]}
+    <View
+      style={{
+        width: width / 1.5,
+        height: 220,
+        overflow: "hidden",
+        borderRadius: 12,
+      }}
     >
-      <Carousel
-        data={images}
-        vertical={false}
-        width={width * 0.5}
-        height={220}
-        loop
-        autoPlay
-        autoPlayInterval={700}
-        scrollAnimationDuration={2000}
-        renderItem={({ item }) => (
-          <View style={{ width: "100%", height: "100%" }}>
+      {fetchLoading.images ? (
+        <Loading />
+      ) : (
+        <Carousel
+          vertical={false}
+          autoPlay={true}
+          autoPlayInterval={1000}
+          scrollAnimationDuration={2000}
+          ref={ref}
+          loop={false}
+          width={width / 1.5}
+          style={{ pointerEvents: "none" }}
+          height={220}
+          data={images}
+          onProgressChange={progress}
+          renderItem={({ item: img }) => (
             <ImageBackground
-              source={{ uri: item.image_url }}
-              resizeMode="cover"
+              source={{ uri: img?.image_url }}
+              resizeMode={"cover"}
               style={{ width: "100%", height: "100%" }}
             />
-          </View>
-        )}
-      />
+          )}
+        />
+      )}
       <Text
         style={{
           position: "absolute",
-          top: 4,
-          left: 4,
+          bottom: 0,
+          left: 0,
           fontWeight: "bold",
-          width: "70%",
+          maxWidth: "70%",
           flexShrink: 1,
+          backgroundColor: theme.colors.backgroundPrimary + "cc",
+          padding: 4,
+          borderTopRightRadius: 8,
         }}
       >
         {item.name}
@@ -112,6 +111,6 @@ export default function ProfileCarouselCard({
           });
         }}
       />
-    </Animated.View>
+    </View>
   );
 }

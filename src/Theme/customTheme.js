@@ -6,12 +6,12 @@ export const lightTheme = {
     primaryHover: "#00b383",
     primaryDelete: "#ff0000",
 
-    secondary: "#00B0E0",
+    secondary: "#0080ff",
     secondaryContrast: "#000",
     secondaryHover: "#13a1cd",
     secondarySelected: "#00B0E0",
 
-    backgroundPrimary: "#fff",
+    backgroundPrimary: "#ffffff",
     backgroundSecondary: "#a9edd0",
     backgroundDefault: "#fff",
     backgroundPaper: "#f5f5f5",
@@ -43,7 +43,7 @@ export const darkTheme = {
     backgroundSecondary: "#0e0e0e",
     backgroundDefault: "#191919",
     backgroundPaper: "#323232",
-    backgroundHover: "#ddd",
+    backgroundHover: "rgba(221,221,221,0.93)",
 
     textPrimary: "#fff",
     textSecondary: "rgb(175,175,175)",

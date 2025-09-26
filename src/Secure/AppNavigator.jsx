@@ -9,6 +9,9 @@ import AddResort from "../screens/Profile/AddResort";
 import EditResort from "../screens/Profile/EditResort";
 import Loading from "../components/Loading/Loading";
 import { useTheme } from "../Theme/themeContext";
+import SearchScreen from "../screens/Search/SearchScreen";
+import ResortScreen from "../screens/Resort/ResortScreen";
+import ProfileScreen from "../screens/Profile/ProfileScreen";
 
 const AppNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -73,6 +76,22 @@ const AppNavigator = () => {
             options={{
               title: t("app.editResortTitle"),
             }}
+          />
+          <Stack.Screen
+            name="Search"
+            component={SearchScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Profile"
+            component={ProfileScreen}
+            options={{ headerShown: false }}
+          />
+
+          <Stack.Screen
+            name={"ResortProfile"}
+            component={ResortScreen}
+            options={{ headerShown: false }}
           />
         </>
       )}

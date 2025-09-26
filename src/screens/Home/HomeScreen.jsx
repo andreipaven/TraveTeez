@@ -1,8 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  RefreshControl,
+} from "react-native";
 
 import { AuthContext } from "../../Secure/AuthProvider";
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import CustomCarousel from "../../components/Carousels/CustomCarousel";
@@ -12,17 +18,16 @@ import CustomButton from "../../components/Buttons/CustomButton";
 import { useTheme } from "../../Theme/themeContext";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import { useTranslation } from "react-i18next";
+import CustomRating from "../../components/Rating/CustomRating";
 
-export default function () {
+export default function HomeScreen() {
   const { theme } = useTheme();
   const { t } = useTranslation();
   const { user, loading } = useContext(AuthContext);
+  const [refreshing, setRefreshing] = React.useState(false);
   const navigation = useNavigation();
   const [newResorts, setNewResorts] = useState([]);
-
-  const [fetchLoading, setFetchLoading] = useState({
-    newResorts: false,
-  });
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     if (!(!loading && !user)) {
@@ -31,12 +36,14 @@ export default function () {
     navigation.replace("SignIn");
   }, [user, loading]);
 
-  useEffect(() => {
-    setFetchLoading((prev) => ({
-      ...prev,
-      newResorts: true,
-    }));
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
 
+  useEffect(() => {
     const fetchNewResorts = () => {
       APIService.post(config.endpoints.legacy.resort.getNewResorts, {})
         .then((response) => {
@@ -49,21 +56,26 @@ export default function () {
         .catch((err) => {
           console.log("An error occurred " + err);
         })
-        .finally(() => {
-          setFetchLoading((prev) => ({
-            ...prev,
-            newResorts: false,
-          }));
-        });
+        .finally(() => {});
     };
     fetchNewResorts();
-  }, []);
+  }, [isFocused]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView>
+    <SafeAreaView
+      style={[
+        styles.container,
+        { backgroundColor: theme.colors.backgroundPrimary },
+      ]}
+    >
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         <View style={{ paddingHorizontal: 16, paddingTop: 4 }}>
           <CustomButton
+            activeOpacity={1}
             backgroundColor={theme.colors.backgroundPrimary}
             title={
               <View
@@ -111,10 +123,25 @@ export default function () {
               elevation: 4,
               justifyContent: "space-between",
             }}
+            onPress={() => navigation.navigate("Search")}
           />
         </View>
-
-        <CustomCarousel dates={newResorts} />
+        <View>
+          <Text
+            style={{
+              paddingHorizontal: 16,
+              paddingTop: 8,
+              paddingBottom: 2,
+              fontSize: 16,
+              fontWeight: "bold",
+              color: theme.colors.textPrimary,
+            }}
+          >
+            {t("home.newResortsTitle")}
+          </Text>
+          <CustomCarousel dates={newResorts} />
+        </View>
+        <CustomRating />
       </ScrollView>
     </SafeAreaView>
   );
@@ -123,7 +150,7 @@ export default function () {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    height: "auto",
+    height: "100%",
     justifyContent: "center",
     alignItems: "center",
     paddingTop: 12,

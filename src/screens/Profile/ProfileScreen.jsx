@@ -22,6 +22,7 @@ import ProfileCarousel from "../../components/Carousels/ProfileCarousel";
 import Loading from "../../components/Loading/Loading";
 import Toast from "react-native-toast-message";
 import { useTheme } from "../../Theme/themeContext";
+import ThemeSwitch from "../../components/Buttons/ThemeSwitch";
 
 const ProfileScreen = () => {
   const [fetchLoading, setFetchLoading] = useState(true);
@@ -33,7 +34,6 @@ const ProfileScreen = () => {
   const navigation = useNavigation();
 
   const [resorts, setResorts] = useState([]);
-  const [resortImages, setResortImages] = useState([]);
 
   useEffect(() => {
     async function getResorts() {
@@ -51,8 +51,7 @@ const ProfileScreen = () => {
         if (response.data?.error) {
           console.log("Something wrong happened: " + response.data.error);
         } else {
-          setResortImages(response.data.allImages);
-          setResorts(response.data.resorts);
+          setResorts(response.data);
         }
       } catch (err) {
         console.error("An error occurred! " + err);
@@ -75,7 +74,7 @@ const ProfileScreen = () => {
         flex: 1,
         justifyContent: "start",
         alignItems: "start",
-        padding: 16,
+
         gap: 16, // or not
       }}
     >
@@ -90,6 +89,7 @@ const ProfileScreen = () => {
               justifyContent: "start",
               width: "100%",
               gap: 16,
+              padding: 16,
             }}
           >
             <Image
@@ -108,15 +108,17 @@ const ProfileScreen = () => {
               width: "100%",
             }}
           >
-            <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+            <Text
+              style={{
+                fontWeight: "bold",
+                fontSize: 16,
+                paddingHorizontal: 16,
+              }}
+            >
               {t(`profileScreen.myResorts`)}
             </Text>
 
-            <ProfileCarousel
-              resorts={resorts}
-              resortImages={resortImages}
-              theme={theme}
-            />
+            <ProfileCarousel resorts={resorts} />
           </View>
           <CustomButton
             title={t("profileScreen.addResortButton")}
@@ -125,6 +127,7 @@ const ProfileScreen = () => {
             fontSize={14}
             paddingVertical={8}
             paddingHorizontal={16}
+            marginHorizontal={16}
             width={"50%"}
             borderRadius={100}
             iconLeft={
@@ -134,8 +137,10 @@ const ProfileScreen = () => {
                 color={theme.colors.primaryContrast}
               />
             }
+            style={{ marginTop: 8 }}
             onPress={() => navigation.navigate("AddResort")}
           />
+          <ThemeSwitch />
         </View>
       )}
     </SafeAreaView>

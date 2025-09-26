@@ -55,7 +55,8 @@
     "successSubmitNotify": "Resort added successfully ✅"
   },
   "home": {
-    "searchButtonInput": "Search a resort... "
+    "searchButtonInput": "Search a resort... ",
+    "newResortsTitle" : "New resorts"
   },
   "app": {
     "addNewResortTitle": "Add New Resort",
@@ -67,6 +68,30 @@
     "successSubmitNotify": "Resort saved successfully ✅",
     "successDeleteSubmitNotify": "Resort deleted successfully \uD83E\uDDF9",
     "resetButton": "Reset"
+  },
+  "typeResort": {
+    "ski": "Ski",
+    "beach": "Beach",
+    "mountain": "Mountain",
+    "spa": "Spa & Wellness",
+    "balneary": "Balneary",
+    "city": "City / Urban",
+    "adventure": "Adventure",
+    "cultural": "Cultural & Historical",
+    "luxury": "Luxury",
+    "allInclusive": "All-Inclusive",
+    "eco": "Eco / Nature",
+    "safari": "Safari / Desert",
+    "lake": "Lake",
+    "island": "Island",
+    "family": "Family-Friendly",
+    "adultsOnly": "Adults Only",
+    "theme": "Theme / Entertainment",
+    "retreat": "Wellness / Yoga Retreat",
+    "natureB": "Nature & Adventure",
+    "relaxB": "Beach & Relaxation",
+    "culturalB": "Cultural & Urban",
+    "specialB": "Exotic & Special"
   },
   "error": {
     "catchError": "Something went wrong. Please try again."

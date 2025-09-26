@@ -53,12 +53,24 @@ export default function AddResort() {
   const [images, setImages] = useState([]);
 
   const typeOptions = [
-    { label: "Ski", value: "Ski" },
-    { label: "Beach", value: "Beach" },
-    { label: "Spa", value: "Spa" },
-    { label: "Mountain", value: "Mountain" },
-    { label: "City", value: "City" },
-    { label: "Adventure", value: "Adventure" },
+    { label: t("typeResort.ski"), value: "ski" },
+    { label: t("typeResort.beach"), value: "beach" },
+    { label: t("typeResort.mountain"), value: "mountain" },
+    { label: t("typeResort.spa"), value: "spa" },
+    { label: t("typeResort.balneary"), value: "balneary" },
+    { label: t("typeResort.city"), value: "city" },
+    { label: t("typeResort.adventure"), value: "adventure" },
+    { label: t("typeResort.cultural"), value: "cultural" },
+    { label: t("typeResort.luxury"), value: "luxury" },
+    { label: t("typeResort.allInclusive"), value: "allInclusive" },
+    { label: t("typeResort.eco"), value: "eco" },
+    { label: t("typeResort.safari"), value: "safari" },
+    { label: t("typeResort.lake"), value: "lake" },
+    { label: t("typeResort.island"), value: "island" },
+    { label: t("typeResort.family"), value: "family" },
+    { label: t("typeResort.adultsOnly"), value: "adultsOnly" },
+    { label: t("typeResort.theme"), value: "theme" },
+    { label: t("typeResort.retreat"), value: "retreat" },
   ];
 
   const handleChange = (name, value) => {
@@ -99,7 +111,7 @@ export default function AddResort() {
       );
       return;
     }
-    setLoadingImages(true);
+
     const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ["images"],
       base64: true,
@@ -107,6 +119,7 @@ export default function AddResort() {
     });
 
     if (!result.canceled) {
+      setLoadingImages(true);
       const newImage = result.assets ? result.assets[0] : result;
 
       const compressed = await compressImage(newImage.uri, 0.6, 1080);
@@ -141,7 +154,7 @@ export default function AddResort() {
 
       return;
     }
-    setLoadingImages(true);
+
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsMultipleSelection: true,
@@ -150,6 +163,7 @@ export default function AddResort() {
     });
 
     if (!result.canceled) {
+      setLoadingImages(true);
       const selectedImages = result.assets || [result];
       const validImages = [];
 

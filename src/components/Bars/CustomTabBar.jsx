@@ -51,6 +51,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
 
           return (
             <TouchableOpacity
+              activeOpacity={1}
               key={index}
               accessibilityRole="button"
               accessibilityState={isFocused ? { selected: true } : {}}
@@ -63,8 +64,8 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
               <Icon
                 name={
                   isFocused
-                    ? options.tabBarIconName
-                    : options.tabBarIconName + "-outline"
+                    ? options.tabBarIconActive
+                    : options.tabBarIconInactive
                 }
                 size={24}
                 color={
@@ -97,22 +98,21 @@ const styles = StyleSheet.create({
   tabContainer: {
     flexDirection: "row",
     marginHorizontal: 40,
-    marginBottom: 50,
+    marginBottom: 45,
     borderRadius: 50,
-    padding: 12,
+    padding: 8,
     justifyContent: "space-around",
     alignItems: "center",
   },
   tabItem: {
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 100,
+    width: 50,
+    height: 50,
+    borderRadius: 50,
   },
   tabLabel: {
-    fontSize: 12,
-
+    fontSize: 10,
     textAlign: "center",
   },
 });

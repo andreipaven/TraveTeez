@@ -9,11 +9,16 @@ export const config = {
       },
       resort: {
         addResort: "/resort/add-resort",
-        getResortsByUser: "/resort/get-resort-by-user",
+        getResortsByUser: "/resort/get-resorts-by-user",
+        getImagesByResort: "/resort/get-images-by-resort",
         getResortsById: "/resort/get-resort-by-id",
         updateResort: "/resort/update-resort",
         deleteResort: "/resort/delete-resort",
         getNewResorts: "/resort/get-new-resorts",
+      },
+      favorite: {
+        addFavorite: "/favorite/add-favorite",
+        deleteFavorite: "/favorite/delete-favorite",
       },
     },
   },
