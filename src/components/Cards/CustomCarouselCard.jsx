@@ -11,34 +11,11 @@ import { useTheme } from "../../Theme/themeContext";
 import APIService from "../../services/APIService";
 import { config } from "../../services/config";
 import { useNavigation } from "@react-navigation/native";
+import Favorite from "../Favorite/Favorite";
 
 const CustomCarouselCard = ({ item }) => {
   const { theme } = useTheme();
   const navigation = useNavigation();
-  const [isFavorite, setIsFavorite] = useState(item.isFavorite);
-
-  const onToggleFavorite = async () => {
-    const newValue = isFavorite;
-    setIsFavorite((prev) => !prev);
-    try {
-      if (newValue) {
-        await APIService.post(config.endpoints.legacy.favorite.deleteFavorite, {
-          resortId: item.resort_id,
-        });
-      } else {
-        await APIService.post(config.endpoints.legacy.favorite.addFavorite, {
-          resortId: item.resort_id,
-        });
-      }
-    } catch (err) {
-      console.log("Error updating favorite", err);
-      setIsFavorite((prev) => !prev);
-    }
-  };
-
-  useEffect(() => {
-    setIsFavorite(item.isFavorite);
-  }, [item.isFavorite]);
 
   return (
     <View
@@ -62,7 +39,7 @@ const CustomCarouselCard = ({ item }) => {
       <Pressable
         onPress={() =>
           navigation.navigate("ResortProfile", {
-            state: { resortId: item.resort_id, isFavoriteX: isFavorite },
+            state: { resortId: item.resort_id, isFavorite: item.isFavorite },
           })
         }
       >
@@ -75,21 +52,6 @@ const CustomCarouselCard = ({ item }) => {
           }}
         />
       </Pressable>
-      <Pressable
-        onPress={() => onToggleFavorite()}
-        style={{
-          position: "absolute",
-          right: 10,
-          top: 10,
-        }}
-      >
-        <Icon
-          name={isFavorite ? "heart" : "heart-outline"}
-          size={28}
-          color={isFavorite ? theme.colors.primary : theme.colors.textDark}
-        />
-      </Pressable>
-
       <View style={{ paddingHorizontal: 8, paddingVertical: 4 }}>
         <Text
           style={{
@@ -109,6 +71,13 @@ const CustomCarouselCard = ({ item }) => {
           {item.city}, {item.country}
         </Text>
       </View>
+      <Favorite
+        resortId={item.resort_id}
+        favorite={item.isFavorite}
+        top={12}
+        right={12}
+        size={28}
+      />
     </View>
   );
 };

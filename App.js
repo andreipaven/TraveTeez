@@ -9,20 +9,26 @@ import Toast from "react-native-toast-message";
 import CustomToast from "./src/components/Hooks/customToast";
 import AppNavigator from "./src/Secure/AppNavigator";
 import ThemeProvider from "./src/Theme/themeContext";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 export default function App() {
   return (
     <SafeAreaProvider>
-      <ThemeProvider>
-        <I18nextProvider i18n={i18n}>
-          <AuthProvider>
-            <NavigationContainer>
-              <AppNavigator />
-              <Toast config={{ custom: CustomToast }} />
-            </NavigationContainer>
-          </AuthProvider>
-        </I18nextProvider>
-      </ThemeProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <BottomSheetModalProvider>
+          <ThemeProvider>
+            <I18nextProvider i18n={i18n}>
+              <AuthProvider>
+                <NavigationContainer>
+                  <AppNavigator />
+                  <Toast config={{ custom: CustomToast }} />
+                </NavigationContainer>
+              </AuthProvider>
+            </I18nextProvider>
+          </ThemeProvider>
+        </BottomSheetModalProvider>
+      </GestureHandlerRootView>
     </SafeAreaProvider>
   );
 }

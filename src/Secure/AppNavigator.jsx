@@ -12,6 +12,7 @@ import { useTheme } from "../Theme/themeContext";
 import SearchScreen from "../screens/Search/SearchScreen";
 import ResortScreen from "../screens/Resort/ResortScreen";
 import ProfileScreen from "../screens/Profile/ProfileScreen";
+import HomeScreen from "../screens/Home/HomeScreen";
 
 const AppNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -80,6 +81,11 @@ const AppNavigator = () => {
           <Stack.Screen
             name="Search"
             component={SearchScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Home"
+            component={HomeScreen}
             options={{ headerShown: false }}
           />
           <Stack.Screen

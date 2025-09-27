@@ -19,6 +19,7 @@ export const config = {
       favorite: {
         addFavorite: "/favorite/add-favorite",
         deleteFavorite: "/favorite/delete-favorite",
+        verifyFavorite: "/favorite/verify-favorite",
       },
     },
   },

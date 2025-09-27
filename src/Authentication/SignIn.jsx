@@ -85,7 +85,7 @@ export default function SignIn() {
             await saveRefreshToken(refreshToken);
             setUser(user);
             setSignInError(false);
-            navigation.navigate("Home");
+            navigation.navigate("MainTabs", { screen: "Home" });
           }
         })
         .catch((err) => {

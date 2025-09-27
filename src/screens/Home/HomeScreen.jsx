@@ -18,7 +18,6 @@ import CustomButton from "../../components/Buttons/CustomButton";
 import { useTheme } from "../../Theme/themeContext";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import { useTranslation } from "react-i18next";
-import CustomRating from "../../components/Rating/CustomRating";
 
 export default function HomeScreen() {
   const { theme } = useTheme();
@@ -141,7 +140,6 @@ export default function HomeScreen() {
           </Text>
           <CustomCarousel dates={newResorts} />
         </View>
-        <CustomRating />
       </ScrollView>
     </SafeAreaView>
   );

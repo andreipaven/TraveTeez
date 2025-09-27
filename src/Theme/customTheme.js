@@ -16,13 +16,14 @@ export const lightTheme = {
     backgroundDefault: "#fff",
     backgroundPaper: "#f5f5f5",
     backgroundHover: "#ddd",
+    backgroundModals: "#000000",
 
     textPrimary: "#000000",
     textSecondary: "rgb(122,122,122)",
     textDark: "#ffffff",
 
-    shadowPrimary: "rgba(0,0,0,0.68)",
-    error: "#ff0000", // optional
+    shadowPrimary: "rgba(0,0,0,1)",
+    error: "#ff0000",
   },
 };
 

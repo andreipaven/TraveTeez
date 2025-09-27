@@ -15,11 +15,10 @@ import {
   useDerivedValue,
   useSharedValue,
 } from "react-native-reanimated";
-import APIService from "../../services/APIService";
-import { config } from "../../services/config";
+
 import Loading from "../Loading/Loading";
 import { useTheme } from "../../Theme/themeContext";
-import Icon from "@expo/vector-icons/MaterialCommunityIcons";
+import Favorite from "../Favorite/Favorite";
 
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
@@ -27,9 +26,9 @@ const height = Dimensions.get("window").height;
 //main function
 const ResortProfileCarousel = ({
   resortId,
-  isFavoriteX,
-  fetchLoadingImages,
+
   images,
+  isFavorite,
 }) => {
   const { theme } = useTheme();
   const ref = useRef(null);
@@ -46,40 +45,12 @@ const ResortProfileCarousel = ({
     });
   };
 
-  const [isFavorite, setIsFavorite] = useState(isFavoriteX);
-
-  const onToggleFavorite = async () => {
-    const newValue = isFavorite;
-
-    setIsFavorite((prev) => !prev);
-    try {
-      if (newValue) {
-        await APIService.post(config.endpoints.legacy.favorite.deleteFavorite, {
-          resortId: resortId,
-        });
-      } else {
-        await APIService.post(config.endpoints.legacy.favorite.addFavorite, {
-          resortId: resortId,
-        });
-      }
-    } catch (err) {
-      console.log("Error updating favorite", err);
-      setIsFavorite((prev) => !prev);
-    }
-  };
-
-  useEffect(() => {
-    setIsFavorite(isFavoriteX);
-  }, [isFavoriteX]);
-
-  return fetchLoadingImages ? (
-    <Loading />
-  ) : (
+  return (
     <View style={styles.container}>
       <Carousel
         autoPlay={true}
         autoPlayInterval={2000}
-        scrollAnimationDuration={2000}
+        scrollAnimationDuration={1000}
         vertical={false}
         ref={ref}
         width={width}
@@ -139,20 +110,13 @@ const ResortProfileCarousel = ({
           };
         }}
       />
-      <Pressable
-        onPress={onToggleFavorite}
-        style={{
-          position: "absolute",
-          right: 20,
-          top: 20,
-        }}
-      >
-        <Icon
-          name={isFavorite ? "heart" : "heart-outline"}
-          size={32}
-          color={isFavorite ? theme.colors.primary : theme.colors.textDark}
-        />
-      </Pressable>
+      <Favorite
+        favorite={isFavorite}
+        resortId={resortId}
+        size={36}
+        top={20}
+        right={20}
+      />
     </View>
   );
 };
