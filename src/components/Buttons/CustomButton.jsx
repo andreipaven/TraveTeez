@@ -23,6 +23,8 @@ export default function CustomButton({
   alignItems,
   maxHeight,
   activeOpacity,
+  flex,
+  height,
 }) {
   return (
     <TouchableOpacity
@@ -30,6 +32,7 @@ export default function CustomButton({
       activeOpacity={activeOpacity || 0.8}
       style={[
         {
+          flex,
           flexDirection: flexDirection || "row",
           alignItems: alignItems || "center",
           justifyContent: "center",
@@ -38,7 +41,8 @@ export default function CustomButton({
           paddingVertical,
           paddingHorizontal,
           marginHorizontal,
-          width: width || "100%",
+          width: width,
+          height,
           borderColor,
           borderWidth,
           maxHeight: maxHeight,

@@ -23,8 +23,8 @@ const ProfileCarousel = ({ resorts }) => {
       onProgressChange={progress}
       mode="parallax"
       modeConfig={{
-        parallaxScrollingScale: 0.96,
-        parallaxScrollingOffset: 120,
+        parallaxScrollingScale: 0.92,
+        parallaxScrollingOffset: 140,
       }}
       renderItem={({ index, item }) => (
         <ProfileCarouselCard

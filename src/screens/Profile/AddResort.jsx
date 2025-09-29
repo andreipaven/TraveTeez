@@ -5,6 +5,7 @@ import {
   Image,
   Keyboard,
   Linking,
+  LogBox,
   ScrollView,
   Text,
   TouchableWithoutFeedback,
@@ -111,7 +112,7 @@ export default function AddResort() {
       );
       return;
     }
-
+    setLoadingImages(true);
     const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ["images"],
       base64: true,
@@ -119,23 +120,38 @@ export default function AddResort() {
     });
 
     if (!result.canceled) {
-      setLoadingImages(true);
       const newImage = result.assets ? result.assets[0] : result;
 
-      const compressed = await compressImage(newImage.uri, 0.6, 1080);
+      const extension = newImage.uri.split(".").pop().toLowerCase();
 
-      const imageToAdd = {
-        ...newImage,
-        uri: compressed.uri,
-        base64: compressed.base64,
-        width: compressed.width,
-        height: compressed.height,
-      };
+      if (
+        extension === "jpg" ||
+        extension === "jpeg" ||
+        extension === "png" ||
+        extension === "heic"
+      ) {
+        const compressed = await compressImage(newImage.uri, 0.6, 1080);
 
-      const updatedImages = [...images, imageToAdd];
-      setImages(updatedImages);
+        const imageToAdd = {
+          ...newImage,
+          uri: compressed.uri,
+          base64: compressed.base64,
+          width: compressed.width,
+          height: compressed.height,
+        };
 
-      validateImage(updatedImages);
+        const updatedImages = [...images, imageToAdd];
+        setImages(updatedImages);
+
+        validateImage(updatedImages);
+      } else {
+        Alert.alert(
+          "Invalid file format",
+          `Only JPG,  PNG, HEIC images are allowed. "${newImage.fileName}" was skipped.`,
+        );
+      }
+    } else {
+      setLoadingImages(false);
     }
   };
 
@@ -154,7 +170,7 @@ export default function AddResort() {
 
       return;
     }
-
+    setLoadingImages(true);
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsMultipleSelection: true,
@@ -163,19 +179,25 @@ export default function AddResort() {
     });
 
     if (!result.canceled) {
-      setLoadingImages(true);
       const selectedImages = result.assets || [result];
       const validImages = [];
 
       for (let img of selectedImages) {
-        const ext = img.fileName?.split(".").pop().toLowerCase();
-        if (ext === "jpg" || ext === "jpeg" || ext === "png") {
+        const ext = img.uri?.split(".").pop().toLowerCase();
+
+        if (
+          ext === "jpg" ||
+          ext === "jpeg" ||
+          ext === "png" ||
+          ext === "heic"
+        ) {
           validImages.push(img);
         } else {
           Alert.alert(
             "Invalid file format",
-            `Only JPG and PNG images are allowed. "${img.fileName}" was skipped.`,
+            `Only JPG, PNG and HEIC images are allowed. "${img.fileName}" was skipped.`,
           );
+          setLoadingImages(false);
         }
       }
 
@@ -196,6 +218,8 @@ export default function AddResort() {
         setImages(updatedImages);
         validateImage(updatedImages);
       }
+    } else {
+      setLoadingImages(false);
     }
   };
 
@@ -331,6 +355,7 @@ export default function AddResort() {
               type: "custom",
               text1: t("addResort.successSubmitNotify"),
               position: "bottom",
+              visibilityTime: 2000,
             });
           }
         })
@@ -340,6 +365,7 @@ export default function AddResort() {
             type: "custom",
             text1: t("error.catchError"),
             position: "bottom",
+            visibilityTime: 2000,
           });
         })
         .finally(() => {
@@ -520,7 +546,34 @@ export default function AddResort() {
             )}
           </View>
           {errors.image && <Text style={{ color: "red" }}>{errors.image}</Text>}
-          <View style={{ width: "100%", marginTop: 16, gap: 16 }}>
+          <View
+            style={{
+              width: "100%",
+              marginTop: 16,
+              gap: 16,
+              alignItems: "center",
+              justifyContent: "center",
+              flexDirection: "row",
+            }}
+          >
+            <CustomButton
+              title={t("addResort.cancelButton")}
+              backgroundColor={theme.colors.textSecondary}
+              paddingVertical={12}
+              paddingHorizontal={8}
+              textColor={theme.colors.primaryContrast}
+              borderRadius={100}
+              flex={1}
+              iconLeft={
+                <Icon
+                  name={"cancel"}
+                  size={24}
+                  color={theme.colors.primaryContrast}
+                />
+              }
+              onPress={submitCancel}
+              width={"50%"}
+            />
             <CustomButton
               title={
                 loadingButton ? (
@@ -528,7 +581,7 @@ export default function AddResort() {
                     source={require("../../../assets/Trail loading.json")}
                     autoPlay
                     loop
-                    style={{ width: 54, height: 54 }}
+                    style={{ width: 54, height: 54, position: "relative" }}
                     resizeMode={"cover"}
                   />
                 ) : (
@@ -539,6 +592,7 @@ export default function AddResort() {
               backgroundColor={theme.colors.primary}
               paddingVertical={12}
               paddingHorizontal={8}
+              flex={1}
               textColor={theme.colors.primaryContrast}
               borderRadius={100}
               iconLeft={
@@ -552,26 +606,6 @@ export default function AddResort() {
               }
               onPress={submitResort}
             />
-            <View style={{ width: "100%", alignItems: "center" }}>
-              <CustomButton
-                title={t("addResort.cancelButton")}
-                backgroundColor={theme.colors.textSecondary}
-                paddingVertical={12}
-                paddingHorizontal={8}
-                textColor={theme.colors.primaryContrast}
-                borderRadius={100}
-                iconLeft={
-                  <Icon
-                    name={"cancel"}
-                    size={24}
-                    color={theme.colors.primaryContrast}
-                  />
-                }
-                onPress={submitCancel}
-                width={"50%"}
-                style={{ opacity: 0.8, marginBottom: 16 }}
-              />
-            </View>
           </View>
         </ScrollView>
       </TouchableWithoutFeedback>

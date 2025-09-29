@@ -93,6 +93,12 @@
     "culturalB": "Cultural & Urban",
     "specialB": "Exotic & Special"
   },
+  "feedback": {
+    "title": "How did you like it?",
+    "saveButton": "Save",
+    "cancelButton": "Cancel",
+    "notifySuccess": "Feedback saved"
+  },
   "error": {
     "catchError": "Something went wrong. Please try again."
   }

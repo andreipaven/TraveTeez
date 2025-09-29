@@ -20,15 +20,13 @@ export default function App() {
           <ThemeProvider>
             <I18nextProvider i18n={i18n}>
               <AuthProvider>
-                <NavigationContainer>
-                  <AppNavigator />
-                  <Toast config={{ custom: CustomToast }} />
-                </NavigationContainer>
+                <AppNavigator />
               </AuthProvider>
             </I18nextProvider>
           </ThemeProvider>
         </BottomSheetModalProvider>
       </GestureHandlerRootView>
+      <Toast config={{ custom: CustomToast }} />
     </SafeAreaProvider>
   );
 }

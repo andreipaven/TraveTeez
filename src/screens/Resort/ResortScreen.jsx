@@ -19,9 +19,6 @@ const ResortScreen = ({ route }) => {
   const [resortDetails, setResortDetails] = useState(null);
 
   //modals
-  const [isOpenModals, setIsOpenModals] = useState({
-    feedback: false,
-  });
   const bottomSheetModalRefFeedback = useRef(null);
 
   //modal functions
@@ -117,20 +114,14 @@ const ResortScreen = ({ route }) => {
                 textColor={theme.colors.primaryContrast}
                 borderColor={"transparent"}
                 borderRadius={100}
-                onPress={() => {
-                  setIsOpenModals((prev) => ({ ...prev, feedback: true }));
-                  handlePresentPressFeedback();
-                }}
+                onPress={() => handlePresentPressFeedback()}
               />
             </View>
           </View>
 
           <FeedbackModal
             ref={bottomSheetModalRefFeedback}
-            isOpen={isOpenModals.feedback}
-            onClose={() =>
-              setIsOpenModals((prev) => ({ ...prev, feedback: false }))
-            }
+            resortId={resortId}
           />
         </View>
       )}

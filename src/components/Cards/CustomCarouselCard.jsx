@@ -24,35 +24,48 @@ const CustomCarouselCard = ({ item }) => {
           width: "auto",
           height: 220,
           borderRadius: 12,
-          overflow: "hidden",
           flexDirection: "column",
           backgroundColor: theme.colors.backgroundPrimary,
           shadowColor: theme.colors.shadowPrimary,
           shadowOffset: { width: 0, height: 0 },
-          shadowRadius: 4,
           shadowOpacity: 0.5,
-          elevation: 2,
+          shadowRadius: 4,
+          elevation: 3,
           marginHorizontal: 16,
         },
       ]}
     >
       <Pressable
+        style={{
+          width: "100%",
+          backgroundColor: "transparent",
+          height: "75%",
+          position: "absolute",
+          zIndex: 1,
+          top: 0,
+          left: 0,
+        }}
         onPress={() =>
           navigation.navigate("ResortProfile", {
             state: { resortId: item.resort_id, isFavorite: item.isFavorite },
           })
         }
+      />
+      <ImageBackground
+        source={{ uri: item.mainImage.image_url || "" }}
+        resizeMode={"cover"}
+        style={{
+          width: "100%",
+          height: 164,
+          borderTopLeftRadius: 12,
+          borderTopRightRadius: 12,
+          overflow: "hidden",
+        }}
+      />
+
+      <View
+        style={{ paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12 }}
       >
-        <ImageBackground
-          source={{ uri: item.mainImage.image_url || "" }}
-          resizeMode={"cover"}
-          style={{
-            width: "100%",
-            height: 164,
-          }}
-        />
-      </Pressable>
-      <View style={{ paddingHorizontal: 8, paddingVertical: 4 }}>
         <Text
           style={{
             fontWeight: "bold",

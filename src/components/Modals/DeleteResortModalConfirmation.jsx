@@ -2,7 +2,13 @@ import React from "react";
 import { Modal, View, Text, Button } from "react-native";
 import { useTheme } from "../../Theme/themeContext";
 
-const CustomModal = ({ visible, title, message, onConfirm, onCancel }) => {
+const DeleteResortModalConfirmation = ({
+  visible,
+  title,
+  message,
+  onConfirm,
+  onCancel,
+}) => {
   const { theme } = useTheme();
   return (
     <Modal transparent visible={visible} animationType="fade">
@@ -41,4 +47,4 @@ const CustomModal = ({ visible, title, message, onConfirm, onCancel }) => {
   );
 };
 
-export default CustomModal;
+export default DeleteResortModalConfirmation;

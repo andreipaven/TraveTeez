@@ -7,6 +7,7 @@ import {
   ImageBackground,
   Image,
   Pressable,
+  Platform,
 } from "react-native";
 import Carousel, { Pagination } from "react-native-reanimated-carousel";
 import {
@@ -19,20 +20,20 @@ import {
 import Loading from "../Loading/Loading";
 import { useTheme } from "../../Theme/themeContext";
 import Favorite from "../Favorite/Favorite";
+import CustomButton from "../Buttons/CustomButton";
+import Icon from "@expo/vector-icons/MaterialCommunityIcons";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
 
 //main function
-const ResortProfileCarousel = ({
-  resortId,
-
-  images,
-  isFavorite,
-}) => {
+const ResortProfileCarousel = ({ resortId, images, isFavorite }) => {
   const { theme } = useTheme();
   const ref = useRef(null);
   const progress = useSharedValue(0);
+  const navigation = useNavigation();
 
   const onPressPagination = (index) => {
     ref.current?.scrollTo({
@@ -116,6 +117,21 @@ const ResortProfileCarousel = ({
         size={36}
         top={20}
         right={20}
+      />
+      <CustomButton
+        title={
+          <Ionicons
+            name={Platform.OS === "ios" ? "chevron-back" : "arrow-back"}
+            size={20}
+          />
+        }
+        backgroundColor={theme.colors.backgroundPrimary}
+        width={42}
+        height={42}
+        borderRadius={100}
+        activeOpacity={0.5}
+        style={{ opacity: 0.7, position: "absolute", left: 10, top: 10 }}
+        onPress={() => navigation.goBack()}
       />
     </View>
   );

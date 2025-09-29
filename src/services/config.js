@@ -21,6 +21,10 @@ export const config = {
         deleteFavorite: "/favorite/delete-favorite",
         verifyFavorite: "/favorite/verify-favorite",
       },
+      feedback: {
+        verifyFeedbackByUser: "/feedback/verify-feedback-by-user",
+        addFeedback: "/feedback/add-feedback",
+      },
     },
   },
 };

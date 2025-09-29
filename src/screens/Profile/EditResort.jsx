@@ -25,7 +25,7 @@ import * as ImageManipulator from "expo-image-manipulator";
 import Toast from "react-native-toast-message";
 import LottieView from "lottie-react-native";
 import Loading from "../../components/Loading/Loading";
-import CustomModal from "../../components/Modals/CustomModal";
+import DeleteResortModalConfirmation from "../../components/Modals/DeleteResortModalConfirmation";
 import { useNavigation } from "@react-navigation/native";
 import LoadingButton from "../../components/Loading/LoadingButton";
 
@@ -119,7 +119,10 @@ export default function EditResort({ route }) {
       );
       return;
     }
-
+    setLoadingButton((prev) => ({
+      ...prev,
+      images: true,
+    }));
     const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ["images"],
       base64: true,
@@ -127,26 +130,45 @@ export default function EditResort({ route }) {
     });
 
     if (!result.canceled) {
-      setLoadingButton((prev) => ({
-        ...prev,
-        images: true,
-      }));
       const newImage = result.assets ? result.assets[0] : result;
 
-      const compressed = await compressImage(newImage.uri, 0.6, 1080);
+      const extension = newImage.uri.split(".").pop().toLowerCase();
 
-      const imageToAdd = {
-        ...newImage,
-        uri: compressed.uri,
-        base64: compressed.base64,
-        width: compressed.width,
-        height: compressed.height,
-      };
+      if (
+        extension === "jpg" ||
+        extension === "jpeg" ||
+        extension === "png" ||
+        extension === "heic"
+      ) {
+        const compressed = await compressImage(newImage.uri, 0.6, 1080);
 
-      const updatedImages = [...images, imageToAdd];
-      setImages(updatedImages);
+        const imageToAdd = {
+          ...newImage,
+          uri: compressed.uri,
+          base64: compressed.base64,
+          width: compressed.width,
+          height: compressed.height,
+        };
 
-      validateImage(updatedImages);
+        const updatedImages = [...images, imageToAdd];
+        setImages(updatedImages);
+
+        validateImage(updatedImages);
+      } else {
+        Alert.alert(
+          "Invalid file format",
+          `Only JPG, PNG and HEIC images are allowed. "${newImage.fileName}" was skipped.`,
+        );
+        setLoadingButton((prev) => ({
+          ...prev,
+          images: false,
+        }));
+      }
+    } else {
+      setLoadingButton((prev) => ({
+        ...prev,
+        images: false,
+      }));
     }
   };
 
@@ -162,10 +184,12 @@ export default function EditResort({ route }) {
           { text: "Open Settings", onPress: () => Linking.openSettings() },
         ],
       );
-
       return;
     }
-
+    setLoadingButton((prev) => ({
+      ...prev,
+      images: true,
+    }));
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsMultipleSelection: true,
@@ -174,22 +198,28 @@ export default function EditResort({ route }) {
     });
 
     if (!result.canceled) {
-      setLoadingButton((prev) => ({
-        ...prev,
-        images: true,
-      }));
       const selectedImages = result.assets || [result];
       const validImages = [];
 
       for (let img of selectedImages) {
-        const ext = img.fileName?.split(".").pop().toLowerCase();
-        if (ext === "jpg" || ext === "jpeg" || ext === "png") {
+        const ext = img.uri?.split(".").pop().toLowerCase();
+
+        if (
+          ext === "jpg" ||
+          ext === "jpeg" ||
+          ext === "png" ||
+          ext === "heic"
+        ) {
           validImages.push(img);
         } else {
           Alert.alert(
             "Invalid file format",
-            `Only JPG and PNG images are allowed. "${img.fileName}" was skipped.`,
+            `Only JPG, PNG and HEIC images are allowed. "${img.fileName}" was skipped.`,
           );
+          setLoadingButton((prev) => ({
+            ...prev,
+            images: false,
+          }));
         }
       }
 
@@ -210,6 +240,12 @@ export default function EditResort({ route }) {
         setImages(updatedImages);
         validateImage(updatedImages);
       }
+    } else {
+      console.log("aici");
+      setLoadingButton((prev) => ({
+        ...prev,
+        images: false,
+      }));
     }
   };
 
@@ -331,6 +367,7 @@ export default function EditResort({ route }) {
         ...prev,
         edit: true,
       }));
+
       APIService.post(config.endpoints.legacy.resort.updateResort, {
         body: {
           name: resort.name,
@@ -630,7 +667,7 @@ export default function EditResort({ route }) {
                       source={require("../../../assets/Trail loading.json")}
                       autoPlay
                       loop
-                      style={{ width: 54, height: 54 }}
+                      style={{ width: 54, height: 54, position: "relative" }}
                       resizeMode={"cover"}
                     />
                   ) : (
@@ -643,6 +680,7 @@ export default function EditResort({ route }) {
                 paddingHorizontal={8}
                 textColor={theme.colors.primaryContrast}
                 borderRadius={100}
+                flex={1}
                 iconLeft={
                   !loadingButton.edit && (
                     <Icon
@@ -654,40 +692,14 @@ export default function EditResort({ route }) {
                 }
                 onPress={updateResort}
               />
-              <CustomButton
-                title={
-                  loadingButton.delete ? (
-                    <LottieView
-                      source={require("../../../assets/Trail loading.json")}
-                      autoPlay
-                      loop
-                      style={{ width: 54, height: 54 }}
-                      resizeMode={"cover"}
-                    />
-                  ) : (
-                    t("editResort.deleteButton")
-                  )
-                }
-                maxHeight={48}
-                backgroundColor={theme.colors.primaryDelete}
-                paddingVertical={12}
-                paddingHorizontal={8}
-                textColor={theme.colors.primaryContrast}
-                borderRadius={100}
-                iconLeft={
-                  !loadingButton.delete && (
-                    <Icon
-                      name={"delete-forever-outline"}
-                      size={24}
-                      color={theme.colors.primaryContrast}
-                    />
-                  )
-                }
-                onPress={() => {
-                  setModalVisible(true);
+              <View
+                style={{
+                  width: "100%",
+                  gap: 16,
+                  flexDirection: "row",
+                  marginBottom: 16,
                 }}
-              />
-              <View style={{ width: "100%", alignItems: "center" }}>
+              >
                 <CustomButton
                   title={t("editResort.resetButton")}
                   backgroundColor={theme.colors.textSecondary}
@@ -695,6 +707,7 @@ export default function EditResort({ route }) {
                   paddingHorizontal={8}
                   textColor={theme.colors.primaryContrast}
                   borderRadius={100}
+                  flex={1}
                   iconLeft={
                     <Icon
                       name={"backup-restore"}
@@ -703,12 +716,44 @@ export default function EditResort({ route }) {
                     />
                   }
                   onPress={submitReset}
-                  width={"50%"}
-                  style={{ opacity: 0.8, marginBottom: 16 }}
+                />
+                <CustomButton
+                  title={
+                    loadingButton.delete ? (
+                      <LottieView
+                        source={require("../../../assets/Trail loading.json")}
+                        autoPlay
+                        loop
+                        style={{ width: 54, height: 54 }}
+                        resizeMode={"cover"}
+                      />
+                    ) : (
+                      t("editResort.deleteButton")
+                    )
+                  }
+                  maxHeight={48}
+                  backgroundColor={theme.colors.primaryDelete}
+                  paddingVertical={12}
+                  paddingHorizontal={8}
+                  textColor={theme.colors.primaryContrast}
+                  borderRadius={100}
+                  flex={1}
+                  iconLeft={
+                    !loadingButton.delete && (
+                      <Icon
+                        name={"delete-forever-outline"}
+                        size={24}
+                        color={theme.colors.primaryContrast}
+                      />
+                    )
+                  }
+                  onPress={() => {
+                    setModalVisible(true);
+                  }}
                 />
               </View>
             </View>
-            <CustomModal
+            <DeleteResortModalConfirmation
               visible={modalVisible}
               title="Delete Resort"
               message="Are you sure you want to delete this resort?"

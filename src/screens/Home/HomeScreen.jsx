@@ -39,7 +39,7 @@ export default function HomeScreen() {
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
-    }, 2000);
+    }, 1000);
   }, []);
 
   useEffect(() => {
@@ -58,7 +58,7 @@ export default function HomeScreen() {
         .finally(() => {});
     };
     fetchNewResorts();
-  }, [isFocused]);
+  }, []);
 
   return (
     <SafeAreaView
@@ -117,8 +117,8 @@ export default function HomeScreen() {
             style={{
               shadowColor: theme.colors.shadowPrimary,
               shadowOffset: { width: 0, height: 0 },
-              shadowOpacity: 0.2,
-              shadowRadius: 10,
+              shadowOpacity: 0.3,
+              shadowRadius: 2,
               elevation: 4,
               justifyContent: "space-between",
             }}
