@@ -583,6 +583,12 @@ export default function AddResort() {
                     loop
                     style={{ width: 54, height: 54, position: "relative" }}
                     resizeMode={"cover"}
+                    colorFilters={[
+                      {
+                        keypath: "*",
+                        color: "#ffffff",
+                      },
+                    ]}
                   />
                 ) : (
                   t("addResort.submitButton")

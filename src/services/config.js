@@ -24,6 +24,7 @@ export const config = {
       feedback: {
         verifyFeedbackByUser: "/feedback/verify-feedback-by-user",
         addFeedback: "/feedback/add-feedback",
+        getRating: "/feedback/get-rating",
       },
     },
   },

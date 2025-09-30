@@ -24,6 +24,7 @@ import CustomButton from "../Buttons/CustomButton";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import RatingAllStars from "../Ratings/RatingAllStars";
 
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
@@ -132,6 +133,12 @@ const ResortProfileCarousel = ({ resortId, images, isFavorite }) => {
         activeOpacity={0.5}
         style={{ opacity: 0.7, position: "absolute", left: 10, top: 10 }}
         onPress={() => navigation.goBack()}
+      />
+      <RatingAllStars
+        position={"absolute"}
+        left={10}
+        bottom={20}
+        resortId={resortId}
       />
     </View>
   );

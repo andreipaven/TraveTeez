@@ -26,7 +26,6 @@ export default function HomeScreen() {
   const [refreshing, setRefreshing] = React.useState(false);
   const navigation = useNavigation();
   const [newResorts, setNewResorts] = useState([]);
-  const isFocused = useIsFocused();
 
   useEffect(() => {
     if (!(!loading && !user)) {

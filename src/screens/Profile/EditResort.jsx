@@ -669,6 +669,12 @@ export default function EditResort({ route }) {
                       loop
                       style={{ width: 54, height: 54, position: "relative" }}
                       resizeMode={"cover"}
+                      colorFilters={[
+                        {
+                          keypath: "*",
+                          color: "#ffffff",
+                        },
+                      ]}
                     />
                   ) : (
                     t("editResort.submitButton")
@@ -726,6 +732,12 @@ export default function EditResort({ route }) {
                         loop
                         style={{ width: 54, height: 54 }}
                         resizeMode={"cover"}
+                        colorFilters={[
+                          {
+                            keypath: "*",
+                            color: "#ffffff",
+                          },
+                        ]}
                       />
                     ) : (
                       t("editResort.deleteButton")
