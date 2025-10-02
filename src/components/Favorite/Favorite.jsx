@@ -7,7 +7,16 @@ import { useTheme } from "../../Theme/themeContext";
 import { useIsFocused } from "@react-navigation/native";
 import Loading from "../Loading/Loading";
 
-const Favorite = ({ resortId, top, right, style, size, position }) => {
+const Favorite = ({
+  resortId,
+  top,
+  right,
+  style,
+  size,
+  position,
+  left,
+  bottom,
+}) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const { theme } = useTheme();
   const isFocused = useIsFocused();
@@ -60,8 +69,10 @@ const Favorite = ({ resortId, top, right, style, size, position }) => {
       style={[
         {
           position: position || "absolute",
-          top: top || 10,
-          right: right || 10,
+          top,
+          right,
+          left,
+          bottom,
         },
         style,
       ]}
@@ -69,7 +80,7 @@ const Favorite = ({ resortId, top, right, style, size, position }) => {
       <Icon
         name={isFavorite ? "heart" : "heart-outline"}
         size={size || 28}
-        color={isFavorite ? theme.colors.primary : theme.colors.textDark}
+        color={isFavorite ? theme.colors.primary : "#ffffff"}
       />
     </Pressable>
   );

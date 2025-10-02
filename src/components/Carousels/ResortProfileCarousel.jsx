@@ -124,20 +124,26 @@ const ResortProfileCarousel = ({ resortId, images, isFavorite }) => {
           <Ionicons
             name={Platform.OS === "ios" ? "chevron-back" : "arrow-back"}
             size={20}
+            color={theme.colors.textPrimary}
           />
         }
-        backgroundColor={theme.colors.backgroundPrimary}
+        backgroundColor={theme.colors.textDark}
         width={42}
         height={42}
         borderRadius={100}
         activeOpacity={0.5}
-        style={{ opacity: 0.7, position: "absolute", left: 10, top: 10 }}
+        style={{
+          opacity: 0.7,
+          position: "absolute",
+          left: 10,
+          top: 10,
+        }}
         onPress={() => navigation.goBack()}
       />
       <RatingAllStars
         position={"absolute"}
         left={10}
-        bottom={20}
+        bottom={30}
         resortId={resortId}
       />
     </View>

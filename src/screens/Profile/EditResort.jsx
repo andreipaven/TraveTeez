@@ -442,7 +442,7 @@ export default function EditResort({ route }) {
   };
 
   const fetchResorts = () => {
-    APIService.post(config.endpoints.legacy.resort.getResortsById, {
+    APIService.post(config.endpoints.legacy.resort.getResortById, {
       resort_id: resortId,
     })
       .then((response) => {

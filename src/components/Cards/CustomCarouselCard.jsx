@@ -90,6 +90,7 @@ const CustomCarouselCard = ({ item }) => {
         top={12}
         right={12}
         size={28}
+        style={{ zIndex: 2 }}
       />
     </View>
   );

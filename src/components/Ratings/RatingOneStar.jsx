@@ -1,11 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { Icon } from "react-native-elements";
+import { useTheme } from "../../Theme/themeContext";
 import APIService from "../../services/APIService";
 import { config } from "../../services/config";
-import { useTheme } from "../../Theme/themeContext";
-import CustomStarRatings from "./CustomStarsRating";
 
-const RatingAllStars = ({ top, left, position, bottom, resortId }) => {
+const RatingOneStar = ({
+  top,
+  left,
+  bottom,
+  right,
+  resortId,
+  position,
+  size = 16,
+  textSize,
+}) => {
   const [rating, setRating] = useState({});
   const { theme } = useTheme();
 
@@ -28,26 +37,31 @@ const RatingAllStars = ({ top, left, position, bottom, resortId }) => {
     };
     fetchRatings();
   }, [resortId]);
-
   return (
     <View
       style={{
-        position,
         top,
         left,
         bottom,
+        right,
+        position: position || "absolute",
         flexDirection: "row",
         alignItems: "center",
-        width: "fit-content",
       }}
     >
-      <CustomStarRatings size={20} rating={rating.avg_rating_value} />
-
-      <Text style={{ paddingLeft: 2, color: theme.colors.textPrimary }}>
-        {rating.total_ratings}
+      <Icon size={size} type={"font-awesome"} name={"star"} color={"gold"} />
+      <Text
+        style={{
+          fontWeight: "bold",
+          fontSize: textSize,
+          color: theme.colors.textPrimary,
+          paddingLeft: 1,
+        }}
+      >
+        {rating.avg_rating_value}
       </Text>
     </View>
   );
 };
 
-export default RatingAllStars;
+export default RatingOneStar;

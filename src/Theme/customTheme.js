@@ -19,7 +19,7 @@ export const lightTheme = {
     backgroundModals: "#000000",
 
     textPrimary: "#000000",
-    textSecondary: "rgb(122,122,122)",
+    textSecondary: "rgb(94,94,94)",
     textDark: "#ffffff",
 
     shadowPrimary: "rgba(0,0,0,1)",
@@ -50,7 +50,7 @@ export const darkTheme = {
     textSecondary: "rgb(175,175,175)",
     textDark: "#000000",
 
-    shadowPrimary: "rgba(255,255,255,0.68)",
+    shadowPrimary: "rgb(255,255,255)",
     error: "#ff0000",
   },
 };

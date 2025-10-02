@@ -1,0 +1,271 @@
+import React, { useRef, useState, useEffect, useCallback } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  ImageBackground,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
+import CustomButton from "../Buttons/CustomButton";
+import { Icon } from "react-native-elements";
+import { useTheme } from "../../Theme/themeContext";
+import APIService from "../../services/APIService";
+import { config } from "../../services/config";
+import Favorite from "../Favorite/Favorite";
+import RatingOneStar from "../Ratings/RatingOneStar";
+
+const TypeResortsBar = () => {
+  const { theme } = useTheme();
+
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+
+  const fetchData = useCallback(async () => {
+    if (loading || !hasMore) return;
+
+    setLoading(true);
+    try {
+      const response = await APIService.post(
+        config.endpoints.legacy.resort.getLimitedResortsByCategory,
+        { page },
+      );
+
+      if (response?.data.length === 0) {
+        setHasMore(false);
+      } else {
+        setData((prev) => [...prev, ...response.data]);
+        setPage((prev) => prev + 1);
+      }
+    } catch (err) {
+      console.log("An error occurred " + err);
+    } finally {
+      setLoading(false);
+    }
+  }, [hasMore]);
+  console.log(data);
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const renderItem = ({ item, index }) => (
+    <View
+      key={index}
+      style={{
+        marginHorizontal: 6,
+        borderRadius: 12,
+        shadowColor: theme.colors.shadowPrimary,
+        shadowOffset: {
+          width: 0,
+          height: 0,
+        },
+        shadowOpacity: 0.5,
+        shadowRadius: 2.5,
+        elevation: 2,
+        width: 148,
+      }}
+    >
+      <ImageBackground
+        source={{ uri: item.mainImage.image_url || "" }}
+        style={{
+          width: 148,
+          height: 180,
+          borderTopLeftRadius: 12,
+          borderTopRightRadius: 12,
+          overflow: "hidden",
+          backgroundColor: theme.colors.backgroundPrimary,
+        }}
+        resizeMode={"cover"}
+      ></ImageBackground>
+      <View
+        style={{
+          backgroundColor: theme.colors.backgroundPrimary,
+          borderBottomRightRadius: 12,
+          borderBottomLeftRadius: 12,
+          paddingHorizontal: 4,
+        }}
+      >
+        <Text style={{ color: theme.colors.textPrimary }}>{item.name}</Text>
+        <Text style={{ color: theme.colors.textSecondary }}>
+          {item.city}, {item.country}
+        </Text>
+        <RatingOneStar
+          resortId={item.resort_id}
+          right={8}
+          bottom={0}
+          textSize={16}
+        />
+      </View>
+      <Favorite resortId={item.resort_id} size={20} top={8} right={8} />
+    </View>
+  );
+
+  const renderFooter = () => (loading ? <ActivityIndicator /> : null);
+
+  const handleScroll = (event) => {
+    const contentWidth = event.nativeEvent.contentSize.width;
+    const contentOffsetX = event.nativeEvent.contentOffset.x;
+    const layoutWidth = event.nativeEvent.layoutMeasurement.w;
+
+    if (contentWidth - contentOffsetX <= layoutWidth + 10) {
+      fetchData();
+    }
+  };
+
+  return (
+    <View>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          paddingHorizontal: 16,
+          paddingVertical: 8,
+        }}
+      >
+        <CustomButton
+          style={{
+            width: 60,
+            height: 60,
+            borderRadius: 30,
+            backgroundColor: theme.colors.backgroundPrimary,
+            alignItems: "center",
+            justifyContent: "center",
+
+            // shadow iOS
+            shadowColor: theme.colors.shadowPrimary,
+            shadowOffset: { width: 1, height: 2 },
+            shadowOpacity: 0.5,
+            shadowRadius: 3.84,
+
+            // shadow Android
+            elevation: theme.mode === "light" ? 2 : 21,
+          }}
+          iconCenter={
+            <Icon
+              raised
+              name="image-filter-hdr"
+              type="material-community"
+              color={theme.colors.backgroundPrimary}
+              reverse
+              reverseColor="brown"
+              size={30}
+              onPress={() => console.log("hello")}
+            />
+          }
+        />
+        <CustomButton
+          style={{
+            width: 60,
+            height: 60,
+            borderRadius: 30,
+            backgroundColor: theme.colors.backgroundPrimary,
+            alignItems: "center",
+            justifyContent: "center",
+
+            // shadow iOS
+            shadowColor: theme.colors.shadowPrimary,
+            shadowOffset: { width: 1, height: 2 },
+            shadowOpacity: 0.5,
+            shadowRadius: 3.84,
+
+            // shadow Android
+            elevation: theme.mode === "light" ? 2 : 21,
+          }}
+          iconCenter={
+            <Icon
+              raised
+              name="surfing"
+              type="material"
+              color={theme.colors.backgroundPrimary}
+              reverse
+              reverseColor="gold"
+              size={30}
+              onPress={() => console.log("hello")}
+            />
+          }
+        />
+        <CustomButton
+          style={{
+            width: 60,
+            height: 60,
+            borderRadius: 30,
+            backgroundColor: theme.colors.backgroundPrimary,
+            alignItems: "center",
+            justifyContent: "center",
+
+            // shadow iOS
+            shadowColor: theme.colors.shadowPrimary,
+            shadowOffset: { width: 1, height: 2 },
+            shadowOpacity: 0.5,
+            shadowRadius: 3.84,
+
+            // shadow Android
+            elevation: theme.mode === "light" ? 2 : 21,
+          }}
+          iconCenter={
+            <Icon
+              raised
+              name="city"
+              type="material-community"
+              color={theme.colors.backgroundPrimary}
+              reverse
+              reverseColor={theme.colors.textPrimary}
+              size={30}
+              onPress={() => console.log("hello")}
+            />
+          }
+        />
+        <CustomButton
+          style={{
+            width: 60,
+            height: 60,
+            borderRadius: 30,
+            backgroundColor: theme.colors.backgroundPrimary,
+            alignItems: "center",
+            justifyContent: "center",
+
+            // shadow iOS
+            shadowColor: theme.colors.shadowPrimary,
+            shadowOffset: { width: 1, height: 2 },
+            shadowOpacity: 0.5,
+            shadowRadius: 3.84,
+
+            // shadow Android
+            elevation: theme.mode === "light" ? 2 : 21,
+          }}
+          iconCenter={
+            <Icon
+              raised
+              name="shimmer"
+              type="material-community"
+              color={theme.colors.backgroundPrimary}
+              reverse
+              reverseColor={theme.colors.primary}
+              size={30}
+              onPress={() => console.log("hello")}
+            />
+          }
+        />
+      </View>
+
+      <FlatList
+        horizontal
+        data={data}
+        keyExtractor={(item, index) => index.toString()}
+        onScroll={handleScroll}
+        ListFooterComponent={renderFooter}
+        scrollEventThrottle={400}
+        renderItem={renderItem}
+        contentContainerStyle={{
+          paddingVertical: 8,
+          paddingHorizontal: 8,
+        }}
+        showsHorizontalScrollIndicator={false}
+      />
+    </View>
+  );
+};
+
+export default TypeResortsBar;

@@ -9,14 +9,16 @@ import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import Loading from "../../components/Loading/Loading";
 import FeedbackModal from "../../components/Modals/FeedbackModal";
 import CustomButton from "../../components/Buttons/CustomButton";
+import { useTranslation } from "react-i18next";
 
 const ResortScreen = ({ route }) => {
   const { state } = route.params;
   const { resortId, isFavorite } = state;
   const { theme } = useTheme();
+  const { t } = useTranslation();
   const [fetchLoading, setFetchLoading] = useState({ resort: false });
   const [images, setImages] = useState([]);
-  const [resortDetails, setResortDetails] = useState(null);
+  const [resortDetails, setResortDetails] = useState({});
 
   //modals
   const bottomSheetModalRefFeedback = useRef(null);
@@ -31,7 +33,7 @@ const ResortScreen = ({ route }) => {
         ...prev,
         resort: true,
       }));
-      APIService.post(config.endpoints.legacy.resort.getResortsById, {
+      APIService.post(config.endpoints.legacy.resort.getResortById, {
         resort_id: resortId,
       })
         .then((response) => {
@@ -86,15 +88,21 @@ const ResortScreen = ({ route }) => {
                   fontWeight: "bold",
                   fontSize: 20,
                   color: theme.colors.textPrimary,
-                  paddingBottom: 4,
                 }}
               >
                 {resortDetails?.name}
               </Text>
               <View>
-                <Text style={{ color: theme.colors.textPrimary }}>
+                <Text
+                  style={{
+                    color: theme.colors.textSecondary,
+
+                    marginLeft: -2,
+                  }}
+                >
                   <Icon name={"map-marker"} size={16} />
-                  {resortDetails?.city}, {resortDetails?.country}
+                  {resortDetails?.city}, {resortDetails?.county},{" "}
+                  {resortDetails?.country}
                 </Text>
               </View>
             </View>
@@ -117,6 +125,23 @@ const ResortScreen = ({ route }) => {
                 onPress={() => handlePresentPressFeedback()}
               />
             </View>
+          </View>
+          <View style={{ paddingHorizontal: 16, paddingTop: 8 }}>
+            <Text
+              style={{
+                fontWeight: "bold",
+                fontSize: 20,
+              }}
+            >
+              {t("resortScreen.about")}
+            </Text>
+            {resortDetails.description ? (
+              <Text style={{ marginTop: -4 }}>{resortDetails.description}</Text>
+            ) : (
+              <Text style={{ marginTop: -4 }}>
+                {t("resortScreen.noDescription")}
+              </Text>
+            )}
           </View>
 
           <FeedbackModal

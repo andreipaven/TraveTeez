@@ -34,6 +34,10 @@
     "myResorts": "My resorts",
     "addResortButton": "Add New Resort"
   },
+  "resortScreen": {
+    "about": "About",
+    "noDescription": "No description yet"
+  },
   "addResort": {
     "name": "name",
     "description": "description...",
@@ -56,7 +60,7 @@
   },
   "home": {
     "searchButtonInput": "Search a resort... ",
-    "newResortsTitle" : "New resorts"
+    "newResortsTitle": "New resorts"
   },
   "app": {
     "addNewResortTitle": "Add New Resort",
@@ -92,6 +96,12 @@
     "relaxB": "Beach & Relaxation",
     "culturalB": "Cultural & Urban",
     "specialB": "Exotic & Special"
+  },
+  "typeCategory": {
+    "nature": "Nature & Adventure",
+    "relax": "Beach & Relaxation",
+    "urban": "Cultural & Urban",
+    "special": "Exotic & Special"
   },
   "feedback": {
     "title": "How did you like it?",

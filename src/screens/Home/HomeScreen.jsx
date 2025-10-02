@@ -18,6 +18,7 @@ import CustomButton from "../../components/Buttons/CustomButton";
 import { useTheme } from "../../Theme/themeContext";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import { useTranslation } from "react-i18next";
+import TypeResortsBar from "../../components/Bars/TypeResortsBar";
 
 export default function HomeScreen() {
   const { theme } = useTheme();
@@ -65,6 +66,7 @@ export default function HomeScreen() {
         styles.container,
         { backgroundColor: theme.colors.backgroundPrimary },
       ]}
+      edges={["top", "left", "right"]}
     >
       <ScrollView
         refreshControl={
@@ -121,7 +123,7 @@ export default function HomeScreen() {
               elevation: 4,
               justifyContent: "space-between",
             }}
-            onPress={() => navigation.navigate("Search")}
+            onPress={() => navigation.navigate("SearchScreen")}
           />
         </View>
         <View>
@@ -138,6 +140,7 @@ export default function HomeScreen() {
             {t("home.newResortsTitle")}
           </Text>
           <CustomCarousel dates={newResorts} />
+          <TypeResortsBar />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -146,8 +149,7 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
-    height: "100%",
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
     paddingTop: 12,
