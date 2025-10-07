@@ -50,13 +50,17 @@
     "countryLabel": "Country",
     "countyLabel": "County",
     "cityLabel": "City",
-    "typeLabel": "Type",
+    "typeLabel": "Types",
+    "categoryLabel": "Category",
+    "facilitiesLabel": "Facilities",
     "addImageButton": "Upload from gallery",
     "errorImage": "Add minimum 1 image",
     "submitButton": "Add Resort",
     "cancelButton": "Cancel",
     "fieldsError": "Fill in the required fields",
-    "successSubmitNotify": "Resort added successfully ✅"
+    "successSubmitNotify": "Resort added successfully ✅",
+    "addNewResortTitle": "Add New Resort",
+    "addGalleryImagesButton": "Add more images"
   },
   "home": {
     "searchButtonInput": "Search a resort... ",
@@ -102,6 +106,28 @@
     "relax": "Beach & Relaxation",
     "urban": "Cultural & Urban",
     "special": "Exotic & Special"
+  },
+  "facilities": {
+    "beachLakeAccess": "Beach / Lake / River Access – relaxation or swimming",
+    "outdoorPool": "Outdoor Pool – swimming, poolside relaxation",
+    "spaWellness": "SPA / Wellness / Massage – relaxation, treatments",
+    "guidedTours": "Guided Excursions / Local Tours – exploring the area",
+    "sportsFields": "Sports Fields (Tennis, Volleyball, Basketball) – sports activities",
+    "kidsActivities": "Kids Activities (Kids Club, Playground) – fun for children",
+    "babysitting": "Babysitting / Child Supervision – service for parents",
+    "waterSports": "Water Sports (Canoe, Kayak, Snorkeling, Windsurf) – water adventure",
+    "hiking": "Hiking / Mountain Biking / Trekking – outdoor activities",
+    "picnicBBQ": "Picnic / BBQ Areas – outdoor meals, relaxation",
+    "wildlifeObservation": "Nature / Wildlife Observation – birdwatching, local fauna",
+    "relaxZones": "Relaxation Areas / Lounge / Viewpoints – relaxation spots and panoramas",
+    "themedRestaurants": "Themed / Gastronomic Restaurants – culinary experience",
+    "eventZones": "Event / Performance Areas – concerts, shows, entertainment",
+    "culturalTours": "Cultural Tours / Visits to Historical Sites – cultural experiences",
+    "sportSchool": "Specific Sport School (e.g., Ski School, Surfing School) – activity courses",
+    "equipmentRental": "Equipment Rental (Bicycles, Sport Equipment) – support for activities",
+    "internalTransport": "Internal Transport / Shuttle to Attractions – easy access to facilities",
+    "safariExperience": "Safari / Desert Experience – special activities in exotic areas",
+    "adventureActivities": "Adventure / Thematic Activities (Zipline, Off-Road) – adventure and special experiences"
   },
   "feedback": {
     "title": "How did you like it?",

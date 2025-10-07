@@ -60,8 +60,7 @@ const ResortScreen = ({ route }) => {
   return (
     <SafeAreaView
       style={{
-        width: "100%",
-        height: "100%",
+        flex: 1,
         flexDirection: "column",
         backgroundColor: theme.colors.backgroundPrimary,
       }}

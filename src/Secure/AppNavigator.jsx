@@ -4,10 +4,10 @@ import { useTranslation } from "react-i18next";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SignIn from "../Authentication/SignIn";
 import SingUp from "../Authentication/SingUp";
-import BottomNavBar from "../components/Bars/BottomNavBar";
 import Loading from "../components/Loading/Loading";
 import { useTheme } from "../Theme/themeContext";
 import { NavigationContainer } from "@react-navigation/native";
+import TabNavigator from "../components/Bars/TabNavigator";
 
 const AppNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -52,7 +52,7 @@ const AppNavigator = () => {
         ) : (
           <Stack.Screen
             name="MainTabs"
-            component={BottomNavBar}
+            component={TabNavigator}
             options={{ headerShown: false }}
           />
         )}

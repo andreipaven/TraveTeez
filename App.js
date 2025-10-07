@@ -11,22 +11,26 @@ import AppNavigator from "./src/Secure/AppNavigator";
 import ThemeProvider from "./src/Theme/themeContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import TabNavigator from "./src/components/Bars/TabNavigator";
+import { ResortProvider } from "./src/components/Hooks/CustomResortContext";
 
 export default function App() {
   return (
     <SafeAreaProvider>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <BottomSheetModalProvider>
-          <ThemeProvider>
-            <I18nextProvider i18n={i18n}>
-              <AuthProvider>
-                <AppNavigator />
-              </AuthProvider>
-            </I18nextProvider>
-          </ThemeProvider>
-        </BottomSheetModalProvider>
-      </GestureHandlerRootView>
-      <Toast config={{ custom: CustomToast }} />
+      <ResortProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <BottomSheetModalProvider>
+            <ThemeProvider>
+              <I18nextProvider i18n={i18n}>
+                <AuthProvider>
+                  <AppNavigator />
+                </AuthProvider>
+              </I18nextProvider>
+            </ThemeProvider>
+          </BottomSheetModalProvider>
+        </GestureHandlerRootView>
+        <Toast config={{ custom: CustomToast }} />
+      </ResortProvider>
     </SafeAreaProvider>
   );
 }

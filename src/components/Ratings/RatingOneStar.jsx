@@ -58,7 +58,7 @@ const RatingOneStar = ({
           paddingLeft: 1,
         }}
       >
-        {rating.avg_rating_value}
+        {rating.avg_rating_value === null ? "0" : rating.avg_rating_value}
       </Text>
     </View>
   );

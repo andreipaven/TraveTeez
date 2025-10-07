@@ -12,6 +12,7 @@ import APIService from "../../services/APIService";
 import { config } from "../../services/config";
 import { useNavigation } from "@react-navigation/native";
 import Favorite from "../Favorite/Favorite";
+import RatingOneStar from "../Ratings/RatingOneStar";
 
 const CustomCarouselCard = ({ item }) => {
   const { theme } = useTheme();
@@ -56,7 +57,7 @@ const CustomCarouselCard = ({ item }) => {
         resizeMode={"cover"}
         style={{
           width: "100%",
-          height: 164,
+          height: 170,
           borderTopLeftRadius: 12,
           borderTopRightRadius: 12,
           overflow: "hidden",
@@ -73,7 +74,7 @@ const CustomCarouselCard = ({ item }) => {
             fontSize: 13,
           }}
         >
-          {item.name}
+          {item.name.length > 28 ? item.name.slice(0, 26) + "..." : item.name}
         </Text>
         <Text
           style={{
@@ -83,6 +84,13 @@ const CustomCarouselCard = ({ item }) => {
         >
           {item.city}, {item.country}
         </Text>
+        <RatingOneStar
+          resortId={item.resort_id}
+          right={8}
+          bottom={0}
+          textSize={18}
+          size={20}
+        />
       </View>
       <Favorite
         resortId={item.resort_id}

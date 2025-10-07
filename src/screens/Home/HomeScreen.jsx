@@ -37,26 +37,28 @@ export default function HomeScreen() {
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
+    fetchNewResorts();
     setTimeout(() => {
       setRefreshing(false);
     }, 1000);
   }, []);
 
+  const fetchNewResorts = () => {
+    APIService.post(config.endpoints.legacy.resort.getNewResorts, {})
+      .then((response) => {
+        if (response?.data.error) {
+          console.log("Something wrong happened " + response.data.error);
+        } else {
+          setNewResorts(response.data);
+        }
+      })
+      .catch((err) => {
+        console.log("An error occurred " + err);
+      })
+      .finally(() => {});
+  };
+
   useEffect(() => {
-    const fetchNewResorts = () => {
-      APIService.post(config.endpoints.legacy.resort.getNewResorts, {})
-        .then((response) => {
-          if (response?.data.error) {
-            console.log("Something wrong happened " + response.data.error);
-          } else {
-            setNewResorts(response.data);
-          }
-        })
-        .catch((err) => {
-          console.log("An error occurred " + err);
-        })
-        .finally(() => {});
-    };
     fetchNewResorts();
   }, []);
 
@@ -140,7 +142,7 @@ export default function HomeScreen() {
             {t("home.newResortsTitle")}
           </Text>
           <CustomCarousel dates={newResorts} />
-          <TypeResortsBar />
+          <TypeResortsBar key={refreshing} />
         </View>
       </ScrollView>
     </SafeAreaView>

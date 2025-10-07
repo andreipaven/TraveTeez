@@ -1,6 +1,6 @@
 // components/Select.js
 import React, { useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Dimensions } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { useTheme } from "../../Theme/themeContext";
 
@@ -11,9 +11,8 @@ const CustomDropdown = ({
   onValueChange,
   name,
   borderWidth = 1,
-  borderColor = "#ccc",
+  borderColor,
   borderRadius = 8,
-  placeholder = "",
   backgroundColor,
   error,
 }) => {
@@ -21,6 +20,14 @@ const CustomDropdown = ({
 
   const handleChange = (item) => {
     if (onValueChange) onValueChange(name, item.value);
+  };
+
+  const renderItem = (item) => {
+    return (
+      <View style={styles.item}>
+        <Text style={styles.selectedTextStyle}>{item.label}</Text>
+      </View>
+    );
   };
 
   return (
@@ -35,21 +42,25 @@ const CustomDropdown = ({
         },
       ]}
     >
-      {label && (
+      {label && selectedValue && (
         <Text style={[styles.label, { color: theme.colors.textSecondary }]}>
           {label}
         </Text>
       )}
       <Dropdown
         style={styles.dropdown}
-        placeholderStyle={styles.placeholderStyle}
+        placeholderStyle={[
+          styles.placeholderStyle,
+          { color: theme.colors.textSecondary },
+        ]}
         selectedTextStyle={styles.selectedTextStyle}
         data={options}
         labelField="label"
         valueField="value"
-        placeholder={placeholder}
+        placeholder={label}
         value={selectedValue}
         onChange={handleChange}
+        renderItem={renderItem}
       />
     </View>
   );
@@ -66,8 +77,8 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16,
-    fontWeight: "600",
     minWidth: 60,
+    paddingRight: 4,
   },
   dropdown: {
     flex: 1,
@@ -77,6 +88,12 @@ const styles = StyleSheet.create({
   },
   selectedTextStyle: {
     fontSize: 16,
+  },
+  item: {
+    padding: 17,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 });
 

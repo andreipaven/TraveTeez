@@ -6,11 +6,6 @@ import { useTheme } from "../../Theme/themeContext";
 const CustomTabBar = ({ state, descriptors, navigation }) => {
   const { theme } = useTheme();
 
-  const currentOptions = descriptors[state.routes[state.index].key].options;
-  if (currentOptions?.tabBarStyle?.display === "none") {
-    return null;
-  }
-
   return (
     <View
       style={{

@@ -67,7 +67,7 @@ export default function ProfileCarouselCard({ item, resortId }) {
           autoPlayInterval={1000}
           scrollAnimationDuration={2000}
           ref={ref}
-          loop={false}
+          loop={true}
           width={width / 1.5}
           style={{ pointerEvents: "none" }}
           height={220}
