@@ -8,6 +8,10 @@ import {
   Pressable,
   ImageBackground,
   Button,
+  FlatList,
+  Dimensions,
+  Image,
+  ScrollView,
 } from "react-native";
 import { useTheme } from "../../Theme/themeContext";
 import { useTranslation } from "react-i18next";
@@ -20,6 +24,10 @@ import { Icon } from "react-native-elements";
 import AddImageModal from "../Modals/AddImageModal";
 import Loading from "../Loading/Loading";
 import LottieView from "lottie-react-native";
+import APIService from "../../services/APIService";
+import { config } from "../../services/config";
+
+const screenWidth = Dimensions.get("window").width;
 
 const Step4Gallery = () => {
   const { theme } = useTheme();
@@ -232,32 +240,54 @@ const Step4Gallery = () => {
     }
   };
 
+  const submitAddResort = () => {
+    setResort((prev) => ({
+      ...prev,
+      country: "Ro",
+      state: "Ab",
+      city: "Campeni",
+    }));
+    if (validateImage()) {
+      APIService.post(config.endpoints.legacy.resort.addResort, {
+        resort,
+      })
+        .then((response) => {
+          if (response?.data.error) {
+            console.log("Something wrong happened " + response.data.error);
+          } else {
+            console.log(response.data.message);
+          }
+        })
+        .catch((err) => {
+          console.log("An error occurred " + err);
+        })
+        .finally(() => {});
+    }
+  };
+
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: theme.colors.backgroundPrimary }}
       edges={["bottom", "left", "right"]}
     >
-      <View
-        style={{
-          flex: 1,
-          padding: 16,
-
-          alignItems: "center",
+      <ScrollView
+        contentContainerStyle={{
+          paddingVertical: 16,
+          paddingHorizontal: 16,
+          height: resort.images.length < 3 ? "100%" : "auto",
         }}
+        showsVerticalScrollIndicator={false}
       >
-        <Text style={{ fontSize: 24, fontWeight: "bold", textAlign: "center" }}>
-          Chose photos
-        </Text>
-
         <Pressable
           style={{
-            width: "60%",
+            width: "80%",
             height: 180,
             borderWidth: 2,
             borderColor: theme.colors.primary,
             borderRadius: 16,
             justifyContent: "center",
             overflow: "hidden",
+            alignSelf: "center",
           }}
           onPress={() => {
             setModalVisible(true);
@@ -267,12 +297,21 @@ const Step4Gallery = () => {
           {loadingImages.mainImage ? (
             <Loading />
           ) : !mainImage ? (
-            <Icon type={"font-awesome"} name={"image"} size={64} />
+            <View style={{ alignItems: "center" }}>
+              <Icon
+                type={"font-awesome"}
+                name={"image"}
+                size={32}
+                color={theme.colors.primary}
+              />
+              <Text>{t("step4Gallery.choseMainPhoto")}</Text>
+            </View>
           ) : (
             <View>
               <ImageBackground
                 source={{ uri: mainImage?.uri }}
                 style={{ width: "100%", height: "100%" }}
+                resizeMode={"cover"}
               />
               <CustomButton
                 onPress={() => removeImage(mainImage.uri)}
@@ -313,7 +352,7 @@ const Step4Gallery = () => {
                 ]}
               />
             ) : (
-              t("addResort.addGalleryImagesButton")
+              t("step4Gallery.addGalleryImagesButton")
             )
           }
           width={"100%"}
@@ -338,14 +377,71 @@ const Step4Gallery = () => {
             setModalVisible(true);
             setIsFirstImage(false);
           }}
-          style={{ marginTop: 16 }}
+          style={{ marginVertical: 16 }}
         />
-      </View>
+
+        <FlatList
+          data={resort.images}
+          keyExtractor={(item) => item.uri}
+          numColumns={2}
+          renderItem={({ item }) => (
+            <View
+              style={{
+                width: screenWidth / 2 - 20,
+                height: 200,
+                borderRadius: 10,
+                margin: 2,
+              }}
+            >
+              <Image
+                source={{ uri: item.uri }}
+                style={{ width: "100%", height: "100%", borderRadius: 10 }}
+                resizeMode="cover"
+              />
+              <CustomButton
+                onPress={() => removeImage(item.uri)}
+                style={{
+                  position: "absolute",
+                  bottom: 4,
+                  right: 4,
+                  borderRadius: 12,
+                }}
+                width={"fit-content"}
+                iconCenter={<Icon name="delete" size={24} color="red" />}
+              />
+            </View>
+          )}
+          contentContainerStyle={{
+            alignSelf: "center",
+          }}
+          scrollEnabled={false}
+        />
+        <View
+          style={{
+            flexDirection: "row",
+            width: "100%",
+
+            paddingTop: 16,
+          }}
+        >
+          <CustomButton
+            title={"Add resort"}
+            backgroundColor={theme.colors.primary}
+            textColor={theme.colors.primaryContrast}
+            flex={1}
+            paddingVertical={16}
+            borderRadius={100}
+            paddingHorizontal={8}
+            onPress={submitAddResort}
+            fontSize={20}
+          />
+        </View>
+      </ScrollView>
 
       <AddImageModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        message={"Chose the option for upload the image"}
+        message={t("step4Gallery.choseOptionForUploadPhoto")}
         onCamera={takePhoto}
         onGallery={pickImages}
       />

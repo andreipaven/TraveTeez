@@ -7,7 +7,7 @@ export const ResortProvider = ({ children }) => {
     name: "",
     description: "",
     country: "",
-    county: "",
+    state: "",
     city: "",
     category: "",
     type: [],

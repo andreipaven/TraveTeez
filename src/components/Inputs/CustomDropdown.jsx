@@ -15,6 +15,7 @@ const CustomDropdown = ({
   borderRadius = 8,
   backgroundColor,
   error,
+  search,
 }) => {
   const { theme } = useTheme();
 
@@ -61,6 +62,8 @@ const CustomDropdown = ({
         value={selectedValue}
         onChange={handleChange}
         renderItem={renderItem}
+        search={search}
+        searchPlaceholder={"Search"}
       />
     </View>
   );

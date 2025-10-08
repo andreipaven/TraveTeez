@@ -64,7 +64,7 @@ const Step1Info = () => {
       >
         <View style={{ width: "100%" }}>
           <CustomTextInput
-            label={t("addResort.nameLabel")}
+            label={t("step1Info.nameLabel")}
             name={"name"}
             value={resort.name}
             onChangeText={handleChange}
@@ -74,9 +74,10 @@ const Step1Info = () => {
             color={theme.colors.textPrimary}
             borderRadius={100}
             error={errors.name}
+            borderWidth={1}
           />
           <CustomTextInput
-            label={t("addResort.descriptionLabel")}
+            label={t("step1Info.descriptionLabel")}
             name={"description"}
             value={resort.description}
             onChangeText={handleChange}
@@ -88,17 +89,17 @@ const Step1Info = () => {
             multiLine={true}
             minHeight={64}
             maxLength={250}
+            borderWidth={1}
           />
         </View>
         <View
           style={{
             flexDirection: "row",
             width: "100%",
-            paddingBottom: 24,
           }}
         >
           <CustomButton
-            title={"Next"}
+            title={t("step1Info.nextButton")}
             backgroundColor={theme.colors.primary}
             textColor={theme.colors.primaryContrast}
             flex={1}

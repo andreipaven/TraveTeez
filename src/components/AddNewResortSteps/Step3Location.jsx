@@ -4,9 +4,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../Theme/themeContext";
 import CustomButton from "../Buttons/CustomButton";
 import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
+import CustomDropdown from "../Inputs/CustomDropdown";
 
 const Step3Location = () => {
   const { theme } = useTheme();
+  const { t } = useTranslation();
   const navigation = useNavigation();
 
   const nextStep = () => {
@@ -25,25 +28,46 @@ const Step3Location = () => {
       <View
         style={{
           flex: 1,
-
           justifyContent: "space-between",
         }}
       >
-        <Text>Step3Location</Text>
+        <View>
+          <Text>Step3Location</Text>
+          <CustomDropdown
+            search={true}
+            label={"Select country"}
+            borderColor={theme.colors.primary}
+            backgroundColor={theme.colors.backgroundPaper}
+            borderRadius={100}
+          />
+          <CustomDropdown
+            search={true}
+            label={"Select state"}
+            borderColor={theme.colors.primary}
+            backgroundColor={theme.colors.backgroundPaper}
+            borderRadius={100}
+          />
+          <CustomDropdown
+            search={true}
+            label={"Select city"}
+            borderColor={theme.colors.primary}
+            backgroundColor={theme.colors.backgroundPaper}
+            borderRadius={100}
+          />
+        </View>
+
         <View
           style={{
             flexDirection: "row",
             width: "100%",
-            gap: 24,
-            paddingBottom: 24,
           }}
         >
           <CustomButton
-            title={"Next"}
+            title={t("step1Info.nextButton")}
             backgroundColor={theme.colors.primary}
             textColor={theme.colors.primaryContrast}
             flex={1}
-            paddingVertical={12}
+            paddingVertical={16}
             borderRadius={100}
             paddingHorizontal={8}
             onPress={nextStep}

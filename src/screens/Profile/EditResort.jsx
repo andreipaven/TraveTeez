@@ -1,93 +1,148 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Alert,
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Pressable,
+  ImageBackground,
   FlatList,
   Image,
-  Keyboard,
+  Alert,
   Linking,
-  ScrollView,
-  Text,
-  TouchableWithoutFeedback,
-  View,
+  Dimensions,
 } from "react-native";
+import { useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTheme } from "../../Theme/themeContext";
 import CustomTextInput from "../../components/Inputs/CustomTextInput";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "../../Theme/themeContext";
-import * as ImagePicker from "expo-image-picker";
-import CustomButton from "../../components/Buttons/CustomButton";
-import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import CustomDropdown from "../../components/Inputs/CustomDropdown";
+import CustomMultiSelect from "../../components/Inputs/CustomMultiSelect";
+import Loading from "../../components/Loading/Loading";
+import { Icon } from "react-native-elements";
+import CustomButton from "../../components/Buttons/CustomButton";
+import LottieView from "lottie-react-native";
+import * as ImageManipulator from "expo-image-manipulator";
+import * as ImagePicker from "expo-image-picker";
+import AddImageModal from "../../components/Modals/AddImageModal";
 import APIService from "../../services/APIService";
 import { config } from "../../services/config";
-import * as ImageManipulator from "expo-image-manipulator";
-
 import Toast from "react-native-toast-message";
-import LottieView from "lottie-react-native";
-import Loading from "../../components/Loading/Loading";
-import DeleteResortModalConfirmation from "../../components/Modals/DeleteResortModalConfirmation";
-import { useNavigation } from "@react-navigation/native";
-import LoadingButton from "../../components/Loading/LoadingButton";
 
-export default function EditResort({ route }) {
+const screenWidth = Dimensions.get("window").width;
+
+const EditResort = () => {
+  const route = useRoute();
   const { state } = route.params;
   const { resortId } = state;
-  const navigation = useNavigation();
-  const { t } = useTranslation();
-  const [modalVisible, setModalVisible] = useState(false);
   const { theme } = useTheme();
-  const [loadingButton, setLoadingButton] = useState({
-    edit: false,
-    delete: false,
-    images: false,
+  const { t } = useTranslation();
+  const [errors, setErrors] = useState({});
+  const [modalVisible, setModalVisible] = useState(false);
+  const [mainImage, setMainImage] = useState(null);
+  const [isFirstImage, setIsFirstImage] = useState(false);
+  const [loadingImages, setLoadingImages] = useState({
+    mainImage: false,
+    galleryImages: false,
   });
   const [fetchLoading, setFetchLoading] = useState(true);
+  const [deletedImages, setDeletedImages] = useState([]);
   const [resort, setResort] = useState({
     name: "",
     description: "",
     country: "",
-    county: "",
+    state: "",
     city: "",
-    type: "",
+    category: "",
+    type: [],
+    facilities: [],
+    images: [],
   });
-  const [errors, setErrors] = useState({
-    name: "",
-    type: "",
-    country: "",
-    county: "",
-    city: "",
-    image: "",
-  });
-  const [images, setImages] = useState([]);
-  const [deletedImages, setDeletedImages] = useState([]);
 
-  const typeOptions = [
-    { label: t("typeResort.ski"), value: "ski" },
-    { label: t("typeResort.beach"), value: "beach" },
-    { label: t("typeResort.mountain"), value: "mountain" },
-    { label: t("typeResort.spa"), value: "spa" },
-    { label: t("typeResort.balneary"), value: "balneary" },
-    { label: t("typeResort.city"), value: "city" },
-    { label: t("typeResort.adventure"), value: "adventure" },
-    { label: t("typeResort.cultural"), value: "cultural" },
-    { label: t("typeResort.luxury"), value: "luxury" },
-    { label: t("typeResort.allInclusive"), value: "allInclusive" },
-    { label: t("typeResort.eco"), value: "eco" },
-    { label: t("typeResort.safari"), value: "safari" },
-    { label: t("typeResort.lake"), value: "lake" },
-    { label: t("typeResort.island"), value: "island" },
-    { label: t("typeResort.family"), value: "family" },
-    { label: t("typeResort.adultsOnly"), value: "adultsOnly" },
-    { label: t("typeResort.theme"), value: "theme" },
-    { label: t("typeResort.retreat"), value: "retreat" },
+  const categoryOptions = [
+    { label: t("typeCategory.nature"), value: "nature" },
+    { label: t("typeCategory.relax"), value: "relax" },
+    { label: t("typeCategory.urban"), value: "urban" },
+    { label: t("typeCategory.special"), value: "special" },
   ];
-  const handleChange = (name, value) => {
-    setResort((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    validate({ [name]: value });
+
+  // Type mapping for each category
+  const categoryMapping = {
+    nature: ["ski", "mountain", "adventure", "eco"],
+    relax: ["beach", "spa", "balneary", "lake", "island"],
+    urban: ["city", "cultural", "luxury", "allInclusive", "theme", "family"],
+    special: ["safari", "retreat"],
   };
+
+  const selectedCategoryOptions = resort?.category
+    ? categoryMapping[resort.category].map((typeKey) => ({
+        label: t(`typeResort.${typeKey}`),
+        value: typeKey,
+      }))
+    : [];
+
+  //facilities options
+  const facilityOptions = [
+    { label: t("facilities.beachLakeAccess"), value: 1 },
+    { label: t("facilities.outdoorPool"), value: 2 },
+    { label: t("facilities.spaWellness"), value: 3 },
+    { label: t("facilities.guidedTours"), value: 4 },
+    { label: t("facilities.sportsFields"), value: 5 },
+    { label: t("facilities.kidsActivities"), value: 6 },
+    { label: t("facilities.babysitting"), value: 7 },
+    { label: t("facilities.waterSports"), value: 8 },
+    { label: t("facilities.hiking"), value: 9 },
+    { label: t("facilities.picnicBBQ"), value: 10 },
+    { label: t("facilities.wildlifeObservation"), value: 11 },
+    { label: t("facilities.relaxZones"), value: 12 },
+    { label: t("facilities.themedRestaurants"), value: 13 },
+    { label: t("facilities.eventZones"), value: 14 },
+    { label: t("facilities.culturalTours"), value: 15 },
+    { label: t("facilities.sportSchool"), value: 16 },
+    { label: t("facilities.equipmentRental"), value: 17 },
+    { label: t("facilities.internalTransport"), value: 18 },
+    { label: t("facilities.safariExperience"), value: 19 },
+    { label: t("facilities.adventureActivities"), value: 20 },
+  ];
+
+  //validations
+  const validate = (fieldValues) => {
+    let newErrors = { ...errors };
+
+    const valuesToValidate = fieldValues || resort;
+
+    if (!valuesToValidate || typeof valuesToValidate !== "object") {
+      return false;
+    }
+
+    //info zone
+    if ("name" in valuesToValidate) {
+      newErrors.name = valuesToValidate.name?.trim() ? "" : "z";
+    }
+
+    //type and facilities zone
+    if ("category" in valuesToValidate) {
+      newErrors.category = valuesToValidate.category?.trim() ? "" : "z";
+    }
+    if ("type" in valuesToValidate) {
+      newErrors.type = valuesToValidate.type.length === 0 ? "z" : "";
+    }
+    if ("facilities" in valuesToValidate) {
+      newErrors.facilities =
+        valuesToValidate.facilities.length === 0 ? "z" : "";
+    }
+    //location zone
+
+    setErrors(newErrors);
+
+    if (!fieldValues) {
+      return Object.values(newErrors).every((x) => x === "");
+    }
+    return !Object.values(newErrors).some((err) => err !== "");
+  };
+
+  //step4Gallery
   const compressImage = async (uri, compress = 0.6, maxWidth = 1080) => {
     try {
       return await ImageManipulator.manipulateAsync(
@@ -105,9 +160,52 @@ export default function EditResort({ route }) {
     }
   };
 
+  const validateImage = (validationImage) => {
+    let newErrors = "";
+    const verifyImage = validationImage || resort.images;
+
+    newErrors =
+      verifyImage && verifyImage.length > 0 ? "" : t("addResort.errorImage");
+
+    newErrors = mainImage === null ? t("addResort.errorImage") : "";
+
+    setErrors((prev) => ({
+      ...prev,
+      image: newErrors,
+    }));
+
+    isFirstImage
+      ? setLoadingImages((prev) => ({ ...prev, mainImage: false }))
+      : setLoadingImages((prev) => ({ ...prev, galleryImages: false }));
+
+    return newErrors === "";
+  };
+
+  const removeImage = (uri) => {
+    const removedImage = resort.images.find(
+      (img) => (img.uri ?? img.image_url) === uri,
+    );
+
+    if (removedImage?.image_url) {
+      setDeletedImages((prev) => [...prev, removedImage]);
+    }
+
+    setResort((prev) => ({
+      ...prev,
+      images: prev.images.filter((img) => (img.uri || img.image_url) !== uri),
+    }));
+
+    if (mainImage?.uri === uri || mainImage?.image_url) {
+      setMainImage(null);
+    }
+
+    validateImage(resort.images.filter((img) => img.uri !== uri));
+  };
+
   //Function for open camera
   const takePhoto = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
+
     if (status !== "granted") {
       Alert.alert(
         "Camera access denied",
@@ -119,10 +217,10 @@ export default function EditResort({ route }) {
       );
       return;
     }
-    setLoadingButton((prev) => ({
-      ...prev,
-      images: true,
-    }));
+    isFirstImage
+      ? setLoadingImages((prev) => ({ ...prev, mainImage: true }))
+      : setLoadingImages((prev) => ({ ...prev, galleryImages: true }));
+
     const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ["images"],
       base64: true,
@@ -131,9 +229,7 @@ export default function EditResort({ route }) {
 
     if (!result.canceled) {
       const newImage = result.assets ? result.assets[0] : result;
-
       const extension = newImage.uri.split(".").pop().toLowerCase();
-
       if (
         extension === "jpg" ||
         extension === "jpeg" ||
@@ -150,25 +246,25 @@ export default function EditResort({ route }) {
           height: compressed.height,
         };
 
-        const updatedImages = [...images, imageToAdd];
-        setImages(updatedImages);
+        const updatedImages = [...resort.images, imageToAdd];
 
+        if (isFirstImage) {
+          setMainImage(imageToAdd);
+          setIsFirstImage(false);
+        } else {
+          setResort({ ...resort, images: updatedImages });
+        }
         validateImage(updatedImages);
       } else {
         Alert.alert(
           "Invalid file format",
-          `Only JPG, PNG and HEIC images are allowed. "${newImage.fileName}" was skipped.`,
+          `Only JPG,  PNG, HEIC images are allowed. "${newImage.fileName}" was skipped.`,
         );
-        setLoadingButton((prev) => ({
-          ...prev,
-          images: false,
-        }));
       }
     } else {
-      setLoadingButton((prev) => ({
-        ...prev,
-        images: false,
-      }));
+      isFirstImage
+        ? setLoadingImages((prev) => ({ ...prev, mainImage: false }))
+        : setLoadingImages((prev) => ({ ...prev, galleryImages: false }));
     }
   };
 
@@ -184,15 +280,16 @@ export default function EditResort({ route }) {
           { text: "Open Settings", onPress: () => Linking.openSettings() },
         ],
       );
+
       return;
     }
-    setLoadingButton((prev) => ({
-      ...prev,
-      images: true,
-    }));
+    isFirstImage
+      ? setLoadingImages((prev) => ({ ...prev, mainImage: true }))
+      : setLoadingImages((prev) => ({ ...prev, galleryImages: true }));
+
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
-      allowsMultipleSelection: true,
+      allowsMultipleSelection: !isFirstImage,
       base64: true,
       quality: 0.7,
     });
@@ -216,10 +313,9 @@ export default function EditResort({ route }) {
             "Invalid file format",
             `Only JPG, PNG and HEIC images are allowed. "${img.fileName}" was skipped.`,
           );
-          setLoadingButton((prev) => ({
-            ...prev,
-            images: false,
-          }));
+          isFirstImage
+            ? setLoadingImages((prev) => ({ ...prev, mainImage: false }))
+            : setLoadingImages((prev) => ({ ...prev, galleryImages: false }));
         }
       }
 
@@ -236,211 +332,43 @@ export default function EditResort({ route }) {
           });
         }
 
-        const updatedImages = [...images, ...compressedImages];
-        setImages(updatedImages);
+        const updatedImages = [...resort.images, ...compressedImages];
+
+        if (isFirstImage) {
+          setMainImage(compressedImages[0]);
+          setIsFirstImage(false);
+        } else {
+          setResort({ ...resort, images: updatedImages });
+        }
         validateImage(updatedImages);
       }
     } else {
-      console.log("aici");
-      setLoadingButton((prev) => ({
-        ...prev,
-        images: false,
-      }));
+      isFirstImage
+        ? setLoadingImages((prev) => ({ ...prev, mainImage: false }))
+        : setLoadingImages((prev) => ({ ...prev, galleryImages: false }));
     }
   };
 
-  const validateImage = (validationImage) => {
-    let newErrors = "";
-    const verifyImage = validationImage || images;
-
-    newErrors =
-      verifyImage && verifyImage.length > 0 ? "" : t("addResort.errorImage");
-
-    setErrors((prev) => ({
+  //change inputs
+  const handleChange = (name, value) => {
+    setResort((prev) => ({
       ...prev,
-      image: newErrors,
+      [name]: value,
     }));
-    setLoadingButton((prev) => ({
+
+    validate({ [name]: value });
+  };
+
+  const handleMultiSelectChange = (name, value) => {
+    setResort((prev) => ({
       ...prev,
-      images: false,
+      [name]: value,
     }));
-    return newErrors === "";
+
+    validate({ [name]: value });
   };
 
-  const removeImage = (uri) => {
-    const removedImage = images.find(
-      (img) => (img.uri ?? img.image_url) === uri,
-    );
-
-    const updatedImages = images.filter(
-      (img) => (img.uri ?? img.image_url) !== uri,
-    );
-
-    if (removedImage?.image_url) {
-      setDeletedImages((prev) => [...prev, removedImage]);
-    }
-
-    setImages(updatedImages);
-    validateImage(updatedImages);
-  };
-
-  const renderImage = ({ item }) => (
-    <View style={{ position: "relative", marginRight: 8 }}>
-      <Image
-        source={{ uri: item.image_url || item.uri }}
-        style={{ width: 128, height: 128, borderRadius: 8 }}
-      />
-      <CustomButton
-        onPress={() => removeImage(item.image_url || item.uri)}
-        style={{
-          position: "absolute",
-          top: 4,
-          right: 4,
-          borderRadius: 12,
-          padding: 4,
-        }}
-        width={"fit-content"}
-        iconCenter={<Icon name="delete" size={20} color="red" />}
-      />
-    </View>
-  );
-
-  const validate = (fieldValues) => {
-    let newErrors = { ...errors };
-
-    const valuesToValidate = fieldValues || resort;
-
-    if (!valuesToValidate || typeof valuesToValidate !== "object") {
-      return false;
-    }
-
-    if ("name" in valuesToValidate) {
-      newErrors.name = valuesToValidate.name?.trim() ? "" : "z";
-    }
-    if ("type" in valuesToValidate) {
-      newErrors.type = valuesToValidate.type !== "" ? "" : "z";
-    }
-    if ("country" in valuesToValidate) {
-      newErrors.country = valuesToValidate.country?.trim() ? "" : "z";
-    }
-    if ("county" in valuesToValidate) {
-      newErrors.county = valuesToValidate.county?.trim() ? "" : "z";
-    }
-    if ("city" in valuesToValidate) {
-      newErrors.city = valuesToValidate.city?.trim() ? "" : "z";
-    }
-
-    if (!fieldValues) {
-      if (!images || images.length === 0) {
-        newErrors.image = t("addResort.errorImage");
-      } else {
-        newErrors.image = "";
-      }
-    }
-
-    setErrors(newErrors);
-
-    if (!fieldValues) {
-      return Object.values(newErrors).every((x) => x === "");
-    }
-    return !Object.values(newErrors).some((err) => err !== "");
-  };
-
-  const submitReset = () => {
-    setFetchLoading(true);
-    fetchResorts();
-    setErrors({
-      name: "",
-      type: "",
-      country: "",
-      county: "",
-      city: "",
-      image: "",
-    });
-    setImages([]);
-    setDeletedImages([]);
-  };
-
-  const updateResort = () => {
-    if (validate()) {
-      setLoadingButton((prev) => ({
-        ...prev,
-        edit: true,
-      }));
-
-      APIService.post(config.endpoints.legacy.resort.updateResort, {
-        body: {
-          name: resort.name,
-          country: resort.country,
-          county: resort.county,
-          city: resort.city,
-          type: resort.type,
-          description: resort.description,
-        },
-        resortId: resortId,
-        images: images,
-        deletedImages: deletedImages,
-      })
-        .then((response) => {
-          if (response.data?.error) {
-            console.log("Something wrong happened: " + response.data.error);
-          } else {
-            Toast.show({
-              type: "custom",
-              text1: t("editResort.successSubmitNotify"),
-              position: "bottom",
-            });
-          }
-        })
-        .catch((err) => {
-          console.log("An error occurred! " + err);
-        })
-        .finally(() => {
-          setLoadingButton((prev) => ({
-            ...prev,
-            edit: false,
-          }));
-        });
-    }
-  };
-
-  const deleteResort = () => {
-    setModalVisible(false);
-    setLoadingButton((prev) => ({
-      ...prev,
-      delete: true,
-    }));
-    APIService.post(config.endpoints.legacy.resort.deleteResort, {
-      resortId: resortId,
-    })
-      .then((response) => {
-        if (response?.data.error) {
-          console.log("Something wrong happened" + response.data.error);
-        } else {
-          Toast.show({
-            type: "custom",
-            text1: t("editResort.successDeleteSubmitNotify"),
-            position: "bottom",
-          });
-          navigation.navigate("MainTabs", { screen: "Profile" });
-        }
-      })
-      .catch((err) => {
-        console.log("An error occurred:" + err);
-        Toast.show({
-          type: "custom",
-          text1: t("error.catchError"),
-          position: "bottom",
-        });
-      })
-      .finally(() => {
-        setLoadingButton((prev) => ({
-          ...prev,
-          delete: false,
-        }));
-      });
-  };
-
+  //get resort from db
   const fetchResorts = () => {
     APIService.post(config.endpoints.legacy.resort.getResortById, {
       resort_id: resortId,
@@ -450,15 +378,17 @@ export default function EditResort({ route }) {
           console.log("Something wrong happened:" + response.data.error);
         } else {
           const resultResort = response.data.resort;
-          setImages(response.data.images);
-          setResort({
+          setMainImage(response.data.images[0]);
+          setResort((prev) => ({
+            ...prev,
+            images: response.data.images,
             name: resultResort.name,
             description: resultResort.description,
             country: resultResort.country,
             county: resultResort.county,
             city: resultResort.city,
             type: resultResort.type,
-          });
+          }));
         }
       })
       .catch((err) => {
@@ -480,301 +410,338 @@ export default function EditResort({ route }) {
 
   return (
     <SafeAreaView
-      style={{
-        flex: 1,
-        justifyContent: "start",
-        alignItems: "center",
-        padding: 16,
-        paddingTop: 2,
-        backgroundColor: theme.colors.backgroundPrimary,
-      }}
+      style={{ flex: 1, backgroundColor: theme.colors.backgroundPrimary }}
       edges={["bottom", "left", "right"]}
     >
-      {fetchLoading ? (
-        <Loading />
-      ) : (
-        <TouchableWithoutFeedback
-          onPress={Keyboard.dismiss}
-          style={{ flex: 1 }}
+      <ScrollView
+        contentContainerStyle={{
+          padding: 16,
+          gap: 16,
+        }}
+        showsVerticalScrollIndicator={false}
+      >
+        <View
+          style={[
+            styles.card,
+            { backgroundColor: theme.colors.backgroundPrimary },
+          ]}
         >
-          <ScrollView
-            style={{ width: "100%" }}
-            showsVerticalScrollIndicator={false}
-            showsHorizontalScrollIndicator={false}
-            bounces={false}
-            overScrollMode={"never"}
-          >
-            <CustomTextInput
-              label={t("addResort.nameLabel")}
-              name={"name"}
-              value={resort.name}
-              onChangeText={handleChange}
-              borderColor={theme.colors.primary}
-              focusBorderColor={theme.colors.primary}
-              backgroundColor={theme.colors.backgroundPaper}
-              color={theme.colors.textPrimary}
-              borderRadius={100}
-              error={errors.name}
-            />
+          <Text>Info step</Text>
+          <CustomTextInput
+            label={t("step1Info.nameLabel")}
+            name={"name"}
+            value={resort.name}
+            onChangeText={handleChange}
+            borderColor={theme.colors.primary}
+            focusBorderColor={theme.colors.primary}
+            backgroundColor={theme.colors.backgroundPaper}
+            color={theme.colors.textPrimary}
+            borderRadius={100}
+            error={errors.name}
+            borderWidth={1}
+          />
+          <CustomTextInput
+            label={t("step1Info.descriptionLabel")}
+            name={"description"}
+            value={resort.description}
+            onChangeText={handleChange}
+            borderColor={theme.colors.primary}
+            focusBorderColor={theme.colors.primary}
+            backgroundColor={theme.colors.backgroundPaper}
+            color={theme.colors.textPrimary}
+            borderRadius={8}
+            multiLine={true}
+            minHeight={64}
+            maxLength={250}
+            borderWidth={1}
+          />
+        </View>
+        <View
+          style={[
+            styles.card,
+            { backgroundColor: theme.colors.backgroundPrimary },
+          ]}
+        >
+          <Text>Type and facilities step</Text>
+          <CustomDropdown
+            name={"category"}
+            borderColor={theme.colors.primary}
+            backgroundColor={theme.colors.backgroundPaper}
+            borderWidth={1}
+            borderRadius={100}
+            label={t("step2Type.categoryLabel")}
+            options={categoryOptions}
+            error={errors?.category}
+            selectedValue={resort?.category}
+            onValueChange={handleChange}
+          />
+          <CustomMultiSelect
+            name={"type"}
+            label={t("step2Type.typeLabel")}
+            options={selectedCategoryOptions}
+            borderWidth={1}
+            borderRadius={100}
+            error={errors?.type}
+            borderColor={theme.colors.primary}
+            backgroundColor={theme.colors.backgroundPaper}
+            onValueChange={(selectedItems) =>
+              handleMultiSelectChange("type", selectedItems)
+            }
+            selectedValue={resort?.type}
+          />
+          <CustomMultiSelect
+            name={"facilities"}
+            label={t("step2Type.facilitiesLabel")}
+            options={facilityOptions}
+            borderWidth={1}
+            borderRadius={100}
+            error={errors?.facilities}
+            borderColor={theme.colors.primary}
+            backgroundColor={theme.colors.backgroundPaper}
+            onValueChange={(selectedItems) =>
+              handleMultiSelectChange("facilities", selectedItems)
+            }
+            selectedValue={resort?.facilities}
+            search={true}
+          />
+        </View>
+        <View
+          style={[
+            styles.card,
+            { backgroundColor: theme.colors.backgroundPrimary },
+          ]}
+        >
+          <Text>Step3Location</Text>
+          <CustomDropdown
+            search={true}
+            label={"Select country"}
+            borderColor={theme.colors.primary}
+            backgroundColor={theme.colors.backgroundPaper}
+            borderRadius={100}
+          />
+          <CustomDropdown
+            search={true}
+            label={"Select state"}
+            borderColor={theme.colors.primary}
+            backgroundColor={theme.colors.backgroundPaper}
+            borderRadius={100}
+          />
+          <CustomDropdown
+            search={true}
+            label={"Select city"}
+            borderColor={theme.colors.primary}
+            backgroundColor={theme.colors.backgroundPaper}
+            borderRadius={100}
+          />
+        </View>
 
-            <CustomTextInput
-              label={t("addResort.countryLabel")}
-              name={"country"}
-              value={resort.country}
-              onChangeText={handleChange}
-              borderColor={theme.colors.primary}
-              focusBorderColor={theme.colors.primary}
-              backgroundColor={theme.colors.backgroundPaper}
-              color={theme.colors.textPrimary}
-              borderRadius={100}
-              error={errors.country}
-            />
-            <CustomTextInput
-              label={t("addResort.countyLabel")}
-              name={"county"}
-              value={resort.county}
-              onChangeText={handleChange}
-              borderColor={theme.colors.primary}
-              focusBorderColor={theme.colors.primary}
-              backgroundColor={theme.colors.backgroundPaper}
-              color={theme.colors.textPrimary}
-              borderRadius={100}
-              error={errors.county}
-            />
-            <CustomTextInput
-              label={t("addResort.cityLabel")}
-              name={"city"}
-              value={resort.city}
-              onChangeText={handleChange}
-              borderColor={theme.colors.primary}
-              focusBorderColor={theme.colors.primary}
-              backgroundColor={theme.colors.backgroundPaper}
-              color={theme.colors.textPrimary}
-              borderRadius={100}
-              error={errors.city}
-            />
-            <CustomDropdown
-              name={"type"}
-              borderColor={theme.colors.primary}
-              backgroundColor={theme.colors.backgroundPaper}
-              borderWidth={2}
-              borderRadius={100}
-              label={t("addResort.typeLabel")}
-              options={typeOptions}
-              error={errors.type}
-              selectedValue={resort.type}
-              onValueChange={handleChange}
-            />
-            {errors &&
-              Object.keys(errors)
-                .filter((key) => key !== "image")
-                .some((key) => errors[key] !== "") && (
-                <Text
-                  style={{
-                    color: "red",
-                    width: "100%",
-                    fontWeight: "bold",
-                    textAlign: "center",
-                    padding: 4,
-                  }}
-                >
-                  <Icon name={"alert"} /> {t("addResort.fieldsError")}{" "}
-                  <Icon name={"alert"} />
-                </Text>
-              )}
-            <CustomTextInput
-              label={t("addResort.descriptionLabel")}
-              name={"description"}
-              value={resort.description}
-              onChangeText={handleChange}
-              borderColor={theme.colors.primary}
-              focusBorderColor={theme.colors.primary}
-              backgroundColor={theme.colors.backgroundPaper}
-              color={theme.colors.textPrimary}
-              borderRadius={8}
-              multiLine={true}
-              minHeight={64}
-              maxLength={250}
-            />
-            <View
+        <View
+          style={[
+            styles.card,
+            {
+              backgroundColor: theme.colors.backgroundPrimary,
+              padding: 0,
+              gap: 16,
+            },
+          ]}
+        >
+          <View
+            style={{
+              flex: 1,
+              padding: 16,
+              width: "100%",
+              gap: 16,
+            }}
+          >
+            <Pressable
               style={{
-                width: "100%",
+                width: "80%",
+                height: 180,
                 borderWidth: 2,
-                borderColor: errors.image ? "red" : theme.colors.primary,
-                height: "auto",
-                borderRadius: 8,
-                padding: 8,
+                borderColor: theme.colors.primary,
+                borderRadius: 16,
+                justifyContent: "center",
+                overflow: "hidden",
+                alignSelf: "center",
+              }}
+              onPress={() => {
+                setModalVisible(true);
+                setIsFirstImage(true);
               }}
             >
-              <View style={{ width: "100%", flexDirection: "row" }}>
-                <CustomButton
-                  width={"fit-content"}
-                  iconCenter={
-                    <Icon
-                      size={24}
-                      name={"camera-plus-outline"}
-                      color={theme.colors.primaryContrast}
-                    />
-                  }
-                  borderWidth={0}
-                  paddingVertical={16}
-                  paddingHorizontal={16}
-                  backgroundColor={theme.colors.primary}
-                  onPress={takePhoto}
-                />
-
-                <CustomButton
-                  title={t("addResort.addImageButton")}
-                  alignItems={"start"}
-                  paddingVertical={0}
-                  paddingHorizontal={0}
-                  width={"fit-content"}
-                  flexDirection={"column-reverse"}
-                  iconLeft={
-                    <Icon
-                      style={{ marginLeft: -4 }}
-                      name={"plus"}
-                      size={24}
-                      color={theme.colors.primary}
-                    />
-                  }
-                  onPress={pickImages}
-                  style={{ marginLeft: 16 }}
-                  textColor={theme.colors.primary}
-                />
-                {loadingButton.images && <LoadingButton />}
-              </View>
-
-              {images.length > 0 && (
-                <FlatList
-                  data={[...images].reverse()}
-                  renderItem={renderImage}
-                  keyExtractor={(item, index) => index.toString()}
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  style={{ marginTop: 16 }}
-                />
-              )}
-            </View>
-            {errors.image && (
-              <Text style={{ color: "red" }}>{errors.image}</Text>
-            )}
-            <View style={{ width: "100%", marginTop: 16, gap: 16 }}>
-              <CustomButton
-                title={
-                  loadingButton.edit ? (
-                    <LottieView
-                      source={require("../../../assets/Trail loading.json")}
-                      autoPlay
-                      loop
-                      style={{ width: 54, height: 54, position: "relative" }}
-                      resizeMode={"cover"}
-                      colorFilters={[
-                        {
-                          keypath: "*",
-                          color: "#ffffff",
-                        },
-                      ]}
-                    />
-                  ) : (
-                    t("editResort.submitButton")
-                  )
-                }
-                maxHeight={48}
-                backgroundColor={theme.colors.primary}
-                paddingVertical={12}
-                paddingHorizontal={8}
-                textColor={theme.colors.primaryContrast}
-                borderRadius={100}
-                flex={1}
-                iconLeft={
-                  !loadingButton.edit && (
-                    <Icon
-                      name={"checkbox-marked-circle-auto-outline"}
-                      size={24}
-                      color={theme.colors.primaryContrast}
-                    />
-                  )
-                }
-                onPress={updateResort}
-              />
-              <View
-                style={{
-                  width: "100%",
-                  gap: 16,
-                  flexDirection: "row",
-                  marginBottom: 16,
-                }}
-              >
-                <CustomButton
-                  title={t("editResort.resetButton")}
-                  backgroundColor={theme.colors.textSecondary}
-                  paddingVertical={12}
-                  paddingHorizontal={8}
-                  textColor={theme.colors.primaryContrast}
-                  borderRadius={100}
-                  flex={1}
-                  iconLeft={
-                    <Icon
-                      name={"backup-restore"}
-                      size={24}
-                      color={theme.colors.primaryContrast}
-                    />
-                  }
-                  onPress={submitReset}
-                />
-                <CustomButton
-                  title={
-                    loadingButton.delete ? (
-                      <LottieView
-                        source={require("../../../assets/Trail loading.json")}
-                        autoPlay
-                        loop
-                        style={{ width: 54, height: 54 }}
-                        resizeMode={"cover"}
-                        colorFilters={[
-                          {
-                            keypath: "*",
-                            color: "#ffffff",
-                          },
-                        ]}
-                      />
-                    ) : (
-                      t("editResort.deleteButton")
-                    )
-                  }
-                  maxHeight={48}
-                  backgroundColor={theme.colors.primaryDelete}
-                  paddingVertical={12}
-                  paddingHorizontal={8}
-                  textColor={theme.colors.primaryContrast}
-                  borderRadius={100}
-                  flex={1}
-                  iconLeft={
-                    !loadingButton.delete && (
+              {loadingImages.mainImage ? (
+                <Loading />
+              ) : !mainImage ? (
+                <View style={{ alignItems: "center" }}>
+                  <Icon
+                    type={"font-awesome"}
+                    name={"image"}
+                    size={24}
+                    color={theme.colors.primary}
+                  />
+                  <Text style={{ fontSize: 12 }}>
+                    {t("step4Gallery.choseMainPhoto")}
+                  </Text>
+                </View>
+              ) : (
+                <View>
+                  <ImageBackground
+                    source={{ uri: mainImage?.uri || mainImage.image_url }}
+                    style={{ width: "100%", height: "100%" }}
+                    resizeMode={"cover"}
+                  />
+                  <CustomButton
+                    onPress={() =>
+                      removeImage(mainImage.uri || mainImage.image_url)
+                    }
+                    style={{
+                      position: "absolute",
+                      bottom: 8,
+                      right: 8,
+                      borderRadius: 12,
+                    }}
+                    width={"fit-content"}
+                    iconCenter={
                       <Icon
-                        name={"delete-forever-outline"}
-                        size={24}
-                        color={theme.colors.primaryContrast}
+                        name="delete"
+                        size={28}
+                        color="red"
+                        containerStyle={{ padding: 4 }}
                       />
-                    )
-                  }
-                  onPress={() => {
-                    setModalVisible(true);
-                  }}
-                />
-              </View>
-            </View>
-            <DeleteResortModalConfirmation
-              visible={modalVisible}
-              title="Delete Resort"
-              message="Are you sure you want to delete this resort?"
-              onConfirm={deleteResort}
-              onCancel={() => setModalVisible(false)}
+                    }
+                  />
+                </View>
+              )}
+            </Pressable>
+
+            <CustomButton
+              title={
+                loadingImages.galleryImages ? (
+                  <LottieView
+                    source={require("../../../assets/Trail loading.json")}
+                    autoPlay
+                    loop
+                    style={{ width: 54, height: 54, position: "relative" }}
+                    resizeMode={"cover"}
+                    colorFilters={[
+                      {
+                        keypath: "*",
+                        color: "#ffffff",
+                      },
+                    ]}
+                  />
+                ) : (
+                  t("step4Gallery.addGalleryImagesButton")
+                )
+              }
+              width={"auto"}
+              maxHeight={48}
+              paddingVertical={12}
+              backgroundColor={theme.colors.primary}
+              paddingHorizontal={32}
+              flex={1}
+              textColor={theme.colors.primaryContrast}
+              borderRadius={100}
+              iconLeft={
+                !loadingImages.galleryImages && (
+                  <Icon
+                    type={"material-community"}
+                    name={"checkbox-marked-circle-auto-outline"}
+                    size={24}
+                    color={theme.colors.primaryContrast}
+                  />
+                )
+              }
+              onPress={() => {
+                setModalVisible(true);
+                setIsFirstImage(false);
+              }}
             />
-          </ScrollView>
-        </TouchableWithoutFeedback>
-      )}
+          </View>
+          <View
+            style={{
+              flex: 1,
+              overflow: "hidden",
+              borderRadius: 12,
+              width: "100%",
+              alignItems: "center",
+            }}
+          >
+            <FlatList
+              horizontal
+              data={resort.images.slice(1)}
+              showsHorizontalScrollIndicator={false}
+              keyExtractor={(item, index) => index}
+              style={{
+                width: "100%",
+
+                alignSelf: "center",
+                paddingLeft: resort.images.length === 1 ? "13%" : 0,
+                paddingBottom: 16,
+              }}
+              renderItem={({ item, index }) => (
+                <View
+                  style={{
+                    width: screenWidth / 1.5,
+                    height: 200,
+                    borderRadius: 10,
+                    marginRight: index === resort.images.length - 1 ? 0 : 8,
+                  }}
+                  key={index}
+                >
+                  <Image
+                    source={{ uri: item.image_url || item.uri }}
+                    style={{ width: "100%", height: "100%", borderRadius: 12 }}
+                    resizeMode="cover"
+                  />
+                  <CustomButton
+                    onPress={() => removeImage(item.image_url || item.uri)}
+                    style={{
+                      position: "absolute",
+                      bottom: 4,
+                      right: 4,
+                      borderRadius: 12,
+                    }}
+                    width={"fit-content"}
+                    iconCenter={<Icon name="delete" size={24} color="red" />}
+                  />
+                </View>
+              )}
+              contentContainerStyle={{
+                alignSelf: "center",
+              }}
+            />
+          </View>
+        </View>
+      </ScrollView>
+      <AddImageModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        message={t("step4Gallery.choseOptionForUploadPhoto")}
+        onCamera={takePhoto}
+        onGallery={pickImages}
+      />
     </SafeAreaView>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  card: {
+    borderRadius: 16,
+    padding: 16,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 8,
+    },
+    shadowOpacity: 0.44,
+    shadowRadius: 10.32,
+
+    elevation: 16,
+    width: "100%",
+    height: "auto",
+    alignItems: "center",
+  },
+});
+
+export default EditResort;

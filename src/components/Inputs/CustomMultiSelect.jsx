@@ -15,6 +15,7 @@ const MultiSelectComponent = ({
   onValueChange,
   marginTop,
   selectedValue,
+  search,
 }) => {
   const [selected, setSelected] = useState(selectedValue);
   const { theme } = useTheme();
@@ -54,6 +55,8 @@ const MultiSelectComponent = ({
         data={options}
         labelField="label"
         valueField="value"
+        search={search}
+        searchPlaceholder={"Search..."}
         placeholder={label}
         value={selected}
         onChange={handleChange}

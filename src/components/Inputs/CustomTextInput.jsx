@@ -54,7 +54,7 @@ export default function CustomTextInput({
           <Text
             style={{
               fontSize: 16,
-              marginLeft: 4,
+              marginLeft: 8,
               color: theme.colors.textSecondary,
               minWidth: 60,
               paddingTop: multiLine && 8,

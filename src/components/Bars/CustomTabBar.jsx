@@ -11,7 +11,11 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
       style={{
         width: "100%",
         height: "auto",
-        backgroundColor: theme.colors.backgroundPrimary,
+        // backgroundColor: theme.colors.backgroundPrimary,
+        backgroundColor: "transparent",
+        zIndex: 999,
+        position: "absolute",
+        bottom: 0,
       }}
     >
       <View

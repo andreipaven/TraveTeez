@@ -137,9 +137,9 @@ const Step2Type = () => {
             name={"category"}
             borderColor={theme.colors.primary}
             backgroundColor={theme.colors.backgroundPaper}
-            borderWidth={2}
+            borderWidth={1}
             borderRadius={100}
-            label={t("addResort.categoryLabel")}
+            label={t("step2Type.categoryLabel")}
             options={categoryOptions}
             error={errors?.category}
             selectedValue={resort?.category}
@@ -147,9 +147,9 @@ const Step2Type = () => {
           />
           <CustomMultiSelect
             name={"type"}
-            label={t("addResort.typeLabel")}
+            label={t("step2Type.typeLabel")}
             options={selectedCategoryOptions}
-            borderWidth={2}
+            borderWidth={1}
             borderRadius={100}
             error={errors?.type}
             borderColor={theme.colors.primary}
@@ -161,9 +161,9 @@ const Step2Type = () => {
           />
           <CustomMultiSelect
             name={"facilities"}
-            label={t("addResort.facilitiesLabel")}
+            label={t("step2Type.facilitiesLabel")}
             options={facilityOptions}
-            borderWidth={2}
+            borderWidth={1}
             borderRadius={100}
             error={errors?.facilities}
             borderColor={theme.colors.primary}
@@ -171,24 +171,22 @@ const Step2Type = () => {
             onValueChange={(selectedItems) =>
               handleMultiSelectChange("facilities", selectedItems)
             }
-            marginTop={8}
             selectedValue={resort?.facilities}
+            search={true}
           />
         </View>
         <View
           style={{
             flexDirection: "row",
             width: "100%",
-            gap: 24,
-            paddingBottom: 24,
           }}
         >
           <CustomButton
-            title={"Next"}
+            title={t("step1Info.nextButton")}
             backgroundColor={theme.colors.primary}
             textColor={theme.colors.primaryContrast}
             flex={1}
-            paddingVertical={12}
+            paddingVertical={16}
             borderRadius={100}
             paddingHorizontal={8}
             onPress={nextStep}

@@ -38,6 +38,23 @@
     "about": "About",
     "noDescription": "No description yet"
   },
+  "step1Info": {
+    "nameLabel": "Name",
+    "descriptionLabel": "Description",
+    "nextButton": "Next"
+  },"step2Type": {
+  "typeLabel": "Types",
+  "categoryLabel": "Category",
+  "facilitiesLabel": "Facilities"
+},
+  "step3Location": {
+
+  },
+  "step4Gallery": {
+    "addGalleryImagesButton": "Add more images",
+    "choseMainPhoto": "Chose main image",
+    "choseOptionForUploadPhoto": "Chose the option for upload the image"
+  },
   "addResort": {
     "name": "name",
     "description": "description...",
@@ -45,14 +62,9 @@
     "county": "county",
     "city": "city",
     "type": "select type",
-    "nameLabel": "Name",
-    "descriptionLabel": "Description",
     "countryLabel": "Country",
     "countyLabel": "County",
     "cityLabel": "City",
-    "typeLabel": "Types",
-    "categoryLabel": "Category",
-    "facilitiesLabel": "Facilities",
     "addImageButton": "Upload from gallery",
     "errorImage": "Add minimum 1 image",
     "submitButton": "Add Resort",
@@ -60,7 +72,6 @@
     "fieldsError": "Fill in the required fields",
     "successSubmitNotify": "Resort added successfully ✅",
     "addNewResortTitle": "Add New Resort",
-    "addGalleryImagesButton": "Add more images"
   },
   "home": {
     "searchButtonInput": "Search a resort... ",
