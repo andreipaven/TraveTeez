@@ -40,7 +40,6 @@ const EditResort = () => {
   const { t } = useTranslation();
   const [errors, setErrors] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
-  const [mainImage, setMainImage] = useState(null);
   const [isFirstImage, setIsFirstImage] = useState(false);
   const [loadingImages, setLoadingImages] = useState({
     mainImage: false,
@@ -58,6 +57,7 @@ const EditResort = () => {
     type: [],
     facilities: [],
     images: [],
+    mainImage: null,
   });
 
   const categoryOptions = [
@@ -161,24 +161,48 @@ const EditResort = () => {
   };
 
   const validateImage = (validationImage) => {
-    let newErrors = "";
+    let newErrors = { mainImage: "", images: "" };
+
+    if (validationImage === undefined) {
+      newErrors.mainImage =
+        resort.mainImage?.uri !== undefined
+          ? ""
+          : t("step4Gallery.errorMainImage");
+      setErrors((prev) => ({
+        ...prev,
+        mainImage: newErrors.mainImage,
+      }));
+    }
+
     const verifyImage = validationImage || resort.images;
 
-    newErrors =
-      verifyImage && verifyImage.length > 0 ? "" : t("addResort.errorImage");
+    console.log(validationImage.length);
 
-    newErrors = mainImage === null ? t("addResort.errorImage") : "";
+    if (Array.isArray(verifyImage)) {
+      newErrors.images =
+        verifyImage && verifyImage.length > 0
+          ? ""
+          : t("step4Gallery.errorImage");
 
-    setErrors((prev) => ({
-      ...prev,
-      image: newErrors,
-    }));
+      console.log(newErrors.images);
+      setErrors((prev) => ({
+        ...prev,
+        images: newErrors.images,
+      }));
+    } else {
+      newErrors.mainImage =
+        verifyImage?.uri !== undefined ? "" : t("step4Gallery.errorMainImage");
+      setErrors((prev) => ({
+        ...prev,
+        mainImage: newErrors.mainImage,
+      }));
+    }
 
     isFirstImage
       ? setLoadingImages((prev) => ({ ...prev, mainImage: false }))
       : setLoadingImages((prev) => ({ ...prev, galleryImages: false }));
 
-    return newErrors === "";
+    return Object.values(newErrors).every((val) => val === "");
   };
 
   const removeImage = (uri) => {
@@ -190,16 +214,20 @@ const EditResort = () => {
       setDeletedImages((prev) => [...prev, removedImage]);
     }
 
-    setResort((prev) => ({
-      ...prev,
-      images: prev.images.filter((img) => (img.uri || img.image_url) !== uri),
-    }));
-
-    if (mainImage?.uri === uri || mainImage?.image_url) {
-      setMainImage(null);
+    if (resort.mainImage?.uri === uri || resort.mainImage?.image_url === uri) {
+      setResort({ ...resort, mainImage: null });
+      validateImage({});
+    } else {
+      setResort((prev) => ({
+        ...prev,
+        images: prev.images.filter(
+          (img) => img.uri !== uri && img.image_url !== uri,
+        ),
+      }));
+      validateImage(
+        resort.images.filter((img) => img.uri !== uri && img.image_url !== uri),
+      );
     }
-
-    validateImage(resort.images.filter((img) => img.uri !== uri));
   };
 
   //Function for open camera
@@ -249,12 +277,13 @@ const EditResort = () => {
         const updatedImages = [...resort.images, imageToAdd];
 
         if (isFirstImage) {
-          setMainImage(imageToAdd);
+          setResort({ ...resort, mainImage: imageToAdd });
           setIsFirstImage(false);
+          validateImage(imageToAdd);
         } else {
           setResort({ ...resort, images: updatedImages });
+          validateImage(updatedImages);
         }
-        validateImage(updatedImages);
       } else {
         Alert.alert(
           "Invalid file format",
@@ -335,12 +364,13 @@ const EditResort = () => {
         const updatedImages = [...resort.images, ...compressedImages];
 
         if (isFirstImage) {
-          setMainImage(compressedImages[0]);
+          setResort({ ...resort, mainImage: compressedImages[0] });
           setIsFirstImage(false);
+          validateImage(compressedImages[0]);
         } else {
           setResort({ ...resort, images: updatedImages });
+          validateImage(updatedImages);
         }
-        validateImage(updatedImages);
       }
     } else {
       isFirstImage
@@ -377,11 +407,12 @@ const EditResort = () => {
         if (response.data?.error) {
           console.log("Something wrong happened:" + response.data.error);
         } else {
-          const resultResort = response.data.resort;
-          setMainImage(response.data.images[0]);
+          const resultResort = response.data;
+
           setResort((prev) => ({
             ...prev,
-            images: response.data.images,
+            images: resultResort.images.slice(1),
+            mainImage: resultResort.images[0],
             name: resultResort.name,
             description: resultResort.description,
             country: resultResort.country,
@@ -413,307 +444,341 @@ const EditResort = () => {
       style={{ flex: 1, backgroundColor: theme.colors.backgroundPrimary }}
       edges={["bottom", "left", "right"]}
     >
-      <ScrollView
-        contentContainerStyle={{
-          padding: 16,
-          gap: 16,
-        }}
-        showsVerticalScrollIndicator={false}
-      >
-        <View
-          style={[
-            styles.card,
-            { backgroundColor: theme.colors.backgroundPrimary },
-          ]}
+      {fetchLoading ? (
+        <Loading />
+      ) : (
+        <ScrollView
+          contentContainerStyle={{
+            padding: 16,
+            gap: 16,
+          }}
+          showsVerticalScrollIndicator={false}
         >
-          <Text>Info step</Text>
-          <CustomTextInput
-            label={t("step1Info.nameLabel")}
-            name={"name"}
-            value={resort.name}
-            onChangeText={handleChange}
-            borderColor={theme.colors.primary}
-            focusBorderColor={theme.colors.primary}
-            backgroundColor={theme.colors.backgroundPaper}
-            color={theme.colors.textPrimary}
-            borderRadius={100}
-            error={errors.name}
-            borderWidth={1}
-          />
-          <CustomTextInput
-            label={t("step1Info.descriptionLabel")}
-            name={"description"}
-            value={resort.description}
-            onChangeText={handleChange}
-            borderColor={theme.colors.primary}
-            focusBorderColor={theme.colors.primary}
-            backgroundColor={theme.colors.backgroundPaper}
-            color={theme.colors.textPrimary}
-            borderRadius={8}
-            multiLine={true}
-            minHeight={64}
-            maxLength={250}
-            borderWidth={1}
-          />
-        </View>
-        <View
-          style={[
-            styles.card,
-            { backgroundColor: theme.colors.backgroundPrimary },
-          ]}
-        >
-          <Text>Type and facilities step</Text>
-          <CustomDropdown
-            name={"category"}
-            borderColor={theme.colors.primary}
-            backgroundColor={theme.colors.backgroundPaper}
-            borderWidth={1}
-            borderRadius={100}
-            label={t("step2Type.categoryLabel")}
-            options={categoryOptions}
-            error={errors?.category}
-            selectedValue={resort?.category}
-            onValueChange={handleChange}
-          />
-          <CustomMultiSelect
-            name={"type"}
-            label={t("step2Type.typeLabel")}
-            options={selectedCategoryOptions}
-            borderWidth={1}
-            borderRadius={100}
-            error={errors?.type}
-            borderColor={theme.colors.primary}
-            backgroundColor={theme.colors.backgroundPaper}
-            onValueChange={(selectedItems) =>
-              handleMultiSelectChange("type", selectedItems)
-            }
-            selectedValue={resort?.type}
-          />
-          <CustomMultiSelect
-            name={"facilities"}
-            label={t("step2Type.facilitiesLabel")}
-            options={facilityOptions}
-            borderWidth={1}
-            borderRadius={100}
-            error={errors?.facilities}
-            borderColor={theme.colors.primary}
-            backgroundColor={theme.colors.backgroundPaper}
-            onValueChange={(selectedItems) =>
-              handleMultiSelectChange("facilities", selectedItems)
-            }
-            selectedValue={resort?.facilities}
-            search={true}
-          />
-        </View>
-        <View
-          style={[
-            styles.card,
-            { backgroundColor: theme.colors.backgroundPrimary },
-          ]}
-        >
-          <Text>Step3Location</Text>
-          <CustomDropdown
-            search={true}
-            label={"Select country"}
-            borderColor={theme.colors.primary}
-            backgroundColor={theme.colors.backgroundPaper}
-            borderRadius={100}
-          />
-          <CustomDropdown
-            search={true}
-            label={"Select state"}
-            borderColor={theme.colors.primary}
-            backgroundColor={theme.colors.backgroundPaper}
-            borderRadius={100}
-          />
-          <CustomDropdown
-            search={true}
-            label={"Select city"}
-            borderColor={theme.colors.primary}
-            backgroundColor={theme.colors.backgroundPaper}
-            borderRadius={100}
-          />
-        </View>
-
-        <View
-          style={[
-            styles.card,
-            {
-              backgroundColor: theme.colors.backgroundPrimary,
-              padding: 0,
-              gap: 16,
-            },
-          ]}
-        >
+          {/*step1*/}
           <View
-            style={{
-              flex: 1,
-              padding: 16,
-              width: "100%",
-              gap: 16,
-            }}
+            style={[
+              styles.card,
+              { backgroundColor: theme.colors.backgroundPrimary },
+            ]}
           >
-            <Pressable
+            <Text>Info step</Text>
+            <CustomTextInput
+              label={t("step1Info.nameLabel")}
+              name={"name"}
+              value={resort.name}
+              onChangeText={handleChange}
+              borderColor={theme.colors.primary}
+              focusBorderColor={theme.colors.primary}
+              backgroundColor={theme.colors.backgroundPaper}
+              color={theme.colors.textPrimary}
+              borderRadius={100}
+              error={errors.name}
+              borderWidth={1}
+            />
+            <CustomTextInput
+              label={t("step1Info.descriptionLabel")}
+              name={"description"}
+              value={resort.description}
+              onChangeText={handleChange}
+              borderColor={theme.colors.primary}
+              focusBorderColor={theme.colors.primary}
+              backgroundColor={theme.colors.backgroundPaper}
+              color={theme.colors.textPrimary}
+              borderRadius={8}
+              multiLine={true}
+              minHeight={64}
+              maxLength={250}
+              borderWidth={1}
+            />
+          </View>
+          {/*step2*/}
+          <View
+            style={[
+              styles.card,
+              { backgroundColor: theme.colors.backgroundPrimary },
+            ]}
+          >
+            <Text>Type and facilities step</Text>
+            <CustomDropdown
+              name={"category"}
+              borderColor={theme.colors.primary}
+              backgroundColor={theme.colors.backgroundPaper}
+              borderWidth={1}
+              borderRadius={100}
+              label={t("step2Type.categoryLabel")}
+              options={categoryOptions}
+              error={errors?.category}
+              selectedValue={resort?.category}
+              onValueChange={handleChange}
+            />
+            <CustomMultiSelect
+              name={"type"}
+              label={t("step2Type.typeLabel")}
+              options={selectedCategoryOptions}
+              borderWidth={1}
+              borderRadius={100}
+              error={errors?.type}
+              borderColor={theme.colors.primary}
+              backgroundColor={theme.colors.backgroundPaper}
+              onValueChange={(selectedItems) =>
+                handleMultiSelectChange("type", selectedItems)
+              }
+              selectedValue={resort?.type}
+            />
+            <CustomMultiSelect
+              name={"facilities"}
+              label={t("step2Type.facilitiesLabel")}
+              options={facilityOptions}
+              borderWidth={1}
+              borderRadius={100}
+              error={errors?.facilities}
+              borderColor={theme.colors.primary}
+              backgroundColor={theme.colors.backgroundPaper}
+              onValueChange={(selectedItems) =>
+                handleMultiSelectChange("facilities", selectedItems)
+              }
+              selectedValue={resort?.facilities}
+              search={true}
+            />
+          </View>
+          {/*step3*/}
+          <View
+            style={[
+              styles.card,
+              { backgroundColor: theme.colors.backgroundPrimary },
+            ]}
+          >
+            <Text>Step3Location</Text>
+            <CustomDropdown
+              search={true}
+              label={"Select country"}
+              borderColor={theme.colors.primary}
+              backgroundColor={theme.colors.backgroundPaper}
+              borderRadius={100}
+            />
+            <CustomDropdown
+              search={true}
+              label={"Select state"}
+              borderColor={theme.colors.primary}
+              backgroundColor={theme.colors.backgroundPaper}
+              borderRadius={100}
+            />
+            <CustomDropdown
+              search={true}
+              label={"Select city"}
+              borderColor={theme.colors.primary}
+              backgroundColor={theme.colors.backgroundPaper}
+              borderRadius={100}
+            />
+          </View>
+
+          {/*step4*/}
+          <View
+            style={[
+              styles.card,
+              {
+                backgroundColor: theme.colors.backgroundPrimary,
+                padding: 0,
+                gap: 16,
+              },
+            ]}
+          >
+            <View
               style={{
-                width: "80%",
-                height: 180,
-                borderWidth: 2,
-                borderColor: theme.colors.primary,
-                borderRadius: 16,
-                justifyContent: "center",
-                overflow: "hidden",
-                alignSelf: "center",
-              }}
-              onPress={() => {
-                setModalVisible(true);
-                setIsFirstImage(true);
+                flex: 1,
+                padding: 16,
+                width: "100%",
+                gap: 16,
               }}
             >
-              {loadingImages.mainImage ? (
-                <Loading />
-              ) : !mainImage ? (
-                <View style={{ alignItems: "center" }}>
-                  <Icon
-                    type={"font-awesome"}
-                    name={"image"}
-                    size={24}
-                    color={theme.colors.primary}
-                  />
-                  <Text style={{ fontSize: 12 }}>
-                    {t("step4Gallery.choseMainPhoto")}
-                  </Text>
-                </View>
-              ) : (
-                <View>
-                  <ImageBackground
-                    source={{ uri: mainImage?.uri || mainImage.image_url }}
-                    style={{ width: "100%", height: "100%" }}
-                    resizeMode={"cover"}
-                  />
-                  <CustomButton
-                    onPress={() =>
-                      removeImage(mainImage.uri || mainImage.image_url)
-                    }
-                    style={{
-                      position: "absolute",
-                      bottom: 8,
-                      right: 8,
-                      borderRadius: 12,
-                    }}
-                    width={"fit-content"}
-                    iconCenter={
-                      <Icon
-                        name="delete"
-                        size={28}
-                        color="red"
-                        containerStyle={{ padding: 4 }}
-                      />
-                    }
-                  />
-                </View>
-              )}
-            </Pressable>
-
-            <CustomButton
-              title={
-                loadingImages.galleryImages ? (
-                  <LottieView
-                    source={require("../../../assets/Trail loading.json")}
-                    autoPlay
-                    loop
-                    style={{ width: 54, height: 54, position: "relative" }}
-                    resizeMode={"cover"}
-                    colorFilters={[
-                      {
-                        keypath: "*",
-                        color: "#ffffff",
-                      },
-                    ]}
-                  />
+              <Pressable
+                style={{
+                  width: "80%",
+                  height: 180,
+                  borderWidth: 2,
+                  borderColor: errors.mainImage
+                    ? theme.colors.error
+                    : theme.colors.primary,
+                  borderRadius: 16,
+                  justifyContent: "center",
+                  overflow: "hidden",
+                  alignSelf: "center",
+                }}
+                onPress={() => {
+                  setModalVisible(true);
+                  setIsFirstImage(true);
+                }}
+              >
+                {loadingImages.mainImage ? (
+                  <Loading />
+                ) : !(resort.mainImage?.uri || resort.mainImage?.image_url) ? (
+                  <View style={{ alignItems: "center" }}>
+                    <Icon
+                      type={"font-awesome"}
+                      name={"image"}
+                      size={24}
+                      color={
+                        errors.mainImage
+                          ? theme.colors.error
+                          : theme.colors.primary
+                      }
+                    />
+                    {errors.mainImage ? (
+                      <Text style={{ color: theme.colors.error }}>
+                        {errors.mainImage}
+                      </Text>
+                    ) : (
+                      <Text>{t("step4Gallery.choseMainPhoto")}</Text>
+                    )}
+                  </View>
                 ) : (
-                  t("step4Gallery.addGalleryImagesButton")
-                )
-              }
-              width={"auto"}
-              maxHeight={48}
-              paddingVertical={12}
-              backgroundColor={theme.colors.primary}
-              paddingHorizontal={32}
-              flex={1}
-              textColor={theme.colors.primaryContrast}
-              borderRadius={100}
-              iconLeft={
-                !loadingImages.galleryImages && (
-                  <Icon
-                    type={"material-community"}
-                    name={"checkbox-marked-circle-auto-outline"}
-                    size={24}
-                    color={theme.colors.primaryContrast}
-                  />
-                )
-              }
-              onPress={() => {
-                setModalVisible(true);
-                setIsFirstImage(false);
-              }}
-            />
-          </View>
-          <View
-            style={{
-              flex: 1,
-              overflow: "hidden",
-              borderRadius: 12,
-              width: "100%",
-              alignItems: "center",
-            }}
-          >
-            <FlatList
-              horizontal
-              data={resort.images.slice(1)}
-              showsHorizontalScrollIndicator={false}
-              keyExtractor={(item, index) => index}
-              style={{
-                width: "100%",
-
-                alignSelf: "center",
-                paddingLeft: resort.images.length === 1 ? "13%" : 0,
-                paddingBottom: 16,
-              }}
-              renderItem={({ item, index }) => (
-                <View
-                  style={{
-                    width: screenWidth / 1.5,
-                    height: 200,
-                    borderRadius: 10,
-                    marginRight: index === resort.images.length - 1 ? 0 : 8,
-                  }}
-                  key={index}
+                  <View>
+                    <ImageBackground
+                      source={{
+                        uri:
+                          resort.mainImage?.image_url || resort.mainImage?.uri,
+                      }}
+                      style={{ width: "100%", height: "100%" }}
+                      resizeMode={"cover"}
+                    />
+                    <CustomButton
+                      onPress={() =>
+                        removeImage(
+                          resort.mainImage?.uri || resort.mainImage?.image_url,
+                        )
+                      }
+                      style={{
+                        position: "absolute",
+                        bottom: 8,
+                        right: 8,
+                        borderRadius: 12,
+                      }}
+                      width={"fit-content"}
+                      iconCenter={
+                        <Icon
+                          name="delete"
+                          size={28}
+                          color="red"
+                          containerStyle={{ padding: 4 }}
+                        />
+                      }
+                    />
+                  </View>
+                )}
+              </Pressable>
+              <CustomButton
+                title={
+                  loadingImages.galleryImages ? (
+                    <LottieView
+                      source={require("../../../assets/Trail loading.json")}
+                      autoPlay
+                      loop
+                      style={{ width: 54, height: 54, position: "relative" }}
+                      resizeMode={"cover"}
+                      colorFilters={[
+                        {
+                          keypath: "*",
+                          color: "#ffffff",
+                        },
+                      ]}
+                    />
+                  ) : (
+                    t("step4Gallery.addGalleryImagesButton")
+                  )
+                }
+                width={"auto"}
+                maxHeight={48}
+                paddingVertical={12}
+                backgroundColor={theme.colors.primary}
+                paddingHorizontal={32}
+                flex={1}
+                textColor={theme.colors.primaryContrast}
+                borderRadius={100}
+                iconLeft={
+                  !loadingImages.galleryImages && (
+                    <Icon
+                      type={"material-community"}
+                      name={"checkbox-marked-circle-auto-outline"}
+                      size={24}
+                      color={theme.colors.primaryContrast}
+                    />
+                  )
+                }
+                onPress={() => {
+                  setModalVisible(true);
+                  setIsFirstImage(false);
+                }}
+              />
+              {errors.images && (
+                <Text
+                  style={{ color: theme.colors.error, alignSelf: "center" }}
                 >
-                  <Image
-                    source={{ uri: item.image_url || item.uri }}
-                    style={{ width: "100%", height: "100%", borderRadius: 12 }}
-                    resizeMode="cover"
-                  />
-                  <CustomButton
-                    onPress={() => removeImage(item.image_url || item.uri)}
-                    style={{
-                      position: "absolute",
-                      bottom: 4,
-                      right: 4,
-                      borderRadius: 12,
-                    }}
-                    width={"fit-content"}
-                    iconCenter={<Icon name="delete" size={24} color="red" />}
-                  />
-                </View>
+                  {errors.images}
+                </Text>
               )}
-              contentContainerStyle={{
-                alignSelf: "center",
+            </View>
+
+            <View
+              style={{
+                flex: 1,
+                overflow: "hidden",
+                borderRadius: 12,
+                width: "100%",
+                alignItems: "center",
               }}
-            />
+            >
+              <FlatList
+                horizontal
+                data={resort.images}
+                showsHorizontalScrollIndicator={false}
+                keyExtractor={(item, index) => index}
+                style={{
+                  width: "100%",
+                  alignSelf: "center",
+                  paddingLeft: resort.images.length === 1 ? "13%" : 0,
+                  paddingBottom: 16,
+                }}
+                renderItem={({ item, index }) => (
+                  <View
+                    style={{
+                      width: screenWidth / 1.5,
+                      height: 200,
+                      borderRadius: 10,
+                      marginRight: index === resort.images.length - 1 ? 0 : 8,
+                    }}
+                    key={index}
+                  >
+                    <Image
+                      source={{ uri: item.image_url || item.uri }}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        borderRadius: 12,
+                      }}
+                      resizeMode="cover"
+                    />
+                    <CustomButton
+                      onPress={() => removeImage(item.image_url || item.uri)}
+                      style={{
+                        position: "absolute",
+                        bottom: 4,
+                        right: 4,
+                        borderRadius: 12,
+                      }}
+                      width={"fit-content"}
+                      iconCenter={<Icon name="delete" size={24} color="red" />}
+                    />
+                  </View>
+                )}
+                contentContainerStyle={{
+                  alignSelf: "center",
+                }}
+              />
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      )}
+
       <AddImageModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}

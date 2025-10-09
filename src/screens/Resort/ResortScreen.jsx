@@ -41,7 +41,7 @@ const ResortScreen = ({ route }) => {
             console.log("Something wrong happened " + response.data.error);
           } else {
             setImages(response.data.images);
-            setResortDetails(response.data.resort);
+            setResortDetails(response.data);
           }
         })
         .catch((err) => {
@@ -100,7 +100,7 @@ const ResortScreen = ({ route }) => {
                   }}
                 >
                   <Icon name={"map-marker"} size={16} />
-                  {resortDetails?.city}, {resortDetails?.county},{" "}
+                  {resortDetails?.city}, {resortDetails?.state},{" "}
                   {resortDetails?.country}
                 </Text>
               </View>

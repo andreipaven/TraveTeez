@@ -53,7 +53,10 @@
   "step4Gallery": {
     "addGalleryImagesButton": "Add more images",
     "choseMainPhoto": "Chose main image",
-    "choseOptionForUploadPhoto": "Chose the option for upload the image"
+    "choseOptionForUploadPhoto": "Chose the option for upload the image",
+    "errorMainImage": "Add main image",
+    "errorImage": "Add minimum 1 image for gallery",
+    "submitButton": "Add Resort","successSubmitNotify": "Resort added successfully ✅"
   },
   "addResort": {
     "name": "name",
@@ -66,12 +69,11 @@
     "countyLabel": "County",
     "cityLabel": "City",
     "addImageButton": "Upload from gallery",
-    "errorImage": "Add minimum 1 image",
-    "submitButton": "Add Resort",
+
+
     "cancelButton": "Cancel",
     "fieldsError": "Fill in the required fields",
-    "successSubmitNotify": "Resort added successfully ✅",
-    "addNewResortTitle": "Add New Resort",
+    "addNewResortTitle": "Add New Resort"
   },
   "home": {
     "searchButtonInput": "Search a resort... ",

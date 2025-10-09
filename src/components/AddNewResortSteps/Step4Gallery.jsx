@@ -1,17 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
   Alert,
+  Dimensions,
+  FlatList,
+  Image,
+  ImageBackground,
   Linking,
   Pressable,
-  ImageBackground,
-  Button,
-  FlatList,
-  Dimensions,
-  Image,
   ScrollView,
+  Text,
+  View,
 } from "react-native";
 import { useTheme } from "../../Theme/themeContext";
 import { useTranslation } from "react-i18next";
@@ -26,21 +24,24 @@ import Loading from "../Loading/Loading";
 import LottieView from "lottie-react-native";
 import APIService from "../../services/APIService";
 import { config } from "../../services/config";
+import Toast from "react-native-toast-message";
+import { useNavigation } from "@react-navigation/native";
 
 const screenWidth = Dimensions.get("window").width;
 
 const Step4Gallery = () => {
   const { theme } = useTheme();
+  const navigation = useNavigation();
   const { t } = useTranslation();
-  const { resort, setResort } = useResort();
+  const { resort, setResort, resetResort } = useResort();
   const [loadingImages, setLoadingImages] = useState({
     mainImage: false,
     galleryImages: false,
   });
   const [errors, setErrors] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
-  const [mainImage, setMainImage] = useState(null);
   const [isFirstImage, setIsFirstImage] = useState(false);
+  const [loadingAddResort, setLoadingAddResort] = useState(false);
 
   const compressImage = async (uri, compress = 0.6, maxWidth = 1080) => {
     try {
@@ -60,24 +61,45 @@ const Step4Gallery = () => {
   };
 
   const validateImage = (validationImage) => {
-    let newErrors = "";
+    let newErrors = { mainImage: "", images: "" };
+
+    if (validationImage === undefined) {
+      newErrors.mainImage =
+        resort.mainImage?.uri !== undefined
+          ? ""
+          : t("step4Gallery.errorMainImage");
+      setErrors((prev) => ({
+        ...prev,
+        mainImage: newErrors.mainImage,
+      }));
+    }
+
     const verifyImage = validationImage || resort.images;
 
-    newErrors =
-      verifyImage && verifyImage.length > 0 ? "" : t("addResort.errorImage");
+    if (Array.isArray(verifyImage)) {
+      newErrors.images =
+        verifyImage && verifyImage.length > 0
+          ? ""
+          : t("step4Gallery.errorImage");
 
-    newErrors = mainImage === null ? t("addResort.errorImage") : "";
-
-    setErrors((prev) => ({
-      ...prev,
-      image: newErrors,
-    }));
+      setErrors((prev) => ({
+        ...prev,
+        images: newErrors.images,
+      }));
+    } else {
+      newErrors.mainImage =
+        verifyImage?.uri !== undefined ? "" : t("step4Gallery.errorMainImage");
+      setErrors((prev) => ({
+        ...prev,
+        mainImage: newErrors.mainImage,
+      }));
+    }
 
     isFirstImage
       ? setLoadingImages((prev) => ({ ...prev, mainImage: false }))
       : setLoadingImages((prev) => ({ ...prev, galleryImages: false }));
 
-    return newErrors === "";
+    return Object.values(newErrors).every((val) => val === "");
   };
 
   const removeImage = (uri) => {
@@ -86,11 +108,12 @@ const Step4Gallery = () => {
       images: prev.images.filter((img) => img.uri !== uri),
     }));
 
-    if (mainImage?.uri === uri) {
-      setMainImage(null);
+    if (resort.mainImage?.uri === uri) {
+      setResort({ ...resort, mainImage: null });
+      validateImage({});
+    } else {
+      validateImage(resort.images.filter((img) => img.uri !== uri));
     }
-
-    validateImage(resort.images.filter((img) => img.uri !== uri));
   };
 
   //Function for open camera
@@ -140,12 +163,13 @@ const Step4Gallery = () => {
         const updatedImages = [...resort.images, imageToAdd];
 
         if (isFirstImage) {
-          setMainImage(imageToAdd);
+          setResort({ ...resort, mainImage: imageToAdd });
           setIsFirstImage(false);
+          validateImage(imageToAdd);
         } else {
           setResort({ ...resort, images: updatedImages });
+          validateImage(updatedImages);
         }
-        validateImage(updatedImages);
       } else {
         Alert.alert(
           "Invalid file format",
@@ -226,12 +250,13 @@ const Step4Gallery = () => {
         const updatedImages = [...resort.images, ...compressedImages];
 
         if (isFirstImage) {
-          setMainImage(compressedImages[0]);
+          setResort({ ...resort, mainImage: compressedImages[0] });
           setIsFirstImage(false);
+          validateImage(compressedImages[0]);
         } else {
           setResort({ ...resort, images: updatedImages });
+          validateImage(updatedImages);
         }
-        validateImage(updatedImages);
       }
     } else {
       isFirstImage
@@ -247,21 +272,36 @@ const Step4Gallery = () => {
       state: "Ab",
       city: "Campeni",
     }));
+
     if (validateImage()) {
+      setLoadingAddResort(true);
       APIService.post(config.endpoints.legacy.resort.addResort, {
-        resort,
+        resort: resort,
       })
         .then((response) => {
           if (response?.data.error) {
             console.log("Something wrong happened " + response.data.error);
           } else {
-            console.log(response.data.message);
+            Toast.show({
+              type: "custom",
+              text1: t("step4Gallery.successSubmitNotify"),
+              position: "bottom",
+              visibilityTime: 1000,
+            });
+            console.log("all good");
+
+            setTimeout(() => {
+              resetResort();
+              navigation.navigate("TabGroup", { screen: "ProfileScreen" });
+            }, 1500);
           }
         })
         .catch((err) => {
           console.log("An error occurred " + err);
         })
-        .finally(() => {});
+        .finally(() => {
+          setLoadingAddResort(false);
+        });
     }
   };
 
@@ -283,7 +323,9 @@ const Step4Gallery = () => {
             width: "80%",
             height: 180,
             borderWidth: 2,
-            borderColor: theme.colors.primary,
+            borderColor: errors.mainImage
+              ? theme.colors.error
+              : theme.colors.primary,
             borderRadius: 16,
             justifyContent: "center",
             overflow: "hidden",
@@ -296,25 +338,33 @@ const Step4Gallery = () => {
         >
           {loadingImages.mainImage ? (
             <Loading />
-          ) : !mainImage ? (
+          ) : !resort.mainImage?.uri ? (
             <View style={{ alignItems: "center" }}>
               <Icon
                 type={"font-awesome"}
                 name={"image"}
                 size={32}
-                color={theme.colors.primary}
+                color={
+                  errors.mainImage ? theme.colors.error : theme.colors.primary
+                }
               />
-              <Text>{t("step4Gallery.choseMainPhoto")}</Text>
+              {errors.mainImage ? (
+                <Text style={{ color: theme.colors.error }}>
+                  {errors.mainImage}
+                </Text>
+              ) : (
+                <Text>{t("step4Gallery.choseMainPhoto")}</Text>
+              )}
             </View>
           ) : (
             <View>
               <ImageBackground
-                source={{ uri: mainImage?.uri }}
+                source={{ uri: resort.mainImage?.uri }}
                 style={{ width: "100%", height: "100%" }}
                 resizeMode={"cover"}
               />
               <CustomButton
-                onPress={() => removeImage(mainImage.uri)}
+                onPress={() => removeImage(resort.mainImage?.uri)}
                 style={{
                   position: "absolute",
                   bottom: 8,
@@ -379,6 +429,11 @@ const Step4Gallery = () => {
           }}
           style={{ marginVertical: 16 }}
         />
+        {errors.images && (
+          <Text style={{ color: theme.colors.error, alignSelf: "center" }}>
+            {errors.images}
+          </Text>
+        )}
 
         <FlatList
           data={resort.images}
@@ -425,11 +480,30 @@ const Step4Gallery = () => {
           }}
         >
           <CustomButton
-            title={"Add resort"}
+            title={
+              loadingAddResort ? (
+                <LottieView
+                  source={require("../../../assets/Trail loading.json")}
+                  autoPlay
+                  loop
+                  style={{ width: 54, height: 54, position: "relative" }}
+                  resizeMode={"cover"}
+                  colorFilters={[
+                    {
+                      keypath: "*",
+                      color: "#ffffff",
+                    },
+                  ]}
+                />
+              ) : (
+                t("step4Gallery.submitButton")
+              )
+            }
             backgroundColor={theme.colors.primary}
             textColor={theme.colors.primaryContrast}
             flex={1}
-            paddingVertical={16}
+            maxHeight={48}
+            paddingVertical={12}
             borderRadius={100}
             paddingHorizontal={8}
             onPress={submitAddResort}

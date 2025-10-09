@@ -82,6 +82,11 @@ const CustomCarouselCard = ({ item }) => {
             fontSize: 12,
           }}
         >
+          <Icon
+            name={"map-marker"}
+            size={16}
+            color={theme.colors.textSecondary}
+          />
           {item.city}, {item.country}
         </Text>
         <RatingOneStar
