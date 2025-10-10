@@ -37,9 +37,10 @@ export default function HomeScreen() {
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-    fetchNewResorts();
+
     setTimeout(() => {
       setRefreshing(false);
+      navigation.navigate("HomeScreen");
     }, 1000);
   }, []);
 
@@ -142,7 +143,7 @@ export default function HomeScreen() {
             {t("home.newResortsTitle")}
           </Text>
           <CustomCarousel dates={newResorts} />
-          <TypeResortsBar key={refreshing} />
+          <TypeResortsBar />
         </View>
       </ScrollView>
     </SafeAreaView>

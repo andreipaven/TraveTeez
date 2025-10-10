@@ -12,7 +12,7 @@ import {
   Linking,
   Dimensions,
 } from "react-native";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../Theme/themeContext";
 import CustomTextInput from "../../components/Inputs/CustomTextInput";
@@ -29,6 +29,7 @@ import AddImageModal from "../../components/Modals/AddImageModal";
 import APIService from "../../services/APIService";
 import { config } from "../../services/config";
 import Toast from "react-native-toast-message";
+import DeleteResortModalConfirmation from "../../components/Modals/DeleteResortModalConfirmation";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -36,14 +37,22 @@ const EditResort = () => {
   const route = useRoute();
   const { state } = route.params;
   const { resortId } = state;
+  const navigation = useNavigation();
   const { theme } = useTheme();
   const { t } = useTranslation();
   const [errors, setErrors] = useState({});
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState({
+    deleteResort: false,
+    addImages: false,
+  });
   const [isFirstImage, setIsFirstImage] = useState(false);
   const [loadingImages, setLoadingImages] = useState({
     mainImage: false,
     galleryImages: false,
+  });
+  const [loadingButton, setLoadingButton] = useState({
+    edit: false,
+    delete: false,
   });
   const [fetchLoading, setFetchLoading] = useState(true);
   const [deletedImages, setDeletedImages] = useState([]);
@@ -175,8 +184,6 @@ const EditResort = () => {
     }
 
     const verifyImage = validationImage || resort.images;
-
-    console.log(validationImage.length);
 
     if (Array.isArray(verifyImage)) {
       newErrors.images =
@@ -398,6 +405,105 @@ const EditResort = () => {
     validate({ [name]: value });
   };
 
+  //update resort
+  const updateResort = () => {
+    if (validate()) {
+      setLoadingButton((prev) => ({
+        ...prev,
+        edit: true,
+      }));
+
+      APIService.post(config.endpoints.legacy.resort.updateResort, {
+        body: {
+          name: resort.name,
+          country: resort.country,
+          state: resort.state,
+          city: resort.city,
+          facilities: resort.facilities,
+          description: resort.description,
+          category: resort.category,
+        },
+        types: resort.type,
+        resortId: resortId,
+        images: [resort.mainImage, resort.images],
+        deletedImages: deletedImages,
+      })
+        .then((response) => {
+          if (response.data?.error) {
+            console.log("Something wrong happened: " + response.data.error);
+          } else {
+            Toast.show({
+              type: "custom",
+              text1: t("editResort.successSubmitNotify"),
+              position: "bottom",
+            });
+          }
+        })
+        .catch((err) => {
+          console.log("An error occurred! " + err);
+        })
+        .finally(() => {
+          setLoadingButton((prev) => ({
+            ...prev,
+            edit: false,
+          }));
+        });
+    }
+  };
+
+  //reset resort
+  const submitReset = () => {
+    setFetchLoading(true);
+    fetchResorts();
+    setErrors({
+      name: "",
+      type: "",
+      country: "",
+      county: "",
+      city: "",
+      image: "",
+    });
+    setDeletedImages([]);
+  };
+
+  //delete resort
+  const deleteResort = () => {
+    setModalVisible((prev) => ({ ...prev, deleteResort: false }));
+    setLoadingButton((prev) => ({
+      ...prev,
+      delete: true,
+    }));
+    APIService.post(config.endpoints.legacy.resort.deleteResort, {
+      resortId: resortId,
+    })
+      .then((response) => {
+        if (response?.data.error) {
+          console.log("Something wrong happened" + response.data.error);
+        } else {
+          Toast.show({
+            type: "custom",
+            text1: t("editResort.successDeleteSubmitNotify"),
+            position: "bottom",
+          });
+          navigation.navigate("MainTabs", { screen: "Profile" });
+        }
+      })
+      .catch((err) => {
+        console.log("An error occurred:" + err);
+        Toast.show({
+          type: "custom",
+          text1: t("error.catchError"),
+          position: "bottom",
+        });
+      })
+      .finally(() => {
+        setLoadingButton((prev) => ({
+          ...prev,
+          delete: false,
+        }));
+      });
+  };
+
   //get resort from db
   const fetchResorts = () => {
     APIService.post(config.endpoints.legacy.resort.getResortById, {
@@ -415,10 +521,12 @@ const EditResort = () => {
             mainImage: resultResort.images[0],
             name: resultResort.name,
             description: resultResort.description,
+            category: resultResort.category,
+            facilities: resultResort.facilities,
             country: resultResort.country,
             county: resultResort.county,
             city: resultResort.city,
-            type: resultResort.type,
+            type: resultResort.types,
           }));
         }
       })
@@ -450,7 +558,7 @@ const EditResort = () => {
         <ScrollView
           contentContainerStyle={{
             padding: 16,
-            gap: 16,
+            gap: 32,
           }}
           showsVerticalScrollIndicator={false}
         >
@@ -605,7 +713,7 @@ const EditResort = () => {
                   alignSelf: "center",
                 }}
                 onPress={() => {
-                  setModalVisible(true);
+                  setModalVisible((prev) => ({ ...prev, addImages: true }));
                   setIsFirstImage(true);
                 }}
               >
@@ -705,7 +813,7 @@ const EditResort = () => {
                   )
                 }
                 onPress={() => {
-                  setModalVisible(true);
+                  setModalVisible((prev) => ({ ...prev, addImages: true }));
                   setIsFirstImage(false);
                 }}
               />
@@ -776,15 +884,136 @@ const EditResort = () => {
               />
             </View>
           </View>
+          <View style={{ width: "100%", marginTop: 16, gap: 16 }}>
+            <CustomButton
+              title={
+                loadingButton.edit ? (
+                  <LottieView
+                    source={require("../../../assets/Trail loading.json")}
+                    autoPlay
+                    loop
+                    style={{ width: 54, height: 54, position: "relative" }}
+                    resizeMode={"cover"}
+                    colorFilters={[
+                      {
+                        keypath: "*",
+                        color: "#ffffff",
+                      },
+                    ]}
+                  />
+                ) : (
+                  t("editResort.submitButton")
+                )
+              }
+              maxHeight={48}
+              backgroundColor={theme.colors.primary}
+              paddingVertical={12}
+              paddingHorizontal={8}
+              textColor={theme.colors.primaryContrast}
+              borderRadius={100}
+              flex={1}
+              iconLeft={
+                !loadingButton.edit && (
+                  <Icon
+                    type={"material-community"}
+                    name={"checkbox-marked-circle-auto-outline"}
+                    size={24}
+                    color={theme.colors.primaryContrast}
+                  />
+                )
+              }
+              onPress={updateResort}
+            />
+
+            <View
+              style={{
+                width: "100%",
+                gap: 16,
+                flexDirection: "row",
+                marginBottom: 16,
+              }}
+            >
+              <CustomButton
+                title={t("editResort.resetButton")}
+                backgroundColor={theme.colors.textSecondary}
+                paddingVertical={12}
+                paddingHorizontal={8}
+                textColor={theme.colors.primaryContrast}
+                borderRadius={100}
+                flex={1}
+                iconLeft={
+                  <Icon
+                    type={"material-community"}
+                    name={"backup-restore"}
+                    size={24}
+                    color={theme.colors.primaryContrast}
+                  />
+                }
+                onPress={submitReset}
+              />
+              <CustomButton
+                title={
+                  loadingButton.delete ? (
+                    <LottieView
+                      source={require("../../../assets/Trail loading.json")}
+                      autoPlay
+                      loop
+                      style={{ width: 54, height: 54 }}
+                      resizeMode={"cover"}
+                      colorFilters={[
+                        {
+                          keypath: "*",
+                          color: "#ffffff",
+                        },
+                      ]}
+                    />
+                  ) : (
+                    t("editResort.deleteButton")
+                  )
+                }
+                maxHeight={48}
+                backgroundColor={theme.colors.primaryDelete}
+                paddingVertical={12}
+                paddingHorizontal={8}
+                textColor={theme.colors.primaryContrast}
+                borderRadius={100}
+                flex={1}
+                iconLeft={
+                  !loadingButton.delete && (
+                    <Icon
+                      type={"material-community"}
+                      name={"delete-forever-outline"}
+                      size={24}
+                      color={theme.colors.primaryContrast}
+                    />
+                  )
+                }
+                onPress={() => {
+                  setModalVisible((prev) => ({ ...prev, deleteResort: true }));
+                }}
+              />
+            </View>
+          </View>
         </ScrollView>
       )}
 
       <AddImageModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
+        visible={modalVisible.addImages}
+        onClose={() =>
+          setModalVisible((prev) => ({ ...prev, addImages: false }))
+        }
         message={t("step4Gallery.choseOptionForUploadPhoto")}
         onCamera={takePhoto}
         onGallery={pickImages}
+      />
+      <DeleteResortModalConfirmation
+        visible={modalVisible.deleteResort}
+        title="Delete Resort"
+        message="Are you sure you want to delete this resort?"
+        onConfirm={deleteResort}
+        onCancel={() =>
+          setModalVisible((prev) => ({ ...prev, deleteResort: false }))
+        }
       />
     </SafeAreaView>
   );

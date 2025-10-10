@@ -42,13 +42,13 @@
     "nameLabel": "Name",
     "descriptionLabel": "Description",
     "nextButton": "Next"
-  },"step2Type": {
-  "typeLabel": "Types",
-  "categoryLabel": "Category",
-  "facilitiesLabel": "Facilities"
-},
+  },
+  "step2Type": {
+    "typeLabel": "Types",
+    "categoryLabel": "Category",
+    "facilitiesLabel": "Facilities"
+  },
   "step3Location": {
-
   },
   "step4Gallery": {
     "addGalleryImagesButton": "Add more images",
@@ -56,24 +56,23 @@
     "choseOptionForUploadPhoto": "Chose the option for upload the image",
     "errorMainImage": "Add main image",
     "errorImage": "Add minimum 1 image for gallery",
-    "submitButton": "Add Resort","successSubmitNotify": "Resort added successfully ✅"
+    "submitButton": "Add Resort",
+    "successSubmitNotify": "Resort added successfully ✅"
   },
   "addResort": {
-    "name": "name",
-    "description": "description...",
-    "country": "country",
-    "county": "county",
-    "city": "city",
-    "type": "select type",
-    "countryLabel": "Country",
-    "countyLabel": "County",
-    "cityLabel": "City",
     "addImageButton": "Upload from gallery",
-
-
+    "addNewResortTitle": "Add New Resort",
     "cancelButton": "Cancel",
+    "city": "city",
+    "cityLabel": "City",
+    "country": "country",
+    "countryLabel": "Country",
+    "county": "county",
+    "countyLabel": "County",
+    "description": "description...",
     "fieldsError": "Fill in the required fields",
-    "addNewResortTitle": "Add New Resort"
+    "name": "name",
+    "type": "select type"
   },
   "home": {
     "searchButtonInput": "Search a resort... ",

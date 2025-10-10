@@ -22,7 +22,6 @@ const AddImageModal = ({ visible, onClose, message, onCamera, onGallery }) => {
           height: "100%",
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: "rgba(0,0,0,0.1)",
         }}
       >
         <TouchableWithoutFeedback onPress={onClose}>
@@ -32,7 +31,7 @@ const AddImageModal = ({ visible, onClose, message, onCamera, onGallery }) => {
               width: "100%",
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: "rgba(0,0,0,0.3)",
+              backgroundColor: theme.colors.shadowPrimary + "88",
             }}
           >
             <TouchableWithoutFeedback>

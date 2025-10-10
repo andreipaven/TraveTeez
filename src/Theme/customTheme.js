@@ -22,7 +22,7 @@ export const lightTheme = {
     textSecondary: "rgb(94,94,94)",
     textDark: "#ffffff",
 
-    shadowPrimary: "rgba(0,0,0,1)",
+    shadowPrimary: "#000000",
     error: "#ff0000",
   },
 };
@@ -50,7 +50,7 @@ export const darkTheme = {
     textSecondary: "rgb(175,175,175)",
     textDark: "#000000",
 
-    shadowPrimary: "rgb(255,255,255)",
+    shadowPrimary: "#ffffff",
     error: "#ff0000",
   },
 };
