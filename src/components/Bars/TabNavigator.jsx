@@ -24,8 +24,16 @@ const AddResortStack = createNativeStackNavigator();
 
 function AddResortFlow() {
   const { t } = useTranslation();
+  const { theme } = useTheme();
   return (
-    <AddResortStack.Navigator>
+    <AddResortStack.Navigator
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: theme.colors.backgroundPrimary,
+        },
+        headerTitleStyle: { color: theme.colors.textPrimary },
+      }}
+    >
       <AddResortStack.Screen
         name={"Step1"}
         component={Step1Info}
@@ -39,6 +47,7 @@ function AddResortFlow() {
               name={
                 Platform.OS === "ios" ? "chevron-back" : "arrow-back-outline"
               }
+              color={theme.colors.textPrimary}
               size={28}
               onPress={() => navigation.goBack()}
             />
@@ -58,6 +67,7 @@ function AddResortFlow() {
               name={
                 Platform.OS === "ios" ? "chevron-back" : "arrow-back-outline"
               }
+              color={theme.colors.textPrimary}
               size={28}
               onPress={() => navigation.goBack()}
             />
@@ -77,6 +87,7 @@ function AddResortFlow() {
               name={
                 Platform.OS === "ios" ? "chevron-back" : "arrow-back-outline"
               }
+              color={theme.colors.textPrimary}
               size={28}
               onPress={() => navigation.goBack()}
             />
@@ -96,6 +107,7 @@ function AddResortFlow() {
               name={
                 Platform.OS === "ios" ? "chevron-back" : "arrow-back-outline"
               }
+              color={theme.colors.textPrimary}
               size={28}
               onPress={() => navigation.goBack()}
             />

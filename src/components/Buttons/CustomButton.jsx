@@ -25,6 +25,7 @@ export default function CustomButton({
   activeOpacity,
   flex,
   height,
+  minHeight,
 }) {
   return (
     <TouchableOpacity
@@ -46,6 +47,7 @@ export default function CustomButton({
           borderColor,
           borderWidth,
           maxHeight: maxHeight,
+          minHeight,
         },
         style,
       ]}

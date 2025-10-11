@@ -1,14 +1,15 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, Text, ScrollView } from "react-native";
 import CustomButton from "../Buttons/CustomButton";
 import { useTheme } from "../../Theme/themeContext";
 import { useTranslation } from "react-i18next";
 import CustomDropdown from "../Inputs/CustomDropdown";
-import { MultiSelect } from "react-native-element-dropdown";
+
 import CustomMultiSelect from "../Inputs/CustomMultiSelect";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { useResort } from "../Hooks/CustomResortContext";
+import AddResortProgressBar from "../Bars/Progress/AddResortProgressBar";
 
 const Step2Type = () => {
   const { theme } = useTheme();
@@ -125,19 +126,40 @@ const Step2Type = () => {
       edges={["bottom", "left", "right"]}
     >
       <ScrollView
-        style={{ flex: 1 }}
         contentContainerStyle={{
-          flexGrow: 1,
+          flex: 1,
           justifyContent: "space-between",
         }}
         showsVerticalScrollIndicator={false}
       >
         <View>
+          <AddResortProgressBar progress={2 / 4} />
+          <Text
+            style={{
+              fontSize: 32,
+              fontWeight: "600",
+              color: theme.colors.textPrimary,
+              marginVertical: 8,
+              width: "80%",
+            }}
+          >
+            {t("step2Type.title")}
+          </Text>
+          <Text
+            style={{
+              fontSize: 16,
+              color: theme.colors.textSecondary,
+              marginBottom: 8,
+            }}
+          >
+            {t("step2Type.subtitle")}
+          </Text>
+
           <CustomDropdown
             name={"category"}
             borderColor={theme.colors.primary}
             backgroundColor={theme.colors.backgroundPaper}
-            borderWidth={1}
+            borderWidth={1.5}
             borderRadius={100}
             label={t("step2Type.categoryLabel")}
             options={categoryOptions}
@@ -149,7 +171,7 @@ const Step2Type = () => {
             name={"type"}
             label={t("step2Type.typeLabel")}
             options={selectedCategoryOptions}
-            borderWidth={1}
+            borderWidth={1.5}
             borderRadius={100}
             error={errors?.type}
             borderColor={theme.colors.primary}
@@ -159,11 +181,21 @@ const Step2Type = () => {
             }
             selectedValue={resort?.type}
           />
+
+          <Text
+            style={{
+              fontSize: 16,
+              color: theme.colors.textSecondary,
+              marginBottom: 8,
+            }}
+          >
+            {t("step2Type.facilitiesHint")}
+          </Text>
           <CustomMultiSelect
             name={"facilities"}
             label={t("step2Type.facilitiesLabel")}
             options={facilityOptions}
-            borderWidth={1}
+            borderWidth={1.5}
             borderRadius={100}
             error={errors?.facilities}
             borderColor={theme.colors.primary}
@@ -175,24 +207,20 @@ const Step2Type = () => {
             search={true}
           />
         </View>
-        <View
-          style={{
-            flexDirection: "row",
-            width: "100%",
-          }}
-        >
-          <CustomButton
-            title={t("step1Info.nextButton")}
-            backgroundColor={theme.colors.primary}
-            textColor={theme.colors.primaryContrast}
-            flex={1}
-            paddingVertical={16}
-            borderRadius={100}
-            paddingHorizontal={8}
-            onPress={nextStep}
-            fontSize={20}
-          />
-        </View>
+
+        <CustomButton
+          title={t("step1Info.nextButton")}
+          backgroundColor={theme.colors.primary}
+          textColor={theme.colors.primaryContrast}
+          flex={1}
+          maxHeight={56}
+          minHeight={56}
+          paddingVertical={12}
+          borderRadius={100}
+          paddingHorizontal={8}
+          onPress={nextStep}
+          fontSize={20}
+        />
       </ScrollView>
     </SafeAreaView>
   );

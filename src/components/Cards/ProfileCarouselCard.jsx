@@ -54,8 +54,10 @@ export default function ProfileCarouselCard({ item, resortId }) {
       style={{
         width: width / 1.5,
         height: 220,
-        overflow: "hidden",
         borderRadius: 12,
+        overflow: "hidden",
+        borderColor: theme.colors.primary,
+        borderWidth: 2,
       }}
     >
       {fetchLoading.images ? (
@@ -77,7 +79,10 @@ export default function ProfileCarouselCard({ item, resortId }) {
             <ImageBackground
               source={{ uri: img?.image_url }}
               resizeMode={"cover"}
-              style={{ width: "100%", height: "100%" }}
+              style={{
+                width: "100%",
+                height: "100%",
+              }}
             />
           )}
         />
@@ -85,14 +90,15 @@ export default function ProfileCarouselCard({ item, resortId }) {
       <Text
         style={{
           position: "absolute",
-          bottom: 0,
-          left: 0,
+          bottom: 4,
+          left: 4,
           fontWeight: "bold",
           maxWidth: "70%",
           flexShrink: 1,
-          backgroundColor: theme.colors.backgroundPrimary + "cc",
-          padding: 4,
-          borderTopRightRadius: 8,
+          backgroundColor: theme.colors.textDark,
+          color: theme.colors.textPrimary,
+          padding: 6,
+          borderRadius: 8,
         }}
       >
         {item.name}

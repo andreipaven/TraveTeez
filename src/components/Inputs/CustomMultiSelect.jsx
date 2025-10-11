@@ -26,9 +26,28 @@ const MultiSelectComponent = ({
   };
 
   const renderItem = (item) => {
+    const isSelected = selected.includes(item.value);
     return (
-      <View style={styles.item}>
-        <Text style={styles.selectedTextStyle}>{item.label}</Text>
+      <View
+        style={[
+          styles.item,
+          {
+            backgroundColor: isSelected
+              ? theme.colors.primary
+              : theme.colors.backgroundPrimary,
+          },
+        ]}
+      >
+        <Text
+          style={[
+            styles.selectedTextStyle,
+            {
+              color: theme.colors.textPrimary,
+            },
+          ]}
+        >
+          {item.label}
+        </Text>
       </View>
     );
   };
@@ -66,22 +85,20 @@ const MultiSelectComponent = ({
             style={[
               styles.selectedStyle,
               {
+                shadowColor: theme.colors.shadowPrimary,
                 backgroundColor: theme.colors.backgroundPrimary,
                 flexDirection: "row",
-                width: "auto",
                 marginHorizontal: 8,
+                alignSelf: "center",
               },
             ]}
           >
             <Text
-              style={[
-                styles.textSelectedStyle,
-                {
-                  shadowColor: theme.colors.shadowPrimary,
-                  flexShrink: 1,
-                  color: theme.colors.textPrimary,
-                },
-              ]}
+              style={{
+                flexShrink: 1,
+                color: theme.colors.textPrimary,
+                marginHorizontal: 4,
+              }}
             >
               {item.label}
             </Text>
@@ -93,11 +110,24 @@ const MultiSelectComponent = ({
                 type={"material-community"}
                 color={theme.colors.textPrimary}
                 name="delete"
-                size={12}
+                size={16}
               />
             </TouchableOpacity>
           </View>
         )}
+        containerStyle={{
+          backgroundColor: theme.colors.backgroundPrimary,
+          borderWidth: 0,
+          shadowColor: theme.colors.shadowPrimary,
+          shadowOffset: {
+            width: 0,
+            height: 2,
+          },
+          shadowOpacity: 0.3,
+          shadowRadius: 3.84,
+
+          elevation: 3,
+        }}
       />
     </View>
   );
@@ -114,10 +144,10 @@ const styles = StyleSheet.create({
 
     shadowOffset: {
       width: 0,
-      height: 1,
+      height: 2,
     },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
+    shadowOpacity: 0.5,
+    shadowRadius: 3.41,
 
     elevation: 2,
   },
@@ -147,14 +177,13 @@ const styles = StyleSheet.create({
   selectedStyle: {
     justifyContent: "center",
     alignItems: "center",
+
     shadowOffset: {
       width: 0,
-      height: 1,
+      height: 2,
     },
-
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
-
+    shadowOpacity: 0.4,
+    shadowRadius: 3.84,
     elevation: 2,
 
     marginVertical: 6,
@@ -162,10 +191,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingVertical: 6,
   },
-  textSelectedStyle: {
-    marginRight: 4,
-    fontSize: 16,
-  },
+
   label: {
     fontSize: 16,
     fontWeight: "600",

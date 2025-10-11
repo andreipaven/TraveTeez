@@ -41,12 +41,20 @@
   "step1Info": {
     "nameLabel": "Name",
     "descriptionLabel": "Description",
-    "nextButton": "Next"
+    "nextButton": "Next",
+    "title": "Start your resort’s story ✨",
+    "subtitle": "Fill in a few details to get started",
+    "descriptionHint": "Add a description that reflects the atmosphere of the resort",
+    "errorsField": "Please complete all required fields."
+
   },
   "step2Type": {
     "typeLabel": "Types",
     "categoryLabel": "Category",
-    "facilitiesLabel": "Facilities"
+    "facilitiesLabel": "Facilities",
+    "title": "What’s your resort’s vibe? \uD83D\uDCAB",
+    "subtitle": "Let’s discover what magical place you’re creating",
+    "facilitiesHint": "Add some magic to your resort ✨"
   },
   "step3Location": {
   },

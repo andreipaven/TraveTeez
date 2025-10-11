@@ -128,9 +128,9 @@ const TypeResortsBar = () => {
       <Favorite
         resortId={item.resort_id}
         size={20}
-        top={8}
-        right={8}
-        style={{ zIndex: 2 }}
+        top={4}
+        right={4}
+        style={{ zIndex: 2, padding: 4 }}
       />
     </View>
   );

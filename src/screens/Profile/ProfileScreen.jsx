@@ -97,7 +97,7 @@ const ProfileScreen = () => {
               borderRadius={64}
               style={{ width: 64, height: 64 }}
             />
-            <Text style={{ fontSize: 24 }}>
+            <Text style={{ fontSize: 24, color: theme.colors.textPrimary }}>
               {user.first_name} {user.last_name}
             </Text>
           </View>

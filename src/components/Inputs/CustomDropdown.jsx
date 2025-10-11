@@ -1,7 +1,7 @@
 // components/Select.js
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Dimensions } from "react-native";
-import { Dropdown } from "react-native-element-dropdown";
+import { Dropdown, SelectCountry } from "react-native-element-dropdown";
 import { useTheme } from "../../Theme/themeContext";
 
 const CustomDropdown = ({
@@ -25,8 +25,20 @@ const CustomDropdown = ({
 
   const renderItem = (item) => {
     return (
-      <View style={styles.item}>
-        <Text style={styles.selectedTextStyle}>{item.label}</Text>
+      <View
+        style={[
+          styles.item,
+          { backgroundColor: theme.colors.backgroundPrimary },
+        ]}
+      >
+        <Text
+          style={[
+            styles.selectedTextStyle,
+            { color: theme.colors.textPrimary },
+          ]}
+        >
+          {item.label}
+        </Text>
       </View>
     );
   };
@@ -54,7 +66,10 @@ const CustomDropdown = ({
           styles.placeholderStyle,
           { color: theme.colors.textSecondary },
         ]}
-        selectedTextStyle={styles.selectedTextStyle}
+        selectedTextStyle={[
+          styles.selectedTextStyle,
+          { color: theme.colors.textPrimary },
+        ]}
         data={options}
         labelField="label"
         valueField="value"
@@ -64,6 +79,19 @@ const CustomDropdown = ({
         renderItem={renderItem}
         search={search}
         searchPlaceholder={"Search"}
+        containerStyle={{
+          backgroundColor: theme.colors.backgroundPrimary,
+          borderWidth: 0,
+          shadowColor: theme.colors.shadowPrimary,
+          shadowOffset: {
+            width: 0,
+            height: 2,
+          },
+          shadowOpacity: 0.3,
+          shadowRadius: 3.84,
+
+          elevation: 3,
+        }}
       />
     </View>
   );
@@ -97,6 +125,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    borderColor: "red",
   },
 });
 

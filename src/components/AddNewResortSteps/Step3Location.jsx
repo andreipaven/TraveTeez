@@ -56,24 +56,19 @@ const Step3Location = () => {
           />
         </View>
 
-        <View
-          style={{
-            flexDirection: "row",
-            width: "100%",
-          }}
-        >
-          <CustomButton
-            title={t("step1Info.nextButton")}
-            backgroundColor={theme.colors.primary}
-            textColor={theme.colors.primaryContrast}
-            flex={1}
-            paddingVertical={16}
-            borderRadius={100}
-            paddingHorizontal={8}
-            onPress={nextStep}
-            fontSize={20}
-          />
-        </View>
+        <CustomButton
+          title={t("step1Info.nextButton")}
+          backgroundColor={theme.colors.primary}
+          textColor={theme.colors.primaryContrast}
+          flex={1}
+          maxHeight={56}
+          minHeight={56}
+          paddingVertical={12}
+          borderRadius={100}
+          paddingHorizontal={8}
+          onPress={nextStep}
+          fontSize={20}
+        />
       </View>
     </SafeAreaView>
   );

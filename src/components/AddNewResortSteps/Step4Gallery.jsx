@@ -502,7 +502,8 @@ const Step4Gallery = () => {
             backgroundColor={theme.colors.primary}
             textColor={theme.colors.primaryContrast}
             flex={1}
-            maxHeight={48}
+            maxHeight={56}
+            minHeight={56}
             paddingVertical={12}
             borderRadius={100}
             paddingHorizontal={8}
