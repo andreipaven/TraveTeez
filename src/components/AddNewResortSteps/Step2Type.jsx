@@ -1,22 +1,19 @@
-import React, { useState } from "react";
+import React, { useImperativeHandle, useState } from "react";
 import { View, Text, ScrollView } from "react-native";
-import CustomButton from "../Buttons/CustomButton";
+
 import { useTheme } from "../../Theme/themeContext";
 import { useTranslation } from "react-i18next";
 import CustomDropdown from "../Inputs/CustomDropdown";
 
 import CustomMultiSelect from "../Inputs/CustomMultiSelect";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native";
-import { useResort } from "../Hooks/CustomResortContext";
-import AddResortProgressBar from "../Bars/Progress/AddResortProgressBar";
 
-const Step2Type = () => {
+import { useResort } from "../Hooks/CustomResortContext";
+
+const Step2Type = ({ ref }) => {
   const { theme } = useTheme();
   const { t } = useTranslation();
   const [errors, setErrors] = useState({});
   const { resort, setResort } = useResort();
-  const navigation = useNavigation();
 
   const categoryOptions = [
     { label: t("typeCategory.nature"), value: "nature" },
@@ -63,6 +60,10 @@ const Step2Type = () => {
     { label: t("facilities.safariExperience"), value: 19 },
     { label: t("facilities.adventureActivities"), value: 20 },
   ];
+
+  useImperativeHandle(ref, () => ({
+    validateAll: () => validate(),
+  }));
 
   //validate form
   const validate = (fieldValues) => {
@@ -112,117 +113,95 @@ const Step2Type = () => {
     validate({ [name]: value });
   };
 
-  const nextStep = () => {
-    if (validate()) navigation.navigate("Step3");
-  };
-
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        padding: 16,
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{
         backgroundColor: theme.colors.backgroundPrimary,
+        padding: 16,
+        paddingTop: 0,
       }}
-      edges={["bottom", "left", "right"]}
     >
-      <ScrollView
-        contentContainerStyle={{
-          flex: 1,
-          justifyContent: "space-between",
-        }}
-        showsVerticalScrollIndicator={false}
-      >
-        <View>
-          <AddResortProgressBar progress={2 / 4} />
-          <Text
-            style={{
-              fontSize: 32,
-              fontWeight: "600",
-              color: theme.colors.textPrimary,
-              marginVertical: 8,
-              width: "80%",
-            }}
-          >
-            {t("step2Type.title")}
-          </Text>
-          <Text
-            style={{
-              fontSize: 16,
-              color: theme.colors.textSecondary,
-              marginBottom: 8,
-            }}
-          >
-            {t("step2Type.subtitle")}
-          </Text>
+      <View>
+        <Text
+          style={{
+            fontSize: 32,
+            fontWeight: "600",
+            color: theme.colors.textPrimary,
+            marginVertical: 8,
+            width: "80%",
+          }}
+        >
+          {t("step2Type.title")}
+        </Text>
+        <Text
+          style={{
+            fontSize: 16,
+            color: theme.colors.textSecondary,
+            marginBottom: 8,
+          }}
+        >
+          {t("step2Type.subtitle")}
+        </Text>
 
-          <CustomDropdown
-            name={"category"}
-            borderColor={theme.colors.primary}
-            backgroundColor={theme.colors.backgroundPaper}
-            borderWidth={1.5}
-            borderRadius={100}
-            label={t("step2Type.categoryLabel")}
-            options={categoryOptions}
-            error={errors?.category}
-            selectedValue={resort?.category}
-            onValueChange={handleChange}
-          />
-          <CustomMultiSelect
-            name={"type"}
-            label={t("step2Type.typeLabel")}
-            options={selectedCategoryOptions}
-            borderWidth={1.5}
-            borderRadius={100}
-            error={errors?.type}
-            borderColor={theme.colors.primary}
-            backgroundColor={theme.colors.backgroundPaper}
-            onValueChange={(selectedItems) =>
-              handleMultiSelectChange("type", selectedItems)
-            }
-            selectedValue={resort?.type}
-          />
-
-          <Text
-            style={{
-              fontSize: 16,
-              color: theme.colors.textSecondary,
-              marginBottom: 8,
-            }}
-          >
-            {t("step2Type.facilitiesHint")}
-          </Text>
-          <CustomMultiSelect
-            name={"facilities"}
-            label={t("step2Type.facilitiesLabel")}
-            options={facilityOptions}
-            borderWidth={1.5}
-            borderRadius={100}
-            error={errors?.facilities}
-            borderColor={theme.colors.primary}
-            backgroundColor={theme.colors.backgroundPaper}
-            onValueChange={(selectedItems) =>
-              handleMultiSelectChange("facilities", selectedItems)
-            }
-            selectedValue={resort?.facilities}
-            search={true}
-          />
-        </View>
-
-        <CustomButton
-          title={t("step1Info.nextButton")}
-          backgroundColor={theme.colors.primary}
-          textColor={theme.colors.primaryContrast}
-          flex={1}
-          maxHeight={56}
-          minHeight={56}
-          paddingVertical={12}
+        <CustomDropdown
+          name={"category"}
+          borderColor={theme.colors.primary}
+          backgroundColor={theme.colors.backgroundPaper}
+          borderWidth={1.5}
           borderRadius={100}
-          paddingHorizontal={8}
-          onPress={nextStep}
-          fontSize={20}
+          label={t("step2Type.categoryLabel")}
+          options={categoryOptions}
+          error={errors?.category}
+          selectedValue={resort?.category}
+          onValueChange={handleChange}
         />
-      </ScrollView>
-    </SafeAreaView>
+        <CustomMultiSelect
+          name={"type"}
+          label={t("step2Type.typeLabel")}
+          options={selectedCategoryOptions}
+          borderWidth={1.5}
+          borderRadius={100}
+          error={errors?.type}
+          borderColor={theme.colors.primary}
+          backgroundColor={theme.colors.backgroundPaper}
+          onValueChange={(selectedItems) =>
+            handleMultiSelectChange("type", selectedItems)
+          }
+          selectedValue={resort?.type}
+        />
+
+        <Text
+          style={{
+            fontSize: 16,
+            color: theme.colors.textSecondary,
+            marginBottom: 8,
+          }}
+        >
+          {t("step2Type.facilitiesHint")}
+        </Text>
+        <CustomMultiSelect
+          name={"facilities"}
+          label={t("step2Type.facilitiesLabel")}
+          options={facilityOptions}
+          borderWidth={1.5}
+          borderRadius={100}
+          error={errors?.facilities}
+          borderColor={theme.colors.primary}
+          backgroundColor={theme.colors.backgroundPaper}
+          onValueChange={(selectedItems) =>
+            handleMultiSelectChange("facilities", selectedItems)
+          }
+          selectedValue={resort?.facilities}
+          search={true}
+        />
+      </View>
+      {(errors.category || errors.type || errors.facilities) && (
+        <Text style={{ color: theme.colors.error, fontWeight: "500" }}>
+          {t("step1Info.errorsField")}
+        </Text>
+      )}
+    </ScrollView>
   );
 };
 

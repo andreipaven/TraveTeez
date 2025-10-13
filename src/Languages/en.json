@@ -42,6 +42,7 @@
     "nameLabel": "Name",
     "descriptionLabel": "Description",
     "nextButton": "Next",
+    "backButton": "Back",
     "title": "Start your resort’s story ✨",
     "subtitle": "Fill in a few details to get started",
     "descriptionHint": "Add a description that reflects the atmosphere of the resort",
@@ -57,6 +58,7 @@
     "facilitiesHint": "Add some magic to your resort ✨"
   },
   "step3Location": {
+    "mapLocationSavedNotify": " \uD83D\uDCCC Location pinned successfully!"
   },
   "step4Gallery": {
     "addGalleryImagesButton": "Add more images",

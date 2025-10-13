@@ -90,6 +90,7 @@ const MultiSelectComponent = ({
                 flexDirection: "row",
                 marginHorizontal: 8,
                 alignSelf: "center",
+                paddingVertical: 8,
               },
             ]}
           >
@@ -144,10 +145,10 @@ const styles = StyleSheet.create({
 
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 1,
     },
-    shadowOpacity: 0.5,
-    shadowRadius: 3.41,
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
 
     elevation: 2,
   },

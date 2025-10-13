@@ -20,7 +20,7 @@ const CustomDropdown = ({
   const { theme } = useTheme();
 
   const handleChange = (item) => {
-    if (onValueChange) onValueChange(name, item.value);
+    if (onValueChange) onValueChange(name, item.value, item.label);
   };
 
   const renderItem = (item) => {

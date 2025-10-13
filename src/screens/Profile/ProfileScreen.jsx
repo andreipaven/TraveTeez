@@ -138,7 +138,7 @@ const ProfileScreen = () => {
               />
             }
             style={{ marginTop: 8 }}
-            onPress={() => navigation.navigate("AddResortFlow")}
+            onPress={() => navigation.navigate("AddResort")}
           />
           <ThemeSwitch />
         </View>

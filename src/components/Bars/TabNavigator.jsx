@@ -17,106 +17,11 @@ import { Button, Platform } from "react-native";
 import { Icon } from "react-native-elements";
 import MapScreen from "../../screens/Map/MapScreen";
 import Step4Gallery from "../AddNewResortSteps/Step4Gallery";
+import AddResort from "../../screens/Profile/AddResort";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 const AddResortStack = createNativeStackNavigator();
-
-function AddResortFlow() {
-  const { t } = useTranslation();
-  const { theme } = useTheme();
-  return (
-    <AddResortStack.Navigator
-      screenOptions={{
-        headerStyle: {
-          backgroundColor: theme.colors.backgroundPrimary,
-        },
-        headerTitleStyle: { color: theme.colors.textPrimary },
-      }}
-    >
-      <AddResortStack.Screen
-        name={"Step1"}
-        component={Step1Info}
-        options={({ navigation }) => ({
-          title: t("addResort.addNewResortTitle"),
-          headerShadowVisible: false,
-          headerTitleAlign: "center",
-          headerLeft: () => (
-            <Icon
-              type={"ionicon"}
-              name={
-                Platform.OS === "ios" ? "chevron-back" : "arrow-back-outline"
-              }
-              color={theme.colors.textPrimary}
-              size={28}
-              onPress={() => navigation.goBack()}
-            />
-          ),
-        })}
-      />
-      <AddResortStack.Screen
-        name={"Step2"}
-        component={Step2Type}
-        options={({ navigation }) => ({
-          title: t("addResort.addNewResortTitle"),
-          headerShadowVisible: false,
-          headerTitleAlign: "center",
-          headerLeft: () => (
-            <Icon
-              type={"ionicon"}
-              name={
-                Platform.OS === "ios" ? "chevron-back" : "arrow-back-outline"
-              }
-              color={theme.colors.textPrimary}
-              size={28}
-              onPress={() => navigation.goBack()}
-            />
-          ),
-        })}
-      />
-      <AddResortStack.Screen
-        name={"Step3"}
-        component={Step3Location}
-        options={({ navigation }) => ({
-          title: t("addResort.addNewResortTitle"),
-          headerShadowVisible: false,
-          headerTitleAlign: "center",
-          headerLeft: () => (
-            <Icon
-              type={"ionicon"}
-              name={
-                Platform.OS === "ios" ? "chevron-back" : "arrow-back-outline"
-              }
-              color={theme.colors.textPrimary}
-              size={28}
-              onPress={() => navigation.goBack()}
-            />
-          ),
-        })}
-      />
-      <AddResortStack.Screen
-        name={"Step4"}
-        component={Step4Gallery}
-        options={({ navigation }) => ({
-          title: t("addResort.addNewResortTitle"),
-          headerShadowVisible: false,
-          headerTitleAlign: "center",
-          headerLeft: () => (
-            <Icon
-              type={"ionicon"}
-              name={
-                Platform.OS === "ios" ? "chevron-back" : "arrow-back-outline"
-              }
-              color={theme.colors.textPrimary}
-              size={28}
-              onPress={() => navigation.goBack()}
-            />
-          ),
-        })}
-      />
-    </AddResortStack.Navigator>
-  );
-}
 
 // Main stack
 function MainStackGroup() {
@@ -137,11 +42,11 @@ function MainStackGroup() {
       />
 
       <Stack.Screen
-        name="AddResortFlow"
-        component={AddResortFlow}
+        name="AddResort"
+        component={AddResort}
         options={{
-          presentation: "card",
-          headerShown: false,
+          headerShown: true,
+          headerShadowVisible: false,
         }}
       />
       <Stack.Screen
