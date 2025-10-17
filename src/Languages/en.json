@@ -58,7 +58,9 @@
     "facilitiesHint": "Add some magic to your resort ✨"
   },
   "step3Location": {
-    "mapLocationSavedNotify": " \uD83D\uDCCC Location pinned successfully!"
+    "mapLocationSavedNotify": " \uD83D\uDCCC Location pinned successfully!",
+    "pinLocationError": "Please place the pin on the exact location.",
+    "title": "Where your story begins \uD83D\uDDFA\uFE0F"
   },
   "step4Gallery": {
     "addGalleryImagesButton": "Add more images",
@@ -67,7 +69,8 @@
     "errorMainImage": "Add main image",
     "errorImage": "Add minimum 1 image for gallery",
     "submitButton": "Add Resort",
-    "successSubmitNotify": "Resort added successfully ✅"
+    "successSubmitNotify": "Resort added successfully ✅",
+    "title": "Add a little magic \uD83E\uDE84"
   },
   "addResort": {
     "addImageButton": "Upload from gallery",

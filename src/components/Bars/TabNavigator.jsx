@@ -28,7 +28,12 @@ function MainStackGroup() {
   const { t } = useTranslation();
   const { theme } = useTheme();
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: theme.colors.backgroundPrimary },
+        headerTitleStyle: { color: theme.colors.textPrimary },
+      }}
+    >
       {/*  Home Stack Group*/}
       <Stack.Screen
         name="TabGroup"

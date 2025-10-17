@@ -13,6 +13,8 @@ export const ResortProvider = ({ children }) => {
     city: "",
     cityValue: "",
     category: "",
+    latitude: null,
+    longitude: null,
     type: [],
     facilities: [],
     images: [],

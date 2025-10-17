@@ -1,5 +1,11 @@
-import React, { useState } from "react";
-import { StyleSheet, View, TouchableOpacity, Text } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Text,
+  Animated,
+} from "react-native";
 import { MultiSelect } from "react-native-element-dropdown";
 import { useTheme } from "../../Theme/themeContext";
 import { Icon } from "react-native-elements";
@@ -15,10 +21,12 @@ const MultiSelectComponent = ({
   onValueChange,
   marginTop,
   selectedValue,
+  focusBorderColor,
   search,
 }) => {
   const [selected, setSelected] = useState(selectedValue);
   const { theme } = useTheme();
+  const [isFocused, setIsFocused] = useState(false);
 
   const handleChange = (items) => {
     setSelected(items);
@@ -52,34 +60,93 @@ const MultiSelectComponent = ({
     );
   };
 
+  const animatedLabel = useRef(
+    new Animated.Value(selected.length ? 1 : 0),
+  ).current;
+
+  useEffect(() => {
+    Animated.timing(animatedLabel, {
+      toValue: isFocused || selected.length ? 1 : 0,
+      duration: 180,
+      useNativeDriver: false,
+    }).start();
+  }, [isFocused, selected]);
+
+  const labelStyle = {
+    position: "absolute",
+    left: animatedLabel.interpolate({
+      inputRange: [0, 1],
+      outputRange: [18, 12],
+    }),
+    top: animatedLabel.interpolate({
+      inputRange: [0, 1],
+      outputRange: [14, -8],
+    }),
+    fontSize: animatedLabel.interpolate({
+      inputRange: [0, 1],
+      outputRange: [16, 12],
+    }),
+    color: animatedLabel.interpolate({
+      inputRange: [0, 1],
+      outputRange: [theme.colors.textSecondary, theme.colors.textPrimary],
+    }),
+    backgroundColor: backgroundColor || theme.colors.backgroundPrimary,
+    paddingHorizontal: 4,
+    zIndex: 10,
+    borderRadius: 100,
+  };
+
   return (
     <View style={[styles.container, { marginTop }]}>
+      {label && <Animated.Text style={labelStyle}>{label}</Animated.Text>}
       <MultiSelect
         style={[
           styles.dropdown,
           {
             borderWidth,
-            borderColor: error ? "red" : borderColor,
+            borderColor: error
+              ? theme.colors.error
+              : isFocused
+                ? focusBorderColor || borderColor
+                : borderColor + "88",
             borderRadius,
             backgroundColor,
           },
         ]}
-        placeholderStyle={[
-          styles.placeholderStyle,
-          { color: theme.colors.textSecondary },
-        ]}
+        placeholderStyle={{ left: 14, color: theme.colors.textPrimary }}
         selectedTextStyle={styles.selectedTextStyle}
-        inputSearchStyle={styles.inputSearchStyle}
+        inputSearchStyle={[
+          styles.inputSearchStyle,
+          {
+            color: theme.colors.textPrimary,
+            borderColor: theme.colors.primary,
+            borderRadius: 100,
+            paddingHorizontal: 8,
+          },
+        ]}
         iconStyle={styles.iconStyle}
         data={options}
         labelField="label"
         valueField="value"
         search={search}
         searchPlaceholder={"Search..."}
-        placeholder={label}
+        placeholder={
+          selected.length
+            ? selected
+                .slice()
+                .reverse()
+                .map((val) => {
+                  const option = options.find((o) => o.value === val);
+                  return option ? option.label : val;
+                })
+                .join(", ")
+            : "..."
+        }
         value={selected}
         onChange={handleChange}
         renderItem={renderItem}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
         renderSelectedItem={(item, unSelect) => (
           <View
             style={[

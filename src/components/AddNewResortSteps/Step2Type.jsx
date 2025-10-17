@@ -128,7 +128,7 @@ const Step2Type = ({ ref }) => {
             fontSize: 32,
             fontWeight: "600",
             color: theme.colors.textPrimary,
-            marginVertical: 8,
+            marginBottom: 8,
             width: "80%",
           }}
         >
@@ -147,7 +147,8 @@ const Step2Type = ({ ref }) => {
         <CustomDropdown
           name={"category"}
           borderColor={theme.colors.primary}
-          backgroundColor={theme.colors.backgroundPaper}
+          focusBorderColor={theme.colors.primary}
+          backgroundColor={theme.colors.backgroundPrimary}
           borderWidth={1.5}
           borderRadius={100}
           label={t("step2Type.categoryLabel")}
@@ -160,11 +161,12 @@ const Step2Type = ({ ref }) => {
           name={"type"}
           label={t("step2Type.typeLabel")}
           options={selectedCategoryOptions}
+          focusBorderColor={theme.colors.primary}
           borderWidth={1.5}
           borderRadius={100}
           error={errors?.type}
           borderColor={theme.colors.primary}
-          backgroundColor={theme.colors.backgroundPaper}
+          backgroundColor={theme.colors.backgroundPrimary}
           onValueChange={(selectedItems) =>
             handleMultiSelectChange("type", selectedItems)
           }
@@ -186,9 +188,10 @@ const Step2Type = ({ ref }) => {
           options={facilityOptions}
           borderWidth={1.5}
           borderRadius={100}
+          focusBorderColor={theme.colors.primary}
           error={errors?.facilities}
           borderColor={theme.colors.primary}
-          backgroundColor={theme.colors.backgroundPaper}
+          backgroundColor={theme.colors.backgroundPrimary}
           onValueChange={(selectedItems) =>
             handleMultiSelectChange("facilities", selectedItems)
           }

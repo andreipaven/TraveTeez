@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
 import { View, Text, StyleSheet, Alert, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../Theme/themeContext";
@@ -13,12 +13,14 @@ import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { Icon } from "react-native-elements";
 import Toast from "react-native-toast-message";
 
-const Step3Location = () => {
+const Step3Location = ({ ref }) => {
   const { theme } = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation();
   const { resort, setResort } = useResort();
   const mapRef = useRef();
+  const [errors, setErrors] = useState({});
+  const [mapButtonIsVisible, setMapButtonIsVisible] = useState(false);
 
   const [location, setLocation] = useState({
     countries: [],
@@ -26,26 +28,68 @@ const Step3Location = () => {
     cities: [],
   });
   const [pinLocation, setPinLocation] = useState({
-    latitude: 0,
-    longitude: 0,
+    latitude: resort?.latitude || 0,
+    longitude: resort?.longitude || 0,
   });
 
-  const nextStep = () => {
-    navigation.navigate("Step4");
+  useImperativeHandle(ref, () => ({
+    validateAll: () => validate(),
+  }));
+
+  const validate = (fieldValues) => {
+    let newErrors = { ...errors };
+
+    const valuesToValidate = fieldValues || resort;
+    if (!valuesToValidate || typeof valuesToValidate !== "object") {
+      return false;
+    }
+    if ("country" in valuesToValidate) {
+      newErrors.country = valuesToValidate.country?.trim() ? "" : "z";
+    }
+    if ("state" in valuesToValidate) {
+      newErrors.state = valuesToValidate.state?.trim() ? "" : "z";
+    }
+    if ("latitude" in valuesToValidate) {
+      const value = valuesToValidate.latitude;
+
+      newErrors.latitude =
+        value !== undefined && value !== null && !isNaN(value)
+          ? ""
+          : t("step3Location.pinLocationError");
+    }
+
+    setErrors(newErrors);
+
+    if (!fieldValues) {
+      return Object.values(newErrors).every((x) => x === "");
+    }
+    return !Object.values(newErrors).some((err) => err !== "");
   };
 
   //change inputs
   const handleChange = (name, value, label) => {
+    setResort((prev) => ({ ...prev, latitude: null, longitude: null }));
+    setMapButtonIsVisible(false);
     if (name === "country") {
       getStatesByCountry(value);
       setLocation((prev) => ({ ...prev, cities: [] }));
+      setResort((prev) => ({
+        ...prev,
+        state: "",
+        stateValue: "",
+        city: "",
+        cityValue: "",
+      }));
       geocode("", "", label);
     } else if (name === "state") {
       getCitiesByState(resort.countryValue, value);
       geocode("", label, resort.country);
+      setResort((prev) => ({ ...prev, city: "", cityValue: "" }));
     } else if (name === "city") {
       geocode(label, resort.state, resort.country);
     }
+
+    validate({ [name]: value });
 
     setResort((prev) => ({
       ...prev,
@@ -76,11 +120,29 @@ const Step3Location = () => {
     mapRef.current?.animateToRegion(initialLocation, 1500);
   };
 
-  const onChangeRegion = (region) => {
+  const onChangeRegion = (region, gesture) => {
     setPinLocation({
       latitude: region.latitude,
       longitude: region.longitude,
     });
+
+    if (gesture.isGesture) {
+      setResort((prev) => ({
+        ...prev,
+        latitude: region.latitude,
+        longitude: region.longitude,
+      }));
+      setMapButtonIsVisible(true);
+      if (resort.latitude) validate();
+    } else {
+      setResort((prev) => ({
+        ...prev,
+        latitude: null,
+        longitude: null,
+      }));
+
+      setMapButtonIsVisible(false);
+    }
   };
 
   const geocode = async (currentCity, currentState, currentCountry) => {
@@ -201,34 +263,52 @@ const Step3Location = () => {
       }}
     >
       <View>
-        <Text>Step3Location</Text>
+        <Text
+          style={{
+            fontSize: 32,
+            fontWeight: "600",
+            color: theme.colors.textPrimary,
+            marginBottom: 8,
+            width: "80%",
+          }}
+        >
+          {t("step3Location.title")}
+        </Text>
         <CustomDropdown
           search={true}
           label={"Country"}
           borderColor={theme.colors.primary}
-          backgroundColor={theme.colors.backgroundPaper}
+          focusBorderColor={theme.colors.primary}
+          backgroundColor={theme.colors.backgroundPrimary}
           borderRadius={100}
           name={"country"}
           selectedValue={resort.countryValue}
           options={location.countries}
           onValueChange={handleChange}
+          error={errors.country}
+          borderWidth={1.5}
         />
         <CustomDropdown
           search={true}
           label={"State"}
           borderColor={theme.colors.primary}
-          backgroundColor={theme.colors.backgroundPaper}
+          focusBorderColor={theme.colors.primary}
+          backgroundColor={theme.colors.backgroundPrimary}
+          borderWidth={1.5}
           borderRadius={100}
           name={"state"}
           selectedValue={resort.stateValue}
           options={location.states}
           onValueChange={handleChange}
+          error={errors.state}
         />
         <CustomDropdown
           search={true}
           label={"City"}
           borderColor={theme.colors.primary}
-          backgroundColor={theme.colors.backgroundPaper}
+          focusBorderColor={theme.colors.primary}
+          backgroundColor={theme.colors.backgroundPrimary}
+          borderWidth={1.5}
           borderRadius={100}
           name={"city"}
           selectedValue={resort.cityValue}
@@ -247,25 +327,24 @@ const Step3Location = () => {
             justifyContent: "center",
           }}
         >
-          <MapView
-            style={{
-              flex: 1,
-              height: "100%",
-              width: "100%",
-              borderRadius: 12,
-            }}
-            ref={mapRef}
-            rotateEnabled={true}
-            loadingEnabled={true}
-            onRegionChange={onChangeRegion}
-          >
-            <Marker coordinate={pinLocation} />
-          </MapView>
+          <View style={{ height: "100%", width: "100%", borderRadius: 12 }}>
+            <MapView
+              style={{ flex: 1 }}
+              ref={mapRef}
+              rotateEnabled={true}
+              loadingEnabled={true}
+              onRegionChange={onChangeRegion}
+              provider={PROVIDER_GOOGLE}
+            >
+              <Marker coordinate={pinLocation} />
+            </MapView>
+          </View>
           <CustomButton
             style={{
               position: "absolute",
               right: 10,
-              bottom: 10,
+              top: 10,
+              display: mapButtonIsVisible ? "flex" : "none",
             }}
             paddingVertical={10}
             paddingHorizontal={10}
@@ -279,15 +358,22 @@ const Step3Location = () => {
                 color={theme.colors.textPrimary}
               />
             }
-            onPress={() =>
+            onPress={() => {
               Toast.show({
                 type: "custom",
                 text1: t("step3Location.mapLocationSavedNotify"),
                 position: "bottom",
-              })
-            }
+              });
+              setMapButtonIsVisible(false);
+              validate();
+            }}
           />
         </View>
+        {errors.latitude && (
+          <Text style={{ fontSize: 16, color: theme.colors.error }}>
+            {errors.latitude}
+          </Text>
+        )}
       </View>
     </ScrollView>
   );

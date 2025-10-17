@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useImperativeHandle, useRef, useState } from "react";
 import {
   Alert,
   Dimensions,
@@ -29,7 +29,7 @@ import { useNavigation } from "@react-navigation/native";
 
 const screenWidth = Dimensions.get("window").width;
 
-const Step4Gallery = () => {
+const Step4Gallery = ({ ref, startLoadingSubmit, endLoadingSubmit }) => {
   const { theme } = useTheme();
   const navigation = useNavigation();
   const { t } = useTranslation();
@@ -42,6 +42,16 @@ const Step4Gallery = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [isFirstImage, setIsFirstImage] = useState(false);
   const [loadingAddResort, setLoadingAddResort] = useState(false);
+
+  useImperativeHandle(ref, () => ({
+    validateAll: () => submitAddResort(),
+  }));
+
+  const bottomSheetModalRefImages = useRef(null);
+
+  //modal functions
+  const handlePresentPressFeedback = () =>
+    bottomSheetModalRefImages.current.present();
 
   const compressImage = async (uri, compress = 0.6, maxWidth = 1080) => {
     try {
@@ -198,6 +208,7 @@ const Step4Gallery = () => {
 
       return;
     }
+
     isFirstImage
       ? setLoadingImages((prev) => ({ ...prev, mainImage: true }))
       : setLoadingImages((prev) => ({ ...prev, galleryImages: true }));
@@ -208,7 +219,6 @@ const Step4Gallery = () => {
       base64: true,
       quality: 0.7,
     });
-
     if (!result.canceled) {
       const selectedImages = result.assets || [result];
       const validImages = [];
@@ -266,15 +276,8 @@ const Step4Gallery = () => {
   };
 
   const submitAddResort = () => {
-    setResort((prev) => ({
-      ...prev,
-      country: "Ro",
-      state: "Ab",
-      city: "Campeni",
-    }));
-
     if (validateImage()) {
-      setLoadingAddResort(true);
+      startLoadingSubmit();
       APIService.post(config.endpoints.legacy.resort.addResort, {
         resort: resort,
       })
@@ -300,227 +303,191 @@ const Step4Gallery = () => {
           console.log("An error occurred " + err);
         })
         .finally(() => {
-          setLoadingAddResort(false);
+          endLoadingSubmit();
         });
     }
   };
 
   return (
-    <SafeAreaView
-      style={{ flex: 1, backgroundColor: theme.colors.backgroundPrimary }}
-      edges={["bottom", "left", "right"]}
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{
+        backgroundColor: theme.colors.backgroundPrimary,
+        padding: 16,
+        paddingTop: 0,
+      }}
     >
-      <ScrollView
-        contentContainerStyle={{
-          paddingVertical: 16,
-          paddingHorizontal: 16,
-          height: resort.images.length < 3 ? "100%" : "auto",
+      <Text
+        style={{
+          fontSize: 32,
+          fontWeight: "600",
+          color: theme.colors.textPrimary,
+          marginBottom: 8,
+          width: "80%",
         }}
-        showsVerticalScrollIndicator={false}
       >
-        <Pressable
-          style={{
-            width: "80%",
-            height: 180,
-            borderWidth: 2,
-            borderColor: errors.mainImage
-              ? theme.colors.error
-              : theme.colors.primary,
-            borderRadius: 16,
-            justifyContent: "center",
-            overflow: "hidden",
-            alignSelf: "center",
-          }}
-          onPress={() => {
-            setModalVisible(true);
-            setIsFirstImage(true);
-          }}
-        >
-          {loadingImages.mainImage ? (
-            <Loading />
-          ) : !resort.mainImage?.uri ? (
-            <View style={{ alignItems: "center" }}>
-              <Icon
-                type={"font-awesome"}
-                name={"image"}
-                size={32}
-                color={
-                  errors.mainImage ? theme.colors.error : theme.colors.primary
-                }
-              />
-              {errors.mainImage ? (
-                <Text style={{ color: theme.colors.error }}>
-                  {errors.mainImage}
-                </Text>
-              ) : (
-                <Text>{t("step4Gallery.choseMainPhoto")}</Text>
-              )}
-            </View>
-          ) : (
-            <View>
-              <ImageBackground
-                source={{ uri: resort.mainImage?.uri }}
-                style={{ width: "100%", height: "100%" }}
-                resizeMode={"cover"}
-              />
-              <CustomButton
-                onPress={() => removeImage(resort.mainImage?.uri)}
-                style={{
-                  position: "absolute",
-                  bottom: 8,
-                  right: 8,
-                  borderRadius: 12,
-                }}
-                width={"fit-content"}
-                iconCenter={
-                  <Icon
-                    name="delete"
-                    size={28}
-                    color="red"
-                    containerStyle={{ padding: 4 }}
-                  />
-                }
-              />
-            </View>
-          )}
-        </Pressable>
-
-        <CustomButton
-          title={
-            loadingImages.galleryImages ? (
-              <LottieView
-                source={require("../../../assets/Trail loading.json")}
-                autoPlay
-                loop
-                style={{ width: 54, height: 54, position: "relative" }}
-                resizeMode={"cover"}
-                colorFilters={[
-                  {
-                    keypath: "*",
-                    color: "#ffffff",
-                  },
-                ]}
-              />
+        {t("step4Gallery.title")}
+      </Text>
+      <Pressable
+        style={{
+          width: "80%",
+          height: 180,
+          borderWidth: 2,
+          borderColor: errors.mainImage
+            ? theme.colors.error
+            : theme.colors.primary,
+          borderRadius: 16,
+          justifyContent: "center",
+          overflow: "hidden",
+          alignSelf: "center",
+        }}
+        onPress={() => {
+          handlePresentPressFeedback();
+          setIsFirstImage(true);
+        }}
+      >
+        {loadingImages.mainImage ? (
+          <Loading />
+        ) : !resort.mainImage?.uri ? (
+          <View style={{ alignItems: "center" }}>
+            <Icon
+              type={"font-awesome"}
+              name={"image"}
+              size={32}
+              color={
+                errors.mainImage ? theme.colors.error : theme.colors.primary
+              }
+            />
+            {errors.mainImage ? (
+              <Text style={{ color: theme.colors.error }}>
+                {errors.mainImage}
+              </Text>
             ) : (
-              t("step4Gallery.addGalleryImagesButton")
-            )
-          }
-          width={"100%"}
-          maxHeight={48}
-          backgroundColor={theme.colors.primary}
-          paddingVertical={12}
-          paddingHorizontal={8}
-          flex={1}
-          textColor={theme.colors.primaryContrast}
-          borderRadius={100}
-          iconLeft={
-            !loadingImages.galleryImages && (
-              <Icon
-                type={"material-community"}
-                name={"checkbox-marked-circle-auto-outline"}
-                size={24}
-                color={theme.colors.primaryContrast}
-              />
-            )
-          }
-          onPress={() => {
-            setModalVisible(true);
-            setIsFirstImage(false);
-          }}
-          style={{ marginVertical: 16 }}
-        />
-        {errors.images && (
-          <Text style={{ color: theme.colors.error, alignSelf: "center" }}>
-            {errors.images}
-          </Text>
-        )}
-
-        <FlatList
-          data={resort.images}
-          keyExtractor={(item) => item.uri}
-          numColumns={2}
-          renderItem={({ item }) => (
-            <View
+              <Text>{t("step4Gallery.choseMainPhoto")}</Text>
+            )}
+          </View>
+        ) : (
+          <View>
+            <ImageBackground
+              source={{ uri: resort.mainImage?.uri }}
+              style={{ width: "100%", height: "100%" }}
+              resizeMode={"cover"}
+            />
+            <CustomButton
+              onPress={() => removeImage(resort.mainImage?.uri)}
               style={{
-                width: screenWidth / 2 - 20,
-                height: 200,
-                borderRadius: 10,
-                margin: 2,
+                position: "absolute",
+                bottom: 8,
+                right: 8,
+                borderRadius: 12,
               }}
-            >
-              <Image
-                source={{ uri: item.uri }}
-                style={{ width: "100%", height: "100%", borderRadius: 10 }}
-                resizeMode="cover"
-              />
-              <CustomButton
-                onPress={() => removeImage(item.uri)}
-                style={{
-                  position: "absolute",
-                  bottom: 4,
-                  right: 4,
-                  borderRadius: 12,
-                }}
-                width={"fit-content"}
-                iconCenter={<Icon name="delete" size={24} color="red" />}
-              />
-            </View>
-          )}
-          contentContainerStyle={{
-            alignSelf: "center",
-          }}
-          scrollEnabled={false}
-        />
-        <View
-          style={{
-            flexDirection: "row",
-            width: "100%",
-
-            paddingTop: 16,
-          }}
-        >
-          <CustomButton
-            title={
-              loadingAddResort ? (
-                <LottieView
-                  source={require("../../../assets/Trail loading.json")}
-                  autoPlay
-                  loop
-                  style={{ width: 54, height: 54, position: "relative" }}
-                  resizeMode={"cover"}
-                  colorFilters={[
-                    {
-                      keypath: "*",
-                      color: "#ffffff",
-                    },
-                  ]}
+              width={"fit-content"}
+              iconCenter={
+                <Icon
+                  name="delete"
+                  size={28}
+                  color="red"
+                  containerStyle={{ padding: 4 }}
                 />
-              ) : (
-                t("step4Gallery.submitButton")
-              )
-            }
-            backgroundColor={theme.colors.primary}
-            textColor={theme.colors.primaryContrast}
-            flex={1}
-            maxHeight={56}
-            minHeight={56}
-            paddingVertical={12}
-            borderRadius={100}
-            paddingHorizontal={8}
-            onPress={submitAddResort}
-            fontSize={20}
-          />
-        </View>
-      </ScrollView>
+              }
+            />
+          </View>
+        )}
+      </Pressable>
 
+      <CustomButton
+        title={
+          loadingImages.galleryImages ? (
+            <LottieView
+              source={require("../../../assets/Trail loading.json")}
+              autoPlay
+              loop
+              style={{ width: 54, height: 54, position: "relative" }}
+              resizeMode={"cover"}
+              colorFilters={[
+                {
+                  keypath: "*",
+                  color: "#ffffff",
+                },
+              ]}
+            />
+          ) : (
+            t("step4Gallery.addGalleryImagesButton")
+          )
+        }
+        width={"100%"}
+        maxHeight={48}
+        backgroundColor={theme.colors.primary}
+        paddingVertical={12}
+        paddingHorizontal={8}
+        flex={1}
+        textColor={theme.colors.primaryContrast}
+        borderRadius={100}
+        iconLeft={
+          !loadingImages.galleryImages && (
+            <Icon
+              type={"material-community"}
+              name={"checkbox-marked-circle-auto-outline"}
+              size={24}
+              color={theme.colors.primaryContrast}
+            />
+          )
+        }
+        onPress={() => {
+          handlePresentPressFeedback();
+          setIsFirstImage(false);
+        }}
+        style={{ marginVertical: 16 }}
+      />
+      {errors.images && (
+        <Text style={{ color: theme.colors.error, alignSelf: "center" }}>
+          {errors.images}
+        </Text>
+      )}
+
+      <FlatList
+        data={resort.images}
+        keyExtractor={(item) => item.uri}
+        numColumns={2}
+        renderItem={({ item }) => (
+          <View
+            style={{
+              width: screenWidth / 2 - 20,
+              height: 200,
+              borderRadius: 10,
+              margin: 2,
+            }}
+          >
+            <Image
+              source={{ uri: item.uri }}
+              style={{ width: "100%", height: "100%", borderRadius: 10 }}
+              resizeMode="cover"
+            />
+            <CustomButton
+              onPress={() => removeImage(item.uri)}
+              style={{
+                position: "absolute",
+                bottom: 4,
+                right: 4,
+                borderRadius: 12,
+              }}
+              width={"fit-content"}
+              iconCenter={<Icon name="delete" size={24} color="red" />}
+            />
+          </View>
+        )}
+        contentContainerStyle={{
+          alignSelf: "center",
+        }}
+        scrollEnabled={false}
+      />
       <AddImageModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
+        ref={bottomSheetModalRefImages}
         message={t("step4Gallery.choseOptionForUploadPhoto")}
         onCamera={takePhoto}
         onGallery={pickImages}
       />
-    </SafeAreaView>
+    </ScrollView>
   );
 };
 export default Step4Gallery;

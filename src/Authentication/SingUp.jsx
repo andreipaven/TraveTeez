@@ -161,12 +161,11 @@ const SingUp = () => {
 
         <CustomTextInput
           name={"lastName"}
-          placeholder={t("signUp.lastName")}
+          label={t("signUp.lastName")}
           value={user.lastName}
           onChangeText={handleChange}
-          borderColor={"transparent"}
-          focusBorderColor={theme.colors.primary}
-          backgroundColor={theme.colors.backgroundPaper}
+          borderColor={theme.colors.primary}
+          backgroundColor={theme.colors.backgroundPrimary}
           iconLeft={
             <Ionicons
               name={"person"}
@@ -176,15 +175,17 @@ const SingUp = () => {
           }
           color={theme.colors.textSecondary}
           error={errors.lastName}
+          borderWidth={1.5}
         />
         <CustomTextInput
           name={"firstName"}
-          placeholder={t("signUp.firstName")}
+          label={t("signUp.firstName")}
           value={user.firstName}
           onChangeText={handleChange}
-          borderColor={"transparent"}
+          borderColor={theme.colors.primary}
           focusBorderColor={theme.colors.primary}
-          backgroundColor={theme.colors.backgroundPaper}
+          backgroundColor={theme.colors.backgroundPrimary}
+          borderWidth={1.5}
           iconLeft={
             <Ionicons
               name={"person"}
@@ -197,12 +198,13 @@ const SingUp = () => {
         />
         <CustomTextInput
           name={"email"}
-          placeholder={t("signUp.email")}
+          label={t("signUp.email")}
           value={user.email}
           onChangeText={handleChange}
-          borderColor={"transparent"}
+          borderColor={theme.colors.primary}
           focusBorderColor={theme.colors.primary}
-          backgroundColor={theme.colors.backgroundPaper}
+          backgroundColor={theme.colors.backgroundPrimary}
+          borderWidth={1.5}
           iconLeft={
             <Ionicons
               name={"mail"}
@@ -215,12 +217,13 @@ const SingUp = () => {
         />
         <CustomTextInput
           name={"password"}
-          placeholder={t("signUp.password")}
+          label={t("signUp.password")}
           value={user.password}
           onChangeText={handleChange}
-          borderColor={"transparent"}
+          borderColor={theme.colors.primary}
           focusBorderColor={theme.colors.primary}
-          backgroundColor={theme.colors.backgroundPaper}
+          backgroundColor={theme.colors.backgroundPrimary}
+          borderWidth={1.5}
           iconLeft={
             <Ionicons
               name={"lock-closed"}
@@ -234,12 +237,13 @@ const SingUp = () => {
         />
         <CustomTextInput
           name={"verifyPassword"}
-          placeholder={t("signUp.verifyPassword")}
+          label={t("signUp.verifyPassword")}
           value={user.verifyPassword}
           onChangeText={handleChange}
-          borderColor={"transparent"}
+          borderColor={theme.colors.primary}
           focusBorderColor={theme.colors.primary}
-          backgroundColor={theme.colors.backgroundPaper}
+          backgroundColor={theme.colors.backgroundPrimary}
+          borderWidth={1.5}
           iconLeft={
             <Ionicons
               name={"lock-closed"}

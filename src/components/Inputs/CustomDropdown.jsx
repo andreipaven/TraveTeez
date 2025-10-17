@@ -1,6 +1,6 @@
 // components/Select.js
-import React, { useState } from "react";
-import { View, Text, StyleSheet, Dimensions } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { View, Text, StyleSheet, Dimensions, Animated } from "react-native";
 import { Dropdown, SelectCountry } from "react-native-element-dropdown";
 import { useTheme } from "../../Theme/themeContext";
 
@@ -16,8 +16,45 @@ const CustomDropdown = ({
   backgroundColor,
   error,
   search,
+  focusBorderColor,
+  textColor,
 }) => {
   const { theme } = useTheme();
+
+  const [isFocused, setIsFocused] = useState(false);
+
+  const animatedLabel = useRef(
+    new Animated.Value(selectedValue ? 1 : 0),
+  ).current;
+  useEffect(() => {
+    Animated.timing(animatedLabel, {
+      toValue: isFocused || selectedValue ? 1 : 0,
+      duration: 180,
+      useNativeDriver: false,
+    }).start();
+  }, [isFocused, selectedValue]);
+
+  const labelStyle = {
+    position: "absolute",
+    left: 14,
+
+    top: animatedLabel.interpolate({
+      inputRange: [0, 1],
+      outputRange: [14, -8],
+    }),
+    fontSize: animatedLabel.interpolate({
+      inputRange: [0, 1],
+      outputRange: [16, 12],
+    }),
+    color: animatedLabel.interpolate({
+      inputRange: [0, 1],
+      outputRange: [theme.colors.textSecondary, theme.colors.textPrimary],
+    }),
+    backgroundColor: backgroundColor || theme.colors.backgroundDefault,
+    paddingHorizontal: 4,
+    width: "auto",
+    borderRadius: 100,
+  };
 
   const handleChange = (item) => {
     if (onValueChange) onValueChange(name, item.value, item.label);
@@ -49,31 +86,34 @@ const CustomDropdown = ({
         styles.wrapper,
         {
           borderWidth,
-          borderColor: error ? "red" : borderColor,
+          borderColor: error
+            ? theme.colors.error
+            : isFocused
+              ? focusBorderColor || borderColor
+              : borderColor + "88",
           borderRadius,
           backgroundColor,
         },
       ]}
     >
-      {label && selectedValue && (
-        <Text style={[styles.label, { color: theme.colors.textSecondary }]}>
-          {label}
-        </Text>
-      )}
+      {label && <Animated.Text style={labelStyle}>{label}</Animated.Text>}
       <Dropdown
         style={styles.dropdown}
         placeholderStyle={[
           styles.placeholderStyle,
-          { color: theme.colors.textSecondary },
-        ]}
-        selectedTextStyle={[
-          styles.selectedTextStyle,
           { color: theme.colors.textPrimary },
         ]}
+        selectedTextStyle={{ color: theme.colors.textPrimary }}
         data={options}
+        inputSearchStyle={{
+          color: theme.colors.textPrimary,
+          borderColor: theme.colors.primary,
+          borderRadius: 100,
+          paddingHorizontal: 8,
+        }}
         labelField="label"
         valueField="value"
-        placeholder={label}
+        placeholder={""}
         value={selectedValue}
         onChange={handleChange}
         renderItem={renderItem}
@@ -89,9 +129,10 @@ const CustomDropdown = ({
           },
           shadowOpacity: 0.3,
           shadowRadius: 3.84,
-
           elevation: 3,
         }}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
       />
     </View>
   );

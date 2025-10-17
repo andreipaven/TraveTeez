@@ -1,100 +1,117 @@
-import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Modal,
-  TouchableWithoutFeedback,
-} from "react-native";
+import React, { useCallback, useMemo, useState } from "react";
+import { View, Text, TouchableWithoutFeedback } from "react-native";
 import { Icon } from "react-native-elements";
 import { useTheme } from "../../Theme/themeContext";
 import CustomButton from "../Buttons/CustomButton";
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetView,
+} from "@gorhom/bottom-sheet";
 
-const AddImageModal = ({ visible, onClose, message, onCamera, onGallery }) => {
+const AddImageModal = ({ ref, message, onCamera, onGallery }) => {
   const { theme } = useTheme();
+  const [isOpen, setIsOpen] = useState(false);
+  const handleSheetChanges = useCallback((index) => {
+    console.log("handleSheetChanges", index);
+    setIsOpen(index === 0);
+  }, []);
+  const snapPoints = useMemo(() => ["100%"], []);
+
+  const backDrop = useCallback((props) => (
+    <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} />
+  ));
+
+  const submitOnClose = () => {
+    if (ref?.current) {
+      ref.current.close();
+    }
+  };
 
   return (
-    visible && (
-      <View
-        style={{
-          position: "absolute",
-          width: "100%",
-          height: "100%",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <TouchableWithoutFeedback onPress={onClose}>
+    <BottomSheetModal
+      ref={ref}
+      onChange={handleSheetChanges}
+      snapPoints={snapPoints}
+      enableDynamicSizing={false}
+      backdropComponent={backDrop}
+      enablePanDownToClose={true}
+      enableContentPanningGesture={true}
+      backgroundStyle={{ backgroundColor: "transparent" }}
+      handleIndicatorStyle={{ display: "none" }}
+    >
+      <TouchableWithoutFeedback onPress={submitOnClose}>
+        <BottomSheetView
+          style={{
+            width: "100%",
+            height: "100%",
+            justifyContent: "center",
+          }}
+        >
           <View
             style={{
-              flex: 1,
-              width: "100%",
-              justifyContent: "center",
+              backgroundColor: theme.colors.backgroundPrimary,
+              padding: 20,
+              borderRadius: 8,
+              width: "80%",
+              shadowColor: theme.colors.shadowPrimary,
+              shadowOpacity: 0.35,
+              shadowOffset: { width: 0, height: 2 },
+              shadowRadius: 6,
+              elevation: 10,
               alignItems: "center",
-              backgroundColor: theme.colors.shadowPrimary + "88",
+              alignSelf: "center",
+              gap: 16,
+              marginTop: 64,
             }}
           >
-            <TouchableWithoutFeedback>
-              <View
-                style={{
-                  backgroundColor: theme.colors.backgroundDefault,
-                  padding: 20,
-                  borderRadius: 8,
-                  width: "80%",
-                  shadowColor: theme.colors.shadowPrimary,
-                  shadowOpacity: 1,
-                  shadowOffset: { width: 0, height: -2 },
-                  shadowRadius: 6,
-                  elevation: 10,
-                  alignItems: "center",
-                  gap: 16,
+            <Text style={{ color: theme.colors.textPrimary }}>{message}</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-evenly",
+                width: "100%",
+              }}
+            >
+              <CustomButton
+                iconLeft={
+                  <Icon
+                    type={"material-community"}
+                    name={"image-multiple-outline"}
+                    size={24}
+                    color={theme.colors.textPrimary}
+                  />
+                }
+                title={"Gallery"}
+                textColor={theme.colors.textPrimary}
+                flexDirection={"column"}
+                onPress={() => {
+                  onGallery();
+                  submitOnClose();
                 }}
-              >
-                <Text>{message}</Text>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-evenly",
-                    width: "100%",
-                  }}
-                >
-                  <CustomButton
-                    iconLeft={
-                      <Icon
-                        type={"material-community"}
-                        name={"image-multiple-outline"}
-                        size={24}
-                      />
-                    }
-                    title={"Gallery"}
-                    flexDirection={"column"}
-                    onPress={() => {
-                      onClose();
-                      onGallery();
-                    }}
+              />
+              <CustomButton
+                iconLeft={
+                  <Icon
+                    type={"material-community"}
+                    name={"camera-outline"}
+                    size={24}
+                    color={theme.colors.textPrimary}
                   />
-                  <CustomButton
-                    iconLeft={
-                      <Icon
-                        type={"material-community"}
-                        name={"camera-outline"}
-                        size={24}
-                      />
-                    }
-                    title={"Camera"}
-                    flexDirection={"column"}
-                    onPress={() => {
-                      onClose();
-                      onCamera();
-                    }}
-                  />
-                </View>
-              </View>
-            </TouchableWithoutFeedback>
+                }
+                title={"Camera"}
+                flexDirection={"column"}
+                textColor={theme.colors.textPrimary}
+                onPress={() => {
+                  onCamera();
+                  submitOnClose();
+                }}
+              />
+            </View>
           </View>
-        </TouchableWithoutFeedback>
-      </View>
-    )
+        </BottomSheetView>
+      </TouchableWithoutFeedback>
+    </BottomSheetModal>
   );
 };
 

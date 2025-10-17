@@ -1,4 +1,9 @@
-import React, { useImperativeHandle, useState } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from "react";
 import {
   View,
   Text,
@@ -11,12 +16,13 @@ import { useTheme } from "../../Theme/themeContext";
 import { useTranslation } from "react-i18next";
 import { useResort } from "../Hooks/CustomResortContext";
 import LottieView from "lottie-react-native";
+import { AuthContext } from "../../Secure/AuthProvider";
+import { Icon } from "react-native-elements";
 
 const Step1Info = ({ ref }) => {
   const { theme } = useTheme();
   const { t } = useTranslation();
   const [errors, setErrors] = useState({});
-
   const { resort, setResort } = useResort();
 
   useImperativeHandle(ref, () => ({
@@ -64,28 +70,26 @@ const Step1Info = ({ ref }) => {
       }}
     >
       <View>
-        <View style={{ marginBottom: 8 }}>
-          <Text
-            style={{
-              fontSize: 32,
-              fontWeight: "600",
-              color: theme.colors.textPrimary,
-              marginBottom: 8,
+        <Text
+          style={{
+            fontSize: 32,
+            fontWeight: "600",
+            color: theme.colors.textPrimary,
+            marginBottom: 8,
+            width: "80%",
+          }}
+        >
+          {t("step1Info.title")}
+        </Text>
 
-              width: "80%",
-            }}
-          >
-            {t("step1Info.title")}
-          </Text>
-          <Text
-            style={{
-              fontSize: 16,
-              color: theme.colors.textSecondary,
-            }}
-          >
-            {t("step1Info.subtitle")}
-          </Text>
-        </View>
+        <Text
+          style={{
+            fontSize: 16,
+            color: theme.colors.textSecondary,
+          }}
+        >
+          {t("step1Info.subtitle")}
+        </Text>
         <CustomTextInput
           label={t("step1Info.nameLabel")}
           name={"name"}
@@ -93,7 +97,7 @@ const Step1Info = ({ ref }) => {
           onChangeText={handleChange}
           borderColor={theme.colors.primary}
           focusBorderColor={theme.colors.primary}
-          backgroundColor={theme.colors.backgroundPaper}
+          backgroundColor={theme.colors.backgroundPrimary}
           color={theme.colors.textPrimary}
           borderRadius={100}
           error={errors.name}
@@ -103,7 +107,7 @@ const Step1Info = ({ ref }) => {
           style={{
             fontSize: 16,
             color: theme.colors.textSecondary,
-            marginBottom: 8,
+            marginVertical: 4,
           }}
         >
           {t("step1Info.descriptionHint")}
@@ -115,7 +119,7 @@ const Step1Info = ({ ref }) => {
           onChangeText={handleChange}
           borderColor={theme.colors.primary}
           focusBorderColor={theme.colors.primary}
-          backgroundColor={theme.colors.backgroundPaper}
+          backgroundColor={theme.colors.backgroundPrimary}
           color={theme.colors.textPrimary}
           borderRadius={8}
           multiLine={true}

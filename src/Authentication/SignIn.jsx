@@ -85,7 +85,6 @@ export default function SignIn() {
             await saveRefreshToken(refreshToken);
             setUser(user);
             setSignInError(false);
-            navigation.navigate("MainTabs", { screen: "Home" });
           }
         })
         .catch((err) => {
@@ -132,9 +131,10 @@ export default function SignIn() {
           placeholder={t("signIn.email")}
           value={state.email}
           onChangeText={handleChange}
-          borderColor={"transparent"}
+          borderColor={theme.colors.primary}
+          label="Email"
           focusBorderColor={theme.colors.primary}
-          backgroundColor={theme.colors.backgroundPaper}
+          backgroundColor={theme.colors.backgroundPrimary}
           iconLeft={
             <Ionicons
               name={"person"}
@@ -144,15 +144,16 @@ export default function SignIn() {
           }
           color={theme.colors.textSecondary}
           error={errors.email}
+          borderWidth={1.5}
         />
         <CustomTextInput
           name={"password"}
-          placeholder={t("signIn.password")}
+          label={t("signIn.password")}
           value={state.password}
           onChangeText={handleChange}
-          borderColor={"transparent"}
+          borderColor={theme.colors.primary}
           focusBorderColor={theme.colors.primary}
-          backgroundColor={theme.colors.backgroundPaper}
+          backgroundColor={theme.colors.backgroundPrimary}
           color={theme.colors.textSecondary}
           error={errors.password}
           secureTextEntry={true}
@@ -163,6 +164,7 @@ export default function SignIn() {
               color={theme.colors.textSecondary}
             />
           }
+          borderWidth={1.5}
         />
         {signInError && (
           <Text style={{ color: "red" }}>{t("signIn.errorInvalid")}</Text>
