@@ -47,7 +47,7 @@ const Step4Gallery = ({
   const [errors, setErrors] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
   const [isFirstImage, setIsFirstImage] = useState(false);
-  const [loadingAddResort, setLoadingAddResort] = useState(false);
+  const [deletedImages, setDeletedImages] = useState([]);
 
   useImperativeHandle(ref, () => ({
     validateAll: () => submitAddResort(),
@@ -118,19 +118,28 @@ const Step4Gallery = ({
     return Object.values(newErrors).every((val) => val === "");
   };
 
-  const removeImage = async (uri) => {
-    const newResort = {
-      ...resort,
-      images: resort.images.filter((img) => img.uri !== uri),
-    };
-    await setResort(newResort);
+  const removeImage = (uri) => {
+    const removedImage = resort.images.find(
+      (img) => (img.uri ?? img.image_url) === uri,
+    );
 
-    if (resort.mainImage?.uri === uri) {
-      const newResort = { ...resort, mainImage: null };
-      await setResort(newResort);
+    if (removedImage?.image_url) {
+      setDeletedImages((prev) => [...prev, removedImage]);
+    }
+
+    if (resort.mainImage?.uri === uri || resort.mainImage?.image_url === uri) {
+      setResort({ ...resort, mainImage: null });
       validateImage({});
     } else {
-      validateImage(resort.images.filter((img) => img.uri !== uri));
+      setResort((prev) => ({
+        ...prev,
+        images: prev.images.filter(
+          (img) => img.uri !== uri && img.image_url !== uri,
+        ),
+      }));
+      validateImage(
+        resort.images.filter((img) => img.uri !== uri && img.image_url !== uri),
+      );
     }
   };
 
@@ -181,13 +190,11 @@ const Step4Gallery = ({
         const updatedImages = [...resort.images, imageToAdd];
 
         if (isFirstImage) {
-          const newResort = { ...resort, mainImage: imageToAdd };
-          await setResort(newResort);
+          setResort({ ...resort, mainImage: imageToAdd });
           setIsFirstImage(false);
           validateImage(imageToAdd);
         } else {
-          const newResort = { ...resort, images: updatedImages };
-          await setResort(newResort);
+          setResort({ ...resort, images: updatedImages });
           validateImage(updatedImages);
         }
       } else {
@@ -270,13 +277,11 @@ const Step4Gallery = ({
         const updatedImages = [...resort.images, ...compressedImages];
 
         if (isFirstImage) {
-          const newResort = { ...resort, mainImage: compressedImages[0] };
-          await setResort(newResort);
+          setResort({ ...resort, mainImage: compressedImages[0] });
           setIsFirstImage(false);
           validateImage(compressedImages[0]);
         } else {
-          const newResort = { ...resort, images: updatedImages };
-          await setResort(newResort);
+          setResort({ ...resort, images: updatedImages });
           validateImage(updatedImages);
         }
       }
@@ -305,8 +310,8 @@ const Step4Gallery = ({
             });
             console.log("all good");
 
-            setTimeout(async () => {
-              await resetResort();
+            setTimeout(() => {
+              resetResort();
               navigation.navigate("TabGroup", { screen: "ProfileScreen" });
             }, 1500);
           }
@@ -360,7 +365,7 @@ const Step4Gallery = ({
       >
         {loadingImages.mainImage ? (
           <Loading />
-        ) : !resort.mainImage?.uri ? (
+        ) : !(resort.mainImage?.uri || resort.mainImage?.image_url) ? (
           <View style={{ alignItems: "center" }}>
             <Icon
               type={"font-awesome"}
@@ -381,12 +386,18 @@ const Step4Gallery = ({
         ) : (
           <View>
             <ImageBackground
-              source={{ uri: resort.mainImage?.uri }}
+              source={{
+                uri: resort.mainImage?.image_url || resort.mainImage?.uri,
+              }}
               style={{ width: "100%", height: "100%" }}
               resizeMode={"cover"}
             />
             <CustomButton
-              onPress={() => removeImage(resort.mainImage?.uri)}
+              onPress={() =>
+                removeImage(
+                  resort.mainImage?.uri || resort.mainImage?.image_url,
+                )
+              }
               style={{
                 position: "absolute",
                 bottom: 8,
@@ -471,12 +482,12 @@ const Step4Gallery = ({
             }}
           >
             <Image
-              source={{ uri: item.uri }}
+              source={{ uri: item.image_url || item.uri }}
               style={{ width: "100%", height: "100%", borderRadius: 10 }}
               resizeMode="cover"
             />
             <CustomButton
-              onPress={() => removeImage(item.uri)}
+              onPress={() => removeImage(item.image_url || item.uri)}
               style={{
                 position: "absolute",
                 bottom: 4,

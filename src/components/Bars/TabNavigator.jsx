@@ -58,15 +58,8 @@ function MainStackGroup() {
         name="EditResort"
         component={EditResort}
         options={{
-          title: t("app.editResortTitle"),
-          headerTitleAlign: "center",
-          headerBackTitleVisible: false,
-          headerTitleStyle: { fontSize: 16 },
+          headerShown: true,
           headerShadowVisible: false,
-          headerStyle: {
-            backgroundColor: theme.colors.backgroundPrimary,
-          },
-          headerTintColor: theme.colors.textPrimary,
         }}
       />
     </Stack.Navigator>

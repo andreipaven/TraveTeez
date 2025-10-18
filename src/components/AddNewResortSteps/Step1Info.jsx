@@ -14,16 +14,13 @@ import {
 import CustomTextInput from "../Inputs/CustomTextInput";
 import { useTheme } from "../../Theme/themeContext";
 import { useTranslation } from "react-i18next";
-import { useResort } from "../Hooks/CustomResortContext";
+import { useResort } from "../Hooks/AddResortStorage";
 import LottieView from "lottie-react-native";
-import { AuthContext } from "../../Secure/AuthProvider";
-import { Icon } from "react-native-elements";
 
-const Step1Info = ({ ref }) => {
+const Step1Info = ({ ref, resort, setResort }) => {
   const { theme } = useTheme();
   const { t } = useTranslation();
   const [errors, setErrors] = useState({});
-  const { resort, setResort } = useResort();
 
   useImperativeHandle(ref, () => ({
     validateAll: () => validate(),
@@ -52,11 +49,13 @@ const Step1Info = ({ ref }) => {
   };
 
   //change inputs
-  const handleChange = (name, value) => {
-    setResort((prev) => ({
-      ...prev,
+  const handleChange = async (name, value) => {
+    const newResort = {
+      ...resort,
       [name]: value,
-    }));
+    };
+
+    await setResort(newResort);
     validate({ [name]: value });
   };
 

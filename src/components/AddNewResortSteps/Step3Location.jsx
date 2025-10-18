@@ -1,23 +1,29 @@
 import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
-import { View, Text, StyleSheet, Alert, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Alert,
+  ScrollView,
+  Platform,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../Theme/themeContext";
 import CustomButton from "../Buttons/CustomButton";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import CustomDropdown from "../Inputs/CustomDropdown";
 import { API_KEY_LOCATION } from "@env";
-import { useResort } from "../Hooks/CustomResortContext";
+import { useResort } from "../Hooks/AddResortStorage";
 import * as Location from "expo-location";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { Icon } from "react-native-elements";
 import Toast from "react-native-toast-message";
 
-const Step3Location = ({ ref }) => {
+const Step3Location = ({ ref, resort, setResort }) => {
   const { theme } = useTheme();
   const { t } = useTranslation();
-  const navigation = useNavigation();
-  const { resort, setResort } = useResort();
+
   const mapRef = useRef();
   const [errors, setErrors] = useState({});
   const [mapButtonIsVisible, setMapButtonIsVisible] = useState(false);
@@ -51,7 +57,6 @@ const Step3Location = ({ ref }) => {
     }
     if ("latitude" in valuesToValidate) {
       const value = valuesToValidate.latitude;
-
       newErrors.latitude =
         value !== undefined && value !== null && !isNaN(value)
           ? ""
@@ -67,35 +72,49 @@ const Step3Location = ({ ref }) => {
   };
 
   //change inputs
-  const handleChange = (name, value, label) => {
-    setResort((prev) => ({ ...prev, latitude: null, longitude: null }));
+  const handleChange = async (name, value, label) => {
+    const newResort = {
+      ...resort,
+      latitude: null,
+      longitude: null,
+    };
+    await setResort(newResort);
     setMapButtonIsVisible(false);
     if (name === "country") {
       getStatesByCountry(value);
       setLocation((prev) => ({ ...prev, cities: [] }));
-      setResort((prev) => ({
-        ...prev,
+      const newResort = {
+        ...resort,
         state: "",
         stateValue: "",
         city: "",
         cityValue: "",
-      }));
+      };
+      await setResort(newResort);
       geocode("", "", label);
     } else if (name === "state") {
       getCitiesByState(resort.countryValue, value);
       geocode("", label, resort.country);
-      setResort((prev) => ({ ...prev, city: "", cityValue: "" }));
+
+      const newResort = {
+        ...resort,
+        city: "",
+        cityValue: "",
+      };
+      await setResort(newResort);
     } else if (name === "city") {
       geocode(label, resort.state, resort.country);
     }
 
     validate({ [name]: value });
 
-    setResort((prev) => ({
-      ...prev,
+    const secondNewResort = {
+      ...resort,
       [name]: label,
       [`${name}Value`]: value,
-    }));
+      pinVerified: false,
+    };
+    await setResort(secondNewResort);
   };
 
   //map methods and things
@@ -111,43 +130,36 @@ const Step3Location = ({ ref }) => {
 
   const focusMap = (lat, long, zoom) => {
     const initialLocation = {
-      latitude: lat,
-      longitude: long,
-      latitudeDelta: zoom,
-      longitudeDelta: zoom,
+      latitude: resort.pinVerified && resort.latitude ? resort.latitude : lat,
+      longitude:
+        resort.pinVerified && resort.longitude ? resort.longitude : long,
+      latitudeDelta: resort.pinVerified && resort.latitude ? 0.002 : zoom,
+      longitudeDelta: resort.pinVerified && resort.longitude ? 0.002 : zoom,
     };
 
     mapRef.current?.animateToRegion(initialLocation, 1500);
   };
 
-  const onChangeRegion = (region, gesture) => {
+  const onChangeRegion = async (region, gesture) => {
     setPinLocation({
       latitude: region.latitude,
       longitude: region.longitude,
     });
 
-    if (gesture.isGesture) {
-      setResort((prev) => ({
-        ...prev,
-        latitude: region.latitude,
-        longitude: region.longitude,
-      }));
+    if (gesture?.isGesture) {
+      if (resort.pinVerified) {
+        const newResort = { ...resort, latitude: null, longitude: null };
+        await setResort(newResort);
+      }
       setMapButtonIsVisible(true);
-      if (resort.latitude) validate();
     } else {
-      setResort((prev) => ({
-        ...prev,
-        latitude: null,
-        longitude: null,
-      }));
-
       setMapButtonIsVisible(false);
     }
   };
 
   const geocode = async (currentCity, currentState, currentCountry) => {
     if (await getPermissions()) {
-      let zoom = 0;
+      let zoom = 1;
       if (currentCountry && !currentCity && !currentState) {
         zoom = 8;
       } else if (currentCountry && currentState && !currentCity) {
@@ -252,7 +264,6 @@ const Step3Location = ({ ref }) => {
 
     geocode(resort.city, resort.state, resort.country);
   }, []);
-
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
@@ -311,7 +322,7 @@ const Step3Location = ({ ref }) => {
           borderWidth={1.5}
           borderRadius={100}
           name={"city"}
-          selectedValue={resort.cityValue}
+          selectedValue={parseInt(resort.cityValue, 10)}
           options={location.cities}
           onValueChange={handleChange}
         />
@@ -335,8 +346,17 @@ const Step3Location = ({ ref }) => {
               loadingEnabled={true}
               onRegionChange={onChangeRegion}
               provider={PROVIDER_GOOGLE}
+              mapType={"standard"}
             >
-              <Marker coordinate={pinLocation} />
+              {!resort.latitude && <Marker coordinate={pinLocation} />}
+              {resort.latitude && (
+                <Marker
+                  coordinate={{
+                    latitude: resort.latitude,
+                    longitude: resort.longitude,
+                  }}
+                />
+              )}
             </MapView>
           </View>
           <CustomButton
@@ -358,14 +378,21 @@ const Step3Location = ({ ref }) => {
                 color={theme.colors.textPrimary}
               />
             }
-            onPress={() => {
+            onPress={async () => {
               Toast.show({
                 type: "custom",
                 text1: t("step3Location.mapLocationSavedNotify"),
                 position: "bottom",
               });
               setMapButtonIsVisible(false);
-              validate();
+              const newResort = {
+                ...resort,
+                latitude: pinLocation.latitude,
+                longitude: pinLocation.longitude,
+                pinVerified: true,
+              };
+              await setResort(newResort);
+              setErrors((prev) => ({ ...prev, latitude: "" }));
             }}
           />
         </View>

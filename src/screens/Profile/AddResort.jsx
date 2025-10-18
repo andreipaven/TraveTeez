@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "../../Theme/themeContext";
 import LottieView from "lottie-react-native";
 import { useNavigation } from "@react-navigation/native";
+import useResortStorage from "../../components/Hooks/AddResortStorage";
 
 const AddResort = () => {
   const { t } = useTranslation();
@@ -25,6 +26,8 @@ const AddResort = () => {
   };
 
   const [loadingSubmitResort, setLoadingSubmitResort] = useState(false);
+
+  const { resort, setResort, resetResort } = useResortStorage();
 
   const nextStep = async () => {
     const currentRef = stepRefs[step].current;
@@ -52,14 +55,27 @@ const AddResort = () => {
     >
       <AddResortProgressBar progress={step / 4} marginBottom={8} />
       <View style={{ flex: 1 }}>
-        {step === 1 && <Step1Info ref={stepRefs[1]} />}
-        {step === 2 && <Step2Type ref={stepRefs[2]} />}
-        {step === 3 && <Step3Location ref={stepRefs[3]} />}
+        {step === 1 && (
+          <Step1Info ref={stepRefs[1]} resort={resort} setResort={setResort} />
+        )}
+        {step === 2 && (
+          <Step2Type ref={stepRefs[2]} resort={resort} setResort={setResort} />
+        )}
+        {step === 3 && (
+          <Step3Location
+            ref={stepRefs[3]}
+            resort={resort}
+            setResort={setResort}
+          />
+        )}
         {step === 4 && (
           <Step4Gallery
             ref={stepRefs[4]}
             startLoadingSubmit={() => setLoadingSubmitResort(true)}
             endLoadingSubmit={() => setLoadingSubmitResort(false)}
+            resort={resort}
+            setResort={setResort}
+            resetResort={resetResort}
           />
         )}
       </View>

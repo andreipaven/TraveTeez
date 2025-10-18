@@ -59,7 +59,7 @@
   },
   "step3Location": {
     "mapLocationSavedNotify": " \uD83D\uDCCC Location pinned successfully!",
-    "pinLocationError": "Please place the pin on the exact location.",
+    "pinLocationError": "Please pin the exact location and press verify location button",
     "title": "Where your story begins \uD83D\uDDFA\uFE0F"
   },
   "step4Gallery": {

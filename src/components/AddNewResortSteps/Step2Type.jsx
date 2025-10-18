@@ -7,13 +7,10 @@ import CustomDropdown from "../Inputs/CustomDropdown";
 
 import CustomMultiSelect from "../Inputs/CustomMultiSelect";
 
-import { useResort } from "../Hooks/CustomResortContext";
-
-const Step2Type = ({ ref }) => {
+const Step2Type = ({ ref, resort, setResort }) => {
   const { theme } = useTheme();
   const { t } = useTranslation();
   const [errors, setErrors] = useState({});
-  const { resort, setResort } = useResort();
 
   const categoryOptions = [
     { label: t("typeCategory.nature"), value: "nature" },
@@ -95,20 +92,24 @@ const Step2Type = ({ ref }) => {
   };
 
   //change input
-  const handleChange = (name, value) => {
-    setResort((prev) => ({
-      ...prev,
+  const handleChange = async (name, value) => {
+    const newResort = {
+      ...resort,
       [name]: value,
-    }));
+    };
+
+    await setResort(newResort);
 
     validate({ [name]: value });
   };
 
-  const handleMultiSelectChange = (name, value) => {
-    setResort((prev) => ({
-      ...prev,
+  const handleMultiSelectChange = async (name, value) => {
+    const newResort = {
+      ...resort,
       [name]: value,
-    }));
+    };
+
+    await setResort(newResort);
 
     validate({ [name]: value });
   };
