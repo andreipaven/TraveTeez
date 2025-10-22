@@ -124,9 +124,11 @@ export default function CustomTextInput({
         {multiLine && maxLength && (
           <Text
             style={{
+              position: "absolute",
               alignSelf: "flex-end",
-              paddingRight: 8,
+              paddingRight: 4,
               paddingTop: 4,
+              right: 0,
               color: theme.colors.textSecondary,
               fontSize: 12,
             }}

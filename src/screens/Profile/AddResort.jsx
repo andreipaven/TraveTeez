@@ -1,5 +1,5 @@
-import React, { useState, useRef } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React, { useState, useRef, useLayoutEffect } from "react";
+import { View, Text, StyleSheet, Button } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AddResortProgressBar from "../../components/Bars/Progress/AddResortProgressBar";
 import Step1Info from "../../components/AddNewResortSteps/Step1Info";
@@ -11,7 +11,8 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "../../Theme/themeContext";
 import LottieView from "lottie-react-native";
 import { useNavigation } from "@react-navigation/native";
-import useResortStorage from "../../components/Hooks/AddResortStorage";
+import useResortStorage from "../../components/Hooks/useResortStorage";
+import { Icon } from "react-native-elements";
 
 const AddResort = () => {
   const { t } = useTranslation();
@@ -28,6 +29,27 @@ const AddResort = () => {
   const [loadingSubmitResort, setLoadingSubmitResort] = useState(false);
 
   const { resort, setResort, resetResort } = useResortStorage();
+
+  //header settings
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <CustomButton
+          iconLeft={
+            <Icon
+              color={theme.colors.textPrimary}
+              size={24}
+              type={"material-community"}
+              name={"close"}
+            />
+          }
+          style={{ paddingRight: 8 }}
+          paddingVertical={8}
+          onPress={() => navigation.goBack()}
+        />
+      ),
+    });
+  }, [navigation, theme, resort]);
 
   const nextStep = async () => {
     const currentRef = stepRefs[step].current;

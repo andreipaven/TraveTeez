@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { useTheme } from "../../Theme/themeContext";
 import { useTranslation } from "react-i18next";
-import { useResort } from "../Hooks/AddResortStorage";
+import { useResort } from "../Hooks/useResortStorage";
 import * as ImageManipulator from "expo-image-manipulator";
 import * as ImagePicker from "expo-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";

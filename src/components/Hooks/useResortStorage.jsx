@@ -41,10 +41,15 @@ const useResortStorage = (storageKey = "resort") => {
     loadResort();
   }, []);
 
-  const setResort = async (newResort) => {
+  const setResort = async (updater) => {
     try {
-      setResortState(newResort);
-      await AsyncStorage.setItem(storageKey, JSON.stringify(newResort));
+      setResortState((prev) => {
+        const newResort =
+          typeof updater === "function" ? updater(prev) : updater;
+
+        AsyncStorage.setItem(storageKey, JSON.stringify(newResort));
+        return newResort;
+      });
     } catch (e) {
       console.log("Eroare la salvarea resortului:", e);
     }

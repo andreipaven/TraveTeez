@@ -93,23 +93,13 @@ const Step2Type = ({ ref, resort, setResort }) => {
 
   //change input
   const handleChange = async (name, value) => {
-    const newResort = {
-      ...resort,
-      [name]: value,
-    };
-
-    await setResort(newResort);
+    await setResort((prev) => ({ ...prev, [name]: value }));
 
     validate({ [name]: value });
   };
 
   const handleMultiSelectChange = async (name, value) => {
-    const newResort = {
-      ...resort,
-      [name]: value,
-    };
-
-    await setResort(newResort);
+    await setResort((prev) => ({ ...prev, [name]: value }));
 
     validate({ [name]: value });
   };

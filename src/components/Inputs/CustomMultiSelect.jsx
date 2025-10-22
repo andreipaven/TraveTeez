@@ -113,7 +113,12 @@ const MultiSelectComponent = ({
             backgroundColor,
           },
         ]}
-        placeholderStyle={{ left: 14, color: theme.colors.textPrimary }}
+        placeholderStyle={{
+          left: 14,
+          color: theme.colors.textPrimary,
+
+          marginRight: 14,
+        }}
         selectedTextStyle={styles.selectedTextStyle}
         inputSearchStyle={[
           styles.inputSearchStyle,

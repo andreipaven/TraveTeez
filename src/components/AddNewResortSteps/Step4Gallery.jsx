@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { useTheme } from "../../Theme/themeContext";
 import { useTranslation } from "react-i18next";
-import { useResort } from "../Hooks/AddResortStorage";
+import { useResort } from "../Hooks/useResortStorage";
 import * as ImageManipulator from "expo-image-manipulator";
 import * as ImagePicker from "expo-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -119,15 +119,13 @@ const Step4Gallery = ({
   };
 
   const removeImage = async (uri) => {
-    const newResort = {
-      ...resort,
+    await setResort((prev) => ({
+      ...prev,
       images: resort.images.filter((img) => img.uri !== uri),
-    };
-    await setResort(newResort);
+    }));
 
     if (resort.mainImage?.uri === uri) {
-      const newResort = { ...resort, mainImage: null };
-      await setResort(newResort);
+      await setResort((prev) => ({ ...prev, mainImage: null }));
       validateImage({});
     } else {
       validateImage(resort.images.filter((img) => img.uri !== uri));
@@ -181,13 +179,11 @@ const Step4Gallery = ({
         const updatedImages = [...resort.images, imageToAdd];
 
         if (isFirstImage) {
-          const newResort = { ...resort, mainImage: imageToAdd };
-          await setResort(newResort);
+          await setResort((prev) => ({ ...prev, mainImage: imageToAdd }));
           setIsFirstImage(false);
           validateImage(imageToAdd);
         } else {
-          const newResort = { ...resort, images: updatedImages };
-          await setResort(newResort);
+          await setResort((prev) => ({ ...prev, images: updatedImages }));
           validateImage(updatedImages);
         }
       } else {
@@ -270,13 +266,17 @@ const Step4Gallery = ({
         const updatedImages = [...resort.images, ...compressedImages];
 
         if (isFirstImage) {
-          const newResort = { ...resort, mainImage: compressedImages[0] };
-          await setResort(newResort);
+          await setResort((prev) => ({
+            ...prev,
+            mainImage: compressedImages[0],
+          }));
           setIsFirstImage(false);
           validateImage(compressedImages[0]);
         } else {
-          const newResort = { ...resort, images: updatedImages };
-          await setResort(newResort);
+          await setResort((prev) => ({
+            ...prev,
+            images: updatedImages,
+          }));
           validateImage(updatedImages);
         }
       }

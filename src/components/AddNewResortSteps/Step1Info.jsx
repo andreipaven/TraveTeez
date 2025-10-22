@@ -1,21 +1,10 @@
-import React, {
-  useContext,
-  useEffect,
-  useImperativeHandle,
-  useState,
-} from "react";
-import {
-  View,
-  Text,
-  TouchableWithoutFeedback,
-  Keyboard,
-  ScrollView,
-} from "react-native";
+import React, { useImperativeHandle, useState } from "react";
+import { View, Text, ScrollView } from "react-native";
 import CustomTextInput from "../Inputs/CustomTextInput";
 import { useTheme } from "../../Theme/themeContext";
 import { useTranslation } from "react-i18next";
-import { useResort } from "../Hooks/AddResortStorage";
 import LottieView from "lottie-react-native";
+import Loading from "../Loading/Loading";
 
 const Step1Info = ({ ref, resort, setResort }) => {
   const { theme } = useTheme();
@@ -50,12 +39,7 @@ const Step1Info = ({ ref, resort, setResort }) => {
 
   //change inputs
   const handleChange = async (name, value) => {
-    const newResort = {
-      ...resort,
-      [name]: value,
-    };
-
-    await setResort(newResort);
+    await setResort((prev) => ({ ...prev, [name]: value }));
     validate({ [name]: value });
   };
 

@@ -5,20 +5,20 @@ import AddResortProgressBar from "../../components/Bars/Progress/AddResortProgre
 import Step1Info from "../../components/AddNewResortSteps/Step1Info";
 import Step2Type from "../../components/AddNewResortSteps/Step2Type";
 import Step3Location from "../../components/AddNewResortSteps/Step3Location";
-import Step4Gallery from "../../components/AddNewResortSteps/Step4Gallery";
 import CustomButton from "../../components/Buttons/CustomButton";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "../../Theme/themeContext";
 import LottieView from "lottie-react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { useResort } from "../../components/Hooks/AddResortStorage";
 import APIService from "../../services/APIService";
 import { config } from "../../services/config";
 import Toast from "react-native-toast-message";
 import Loading from "../../components/Loading/Loading";
 import EditStep4Gallery from "../../components/EditResortSteps/EditStep4Gallery";
+import { useEditResort } from "../../components/Hooks/useEditResort";
+import { Icon } from "react-native-elements";
 
-const AddResort = () => {
+const EditResort = () => {
   const route = useRoute();
   const { state } = route.params;
   const { resortId } = state;
@@ -36,7 +36,7 @@ const AddResort = () => {
 
   const [loadingSubmitResort, setLoadingSubmitResort] = useState(false);
 
-  const { resort, setResort, resetResort } = useResort();
+  const { resort, setResort, resetResort } = useEditResort();
 
   //header settings
   useLayoutEffect(() => {
@@ -48,14 +48,26 @@ const AddResort = () => {
           color={theme.colors.primary}
         />
       ),
+      headerLeft: () => (
+        <CustomButton
+          iconLeft={
+            <Icon
+              color={theme.colors.textPrimary}
+              size={24}
+              type={"material-community"}
+              name={"close"}
+            />
+          }
+          style={{ paddingRight: 8 }}
+          paddingVertical={8}
+          onPress={() => navigation.goBack()}
+        />
+      ),
     });
   }, [navigation, theme, resort]);
 
   //update resort
-
-  const updateResort = () => {
-    console.log(resort.type);
-  };
+  const updateResort = () => {};
 
   const nextStep = async () => {
     const currentRef = stepRefs[step].current;
@@ -227,4 +239,4 @@ const AddResort = () => {
   );
 };
 
-export default AddResort;
+export default EditResort;
