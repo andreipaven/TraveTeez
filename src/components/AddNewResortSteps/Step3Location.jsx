@@ -18,12 +18,12 @@ import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { Icon } from "react-native-elements";
 import Toast from "react-native-toast-message";
 
-const Step3Location = ({ ref, resort, setResort }) => {
+const Step3Location = ({ ref, resort, setResort, errors, setErrors }) => {
   const { theme } = useTheme();
   const { t } = useTranslation();
 
   const mapRef = useRef();
-  const [errors, setErrors] = useState({});
+
   const [mapButtonIsVisible, setMapButtonIsVisible] = useState(false);
 
   const [location, setLocation] = useState({

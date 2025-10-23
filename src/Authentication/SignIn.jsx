@@ -142,7 +142,7 @@ export default function SignIn() {
               color={theme.colors.textSecondary}
             />
           }
-          color={theme.colors.textSecondary}
+          textColor={theme.colors.textSecondary}
           error={errors.email}
           borderWidth={1.5}
         />
@@ -154,7 +154,7 @@ export default function SignIn() {
           borderColor={theme.colors.primary}
           focusBorderColor={theme.colors.primary}
           backgroundColor={theme.colors.backgroundPrimary}
-          color={theme.colors.textSecondary}
+          textColor={theme.colors.textSecondary}
           error={errors.password}
           secureTextEntry={true}
           iconLeft={

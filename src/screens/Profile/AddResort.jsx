@@ -13,12 +13,14 @@ import LottieView from "lottie-react-native";
 import { useNavigation } from "@react-navigation/native";
 import useResortStorage from "../../components/Hooks/useResortStorage";
 import { Icon } from "react-native-elements";
+import * as Haptics from "expo-haptics";
 
 const AddResort = () => {
   const { t } = useTranslation();
   const { theme } = useTheme();
   const [step, setStep] = useState(1);
   const navigation = useNavigation();
+  const [errors, setErrors] = useState({});
   const stepRefs = {
     1: useRef(),
     2: useRef(),
@@ -45,26 +47,50 @@ const AddResort = () => {
           }
           style={{ paddingRight: 8 }}
           paddingVertical={8}
-          onPress={() => navigation.goBack()}
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            navigation.goBack();
+          }}
         />
       ),
     });
   }, [navigation, theme, resort]);
 
   const nextStep = async () => {
-    const currentRef = stepRefs[step].current;
+    const currentRef = stepRefs[step]?.current;
+    if (!currentRef || typeof currentRef.validateAll !== "function") return;
 
-    if (currentRef && typeof currentRef.validateAll() === "boolean") {
-      const valid = await currentRef.validateAll();
+    const result = await currentRef.validateAll();
 
-      if (!valid || step >= 4) return;
-      setStep(step + 1);
+    if (typeof result === "boolean") {
+      if (!result) {
+        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        return;
+      }
+
+      if (step < 4) {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        setStep(step + 1);
+      }
+      return;
+    }
+
+    if (
+      step === 4 &&
+      result === undefined &&
+      Object.values(errors).every((x) => x === "")
+    ) {
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    } else {
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     }
   };
 
   const prevStep = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     if (step > 1) {
       setStep(step - 1);
+      setErrors({});
     } else {
       navigation.goBack();
     }
@@ -78,16 +104,30 @@ const AddResort = () => {
       <AddResortProgressBar progress={step / 4} marginBottom={8} />
       <View style={{ flex: 1 }}>
         {step === 1 && (
-          <Step1Info ref={stepRefs[1]} resort={resort} setResort={setResort} />
+          <Step1Info
+            ref={stepRefs[1]}
+            resort={resort}
+            setResort={setResort}
+            errors={errors}
+            setErrors={setErrors}
+          />
         )}
         {step === 2 && (
-          <Step2Type ref={stepRefs[2]} resort={resort} setResort={setResort} />
+          <Step2Type
+            ref={stepRefs[2]}
+            resort={resort}
+            setResort={setResort}
+            errors={errors}
+            setErrors={setErrors}
+          />
         )}
         {step === 3 && (
           <Step3Location
             ref={stepRefs[3]}
             resort={resort}
             setResort={setResort}
+            errors={errors}
+            setErrors={setErrors}
           />
         )}
         {step === 4 && (
@@ -98,6 +138,8 @@ const AddResort = () => {
             resort={resort}
             setResort={setResort}
             resetResort={resetResort}
+            errors={errors}
+            setErrors={setErrors}
           />
         )}
       </View>
@@ -140,6 +182,8 @@ const AddResort = () => {
                   },
                 ]}
               />
+            ) : step === 4 ? (
+              "Add Resort"
             ) : (
               t("step1Info.nextButton")
             )

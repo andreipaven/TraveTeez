@@ -4,12 +4,10 @@ import CustomTextInput from "../Inputs/CustomTextInput";
 import { useTheme } from "../../Theme/themeContext";
 import { useTranslation } from "react-i18next";
 import LottieView from "lottie-react-native";
-import Loading from "../Loading/Loading";
 
-const Step1Info = ({ ref, resort, setResort }) => {
+const Step1Info = ({ ref, resort, setResort, errors, setErrors }) => {
   const { theme } = useTheme();
   const { t } = useTranslation();
-  const [errors, setErrors] = useState({});
 
   useImperativeHandle(ref, () => ({
     validateAll: () => validate(),
@@ -81,7 +79,7 @@ const Step1Info = ({ ref, resort, setResort }) => {
           borderColor={theme.colors.primary}
           focusBorderColor={theme.colors.primary}
           backgroundColor={theme.colors.backgroundPrimary}
-          color={theme.colors.textPrimary}
+          textColor={theme.colors.textPrimary}
           borderRadius={100}
           error={errors.name}
           borderWidth={1.5}
@@ -103,12 +101,12 @@ const Step1Info = ({ ref, resort, setResort }) => {
           borderColor={theme.colors.primary}
           focusBorderColor={theme.colors.primary}
           backgroundColor={theme.colors.backgroundPrimary}
-          color={theme.colors.textPrimary}
           borderRadius={8}
           multiLine={true}
           minHeight={64}
           maxLength={1000}
           borderWidth={1.5}
+          textColor={theme.colors.textPrimary}
         />
         {errors.name && (
           <Text style={{ color: theme.colors.error, fontWeight: "500" }}>

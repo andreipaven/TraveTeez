@@ -9,6 +9,7 @@ import {
 import { MultiSelect } from "react-native-element-dropdown";
 import { useTheme } from "../../Theme/themeContext";
 import { Icon } from "react-native-elements";
+import * as Haptics from "expo-haptics";
 
 const MultiSelectComponent = ({
   options,
@@ -30,7 +31,10 @@ const MultiSelectComponent = ({
 
   const handleChange = (items) => {
     setSelected(items);
-    if (onValueChange) onValueChange(items);
+    if (onValueChange) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+      onValueChange(items);
+    }
   };
 
   const renderItem = (item) => {

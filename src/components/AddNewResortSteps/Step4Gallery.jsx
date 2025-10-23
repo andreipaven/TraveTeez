@@ -13,10 +13,9 @@ import {
 } from "react-native";
 import { useTheme } from "../../Theme/themeContext";
 import { useTranslation } from "react-i18next";
-import { useResort } from "../Hooks/useResortStorage";
+
 import * as ImageManipulator from "expo-image-manipulator";
 import * as ImagePicker from "expo-image-picker";
-import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from "../Buttons/CustomButton";
 import { Icon } from "react-native-elements";
 import AddImageModal from "../Modals/AddImageModal";
@@ -26,6 +25,7 @@ import APIService from "../../services/APIService";
 import { config } from "../../services/config";
 import Toast from "react-native-toast-message";
 import { useNavigation } from "@react-navigation/native";
+import * as Haptics from "expo-haptics";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -36,6 +36,8 @@ const Step4Gallery = ({
   resort,
   setResort,
   resetResort,
+  errors,
+  setErrors,
 }) => {
   const { theme } = useTheme();
   const navigation = useNavigation();
@@ -44,10 +46,8 @@ const Step4Gallery = ({
     mainImage: false,
     galleryImages: false,
   });
-  const [errors, setErrors] = useState({});
-  const [modalVisible, setModalVisible] = useState(false);
+
   const [isFirstImage, setIsFirstImage] = useState(false);
-  const [loadingAddResort, setLoadingAddResort] = useState(false);
 
   useImperativeHandle(ref, () => ({
     validateAll: () => submitAddResort(),
@@ -119,6 +119,7 @@ const Step4Gallery = ({
   };
 
   const removeImage = async (uri) => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     await setResort((prev) => ({
       ...prev,
       images: resort.images.filter((img) => img.uri !== uri),
@@ -303,11 +304,10 @@ const Step4Gallery = ({
               position: "bottom",
               visibilityTime: 1000,
             });
-            console.log("all good");
 
             setTimeout(async () => {
-              await resetResort();
-              navigation.navigate("TabGroup", { screen: "ProfileScreen" });
+              // await resetResort();
+              // navigation.goBack();
             }, 1500);
           }
         })
@@ -386,7 +386,9 @@ const Step4Gallery = ({
               resizeMode={"cover"}
             />
             <CustomButton
-              onPress={() => removeImage(resort.mainImage?.uri)}
+              onPress={() => {
+                removeImage(resort.mainImage?.uri);
+              }}
               style={{
                 position: "absolute",
                 bottom: 8,

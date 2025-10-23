@@ -13,7 +13,6 @@ const AddImageModal = ({ ref, message, onCamera, onGallery }) => {
   const { theme } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
   const handleSheetChanges = useCallback((index) => {
-    console.log("handleSheetChanges", index);
     setIsOpen(index === 0);
   }, []);
   const snapPoints = useMemo(() => ["100%"], []);
@@ -86,8 +85,8 @@ const AddImageModal = ({ ref, message, onCamera, onGallery }) => {
                 textColor={theme.colors.textPrimary}
                 flexDirection={"column"}
                 onPress={() => {
-                  onGallery();
                   submitOnClose();
+                  onGallery();
                 }}
               />
               <CustomButton
@@ -103,8 +102,8 @@ const AddImageModal = ({ ref, message, onCamera, onGallery }) => {
                 flexDirection={"column"}
                 textColor={theme.colors.textPrimary}
                 onPress={() => {
-                  onCamera();
                   submitOnClose();
+                  onCamera();
                 }}
               />
             </View>

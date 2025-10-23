@@ -11,7 +11,6 @@ import { Ionicons } from "@expo/vector-icons";
 
 export default function CustomTextInput({
   label,
-  placeholder,
   value,
   onChangeText,
   secureTextEntry,
@@ -146,7 +145,7 @@ export default function CustomTextInput({
             <Ionicons
               name={hidePassword ? "eye-off" : "eye"}
               size={22}
-              color={color || theme.colors.textSecondary}
+              color={textColor || theme.colors.textSecondary}
             />
           </TouchableOpacity>
         ) : (
@@ -156,7 +155,12 @@ export default function CustomTextInput({
 
       {error && error !== "z" && (
         <Text
-          style={{ color: "red", fontSize: 14, paddingTop: 2, paddingLeft: 8 }}
+          style={{
+            color: theme.colors.error,
+            fontSize: 14,
+            paddingTop: 2,
+            paddingLeft: 8,
+          }}
         >
           {error}
         </Text>

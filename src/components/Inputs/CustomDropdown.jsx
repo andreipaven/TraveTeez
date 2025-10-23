@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, Dimensions, Animated } from "react-native";
 import { Dropdown, SelectCountry } from "react-native-element-dropdown";
 import { useTheme } from "../../Theme/themeContext";
+import * as Haptics from "expo-haptics";
 
 const CustomDropdown = ({
   label,
@@ -17,7 +18,6 @@ const CustomDropdown = ({
   error,
   search,
   focusBorderColor,
-  textColor,
 }) => {
   const { theme } = useTheme();
 
@@ -57,7 +57,10 @@ const CustomDropdown = ({
   };
 
   const handleChange = (item) => {
-    if (onValueChange) onValueChange(name, item.value, item.label);
+    if (onValueChange) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      onValueChange(name, item.value, item.label);
+    }
   };
 
   const renderItem = (item) => {

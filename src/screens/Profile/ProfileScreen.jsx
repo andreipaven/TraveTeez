@@ -1,12 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import {
-  Dimensions,
-  FlatList,
-  Image,
-  Pressable,
-  Text,
-  View,
-} from "react-native";
+import { Image, Text, View } from "react-native";
 import { AuthContext } from "../../Secure/AuthProvider";
 import { SafeAreaView } from "react-native-safe-area-context";
 import profileAvatar from "../../../assets/profileAvatar.png";
@@ -23,6 +16,7 @@ import Loading from "../../components/Loading/Loading";
 import Toast from "react-native-toast-message";
 import { useTheme } from "../../Theme/themeContext";
 import ThemeSwitch from "../../components/Buttons/ThemeSwitch";
+import * as Haptics from "expo-haptics";
 
 const ProfileScreen = () => {
   const [fetchLoading, setFetchLoading] = useState(true);
@@ -64,6 +58,7 @@ const ProfileScreen = () => {
         setFetchLoading(false);
       }
     }
+
     getResorts();
   }, [isFocused]);
 
@@ -138,7 +133,10 @@ const ProfileScreen = () => {
               />
             }
             style={{ marginTop: 8 }}
-            onPress={() => navigation.navigate("AddResort")}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+              navigation.navigate("AddResort");
+            }}
           />
           <ThemeSwitch />
         </View>

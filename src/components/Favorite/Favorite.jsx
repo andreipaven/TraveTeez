@@ -6,6 +6,7 @@ import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import { useTheme } from "../../Theme/themeContext";
 import { useIsFocused } from "@react-navigation/native";
 import Loading from "../Loading/Loading";
+import * as Haptics from "expo-haptics";
 
 const Favorite = ({
   resortId,
@@ -31,6 +32,7 @@ const Favorite = ({
           resortId: resortId,
         });
       } else {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         await APIService.post(config.endpoints.legacy.favorite.addFavorite, {
           resortId: resortId,
         });
@@ -65,7 +67,9 @@ const Favorite = ({
     <></>
   ) : (
     <Pressable
-      onPress={() => onToggleFavorite()}
+      onPress={() => {
+        onToggleFavorite();
+      }}
       style={[
         {
           position: position || "absolute",

@@ -7,10 +7,9 @@ import CustomDropdown from "../Inputs/CustomDropdown";
 
 import CustomMultiSelect from "../Inputs/CustomMultiSelect";
 
-const Step2Type = ({ ref, resort, setResort }) => {
+const Step2Type = ({ ref, resort, setResort, errors, setErrors }) => {
   const { theme } = useTheme();
   const { t } = useTranslation();
-  const [errors, setErrors] = useState({});
 
   const categoryOptions = [
     { label: t("typeCategory.nature"), value: "nature" },

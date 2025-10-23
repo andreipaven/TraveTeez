@@ -10,6 +10,7 @@ import Loading from "../../components/Loading/Loading";
 import FeedbackModal from "../../components/Modals/FeedbackModal";
 import CustomButton from "../../components/Buttons/CustomButton";
 import { useTranslation } from "react-i18next";
+import * as Haptics from "expo-haptics";
 
 const ResortScreen = ({ route }) => {
   const { state } = route.params;
@@ -64,6 +65,7 @@ const ResortScreen = ({ route }) => {
         flexDirection: "column",
         backgroundColor: theme.colors.backgroundPrimary,
       }}
+      edges={["bottom", "left", "right"]}
     >
       {fetchLoading.resort ? (
         <Loading />
@@ -121,7 +123,10 @@ const ResortScreen = ({ route }) => {
                 textColor={theme.colors.primaryContrast}
                 borderColor={"transparent"}
                 borderRadius={100}
-                onPress={() => handlePresentPressFeedback()}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+                  handlePresentPressFeedback();
+                }}
               />
             </View>
           </View>

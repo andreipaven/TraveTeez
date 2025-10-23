@@ -19,6 +19,7 @@ import { useTheme } from "../../Theme/themeContext";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import { useTranslation } from "react-i18next";
 import TypeResortsBar from "../../components/Bars/TypeResortsBar";
+import * as Haptics from "expo-haptics";
 
 export default function HomeScreen() {
   const { theme } = useTheme();
@@ -126,7 +127,10 @@ export default function HomeScreen() {
               elevation: 4,
               justifyContent: "space-between",
             }}
-            onPress={() => navigation.navigate("SearchScreen")}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+              navigation.navigate("SearchScreen");
+            }}
           />
         </View>
         <View>

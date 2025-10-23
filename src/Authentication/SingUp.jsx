@@ -173,7 +173,7 @@ const SingUp = () => {
               color={theme.colors.textSecondary}
             />
           }
-          color={theme.colors.textSecondary}
+          textColor={theme.colors.textSecondary}
           error={errors.lastName}
           borderWidth={1.5}
         />
@@ -193,7 +193,7 @@ const SingUp = () => {
               color={theme.colors.textSecondary}
             />
           }
-          color={theme.colors.textSecondary}
+          textColor={theme.colors.textSecondary}
           error={errors.firstName}
         />
         <CustomTextInput
@@ -212,7 +212,7 @@ const SingUp = () => {
               color={theme.colors.textSecondary}
             />
           }
-          color={theme.colors.textSecondary}
+          textColor={theme.colors.textSecondary}
           error={errors.email}
         />
         <CustomTextInput
@@ -231,7 +231,7 @@ const SingUp = () => {
               color={theme.colors.textSecondary}
             />
           }
-          color={theme.colors.textSecondary}
+          textColor={theme.colors.textSecondary}
           error={errors.password}
           secureTextEntry={true}
         />
@@ -251,7 +251,7 @@ const SingUp = () => {
               color={theme.colors.textSecondary}
             />
           }
-          color={theme.colors.textSecondary}
+          textColor={theme.colors.textSecondary}
           error={errors.verifyPassword}
           secureTextEntry={true}
         />

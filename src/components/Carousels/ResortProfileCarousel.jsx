@@ -112,13 +112,28 @@ const ResortProfileCarousel = ({ resortId, images, isFavorite }) => {
           };
         }}
       />
-      <Favorite
-        favorite={isFavorite}
-        resortId={resortId}
-        size={36}
-        top={20}
-        right={20}
-      />
+      <View
+        style={{
+          position: "absolute",
+          top: 60,
+          right: 16,
+          backgroundColor: theme.colors.textPrimary + "55",
+          borderRadius: 100,
+          width: 52,
+          height: 52,
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Favorite
+          favorite={isFavorite}
+          resortId={resortId}
+          size={32}
+          top={1}
+          right={0}
+          position={"relative"}
+        />
+      </View>
       <CustomButton
         title={
           <Ionicons
@@ -136,7 +151,7 @@ const ResortProfileCarousel = ({ resortId, images, isFavorite }) => {
           opacity: 0.7,
           position: "absolute",
           left: 10,
-          top: 10,
+          top: 60,
         }}
         onPress={() => navigation.goBack()}
       />

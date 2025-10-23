@@ -13,47 +13,37 @@ import {
 } from "react-native";
 import { useTheme } from "../../Theme/themeContext";
 import { useTranslation } from "react-i18next";
-import { useResort } from "../Hooks/useResortStorage";
 import * as ImageManipulator from "expo-image-manipulator";
 import * as ImagePicker from "expo-image-picker";
-import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from "../Buttons/CustomButton";
 import { Icon } from "react-native-elements";
 import AddImageModal from "../Modals/AddImageModal";
 import Loading from "../Loading/Loading";
 import LottieView from "lottie-react-native";
-import APIService from "../../services/APIService";
-import { config } from "../../services/config";
-import Toast from "react-native-toast-message";
-import { useNavigation } from "@react-navigation/native";
 
 const screenWidth = Dimensions.get("window").width;
 
-const Step4Gallery = ({
+const EditStep4Gallery = ({
   ref,
-  startLoadingSubmit,
-  endLoadingSubmit,
   resort,
   setResort,
-  resetResort,
+  errors,
+  setErrors,
+  setDeletedImages,
 }) => {
   const { theme } = useTheme();
-  const navigation = useNavigation();
   const { t } = useTranslation();
   const [loadingImages, setLoadingImages] = useState({
     mainImage: false,
     galleryImages: false,
   });
-  const [errors, setErrors] = useState({});
-  const [modalVisible, setModalVisible] = useState(false);
   const [isFirstImage, setIsFirstImage] = useState(false);
-  const [deletedImages, setDeletedImages] = useState([]);
-
-  useImperativeHandle(ref, () => ({
-    validateAll: () => submitAddResort(),
-  }));
 
   const bottomSheetModalRefImages = useRef(null);
+
+  useImperativeHandle(ref, () => ({
+    validateAll: () => validateImage(),
+  }));
 
   //modal functions
   const handlePresentPressFeedback = () =>
@@ -81,7 +71,7 @@ const Step4Gallery = ({
 
     if (validationImage === undefined) {
       newErrors.mainImage =
-        resort.mainImage?.uri !== undefined
+        resort.mainImage?.uri || resort.mainImage.image_url !== undefined
           ? ""
           : t("step4Gallery.errorMainImage");
       setErrors((prev) => ({
@@ -104,7 +94,9 @@ const Step4Gallery = ({
       }));
     } else {
       newErrors.mainImage =
-        verifyImage?.uri !== undefined ? "" : t("step4Gallery.errorMainImage");
+        verifyImage?.uri || verifyImage.image_url !== undefined || null
+          ? ""
+          : t("step4Gallery.errorMainImage");
       setErrors((prev) => ({
         ...prev,
         mainImage: newErrors.mainImage,
@@ -128,7 +120,9 @@ const Step4Gallery = ({
     }
 
     if (resort.mainImage?.uri === uri || resort.mainImage?.image_url === uri) {
-      setResort({ ...resort, mainImage: null });
+      setDeletedImages((prev) => [...prev, resort.mainImage]);
+      setResort((prev) => ({ ...prev, mainImage: null }));
+
       validateImage({});
     } else {
       setResort((prev) => ({
@@ -190,11 +184,11 @@ const Step4Gallery = ({
         const updatedImages = [...resort.images, imageToAdd];
 
         if (isFirstImage) {
-          setResort({ ...resort, mainImage: imageToAdd });
+          setResort((prev) => ({ ...prev, mainImage: imageToAdd }));
           setIsFirstImage(false);
           validateImage(imageToAdd);
         } else {
-          setResort({ ...resort, images: updatedImages });
+          setResort((prev) => ({ ...prev, images: updatedImages }));
           validateImage(updatedImages);
         }
       } else {
@@ -277,11 +271,11 @@ const Step4Gallery = ({
         const updatedImages = [...resort.images, ...compressedImages];
 
         if (isFirstImage) {
-          setResort({ ...resort, mainImage: compressedImages[0] });
+          setResort((prev) => ({ ...prev, mainImage: compressedImages[0] }));
           setIsFirstImage(false);
           validateImage(compressedImages[0]);
         } else {
-          setResort({ ...resort, images: updatedImages });
+          setResort((prev) => ({ ...prev, images: updatedImages }));
           validateImage(updatedImages);
         }
       }
@@ -289,39 +283,6 @@ const Step4Gallery = ({
       isFirstImage
         ? setLoadingImages((prev) => ({ ...prev, mainImage: false }))
         : setLoadingImages((prev) => ({ ...prev, galleryImages: false }));
-    }
-  };
-
-  const submitAddResort = () => {
-    if (validateImage()) {
-      startLoadingSubmit();
-      APIService.post(config.endpoints.legacy.resort.addResort, {
-        resort: resort,
-      })
-        .then((response) => {
-          if (response?.data.error) {
-            console.log("Something wrong happened " + response.data.error);
-          } else {
-            Toast.show({
-              type: "custom",
-              text1: t("step4Gallery.successSubmitNotify"),
-              position: "bottom",
-              visibilityTime: 1000,
-            });
-            console.log("all good");
-
-            setTimeout(() => {
-              resetResort();
-              navigation.navigate("TabGroup", { screen: "ProfileScreen" });
-            }, 1500);
-          }
-        })
-        .catch((err) => {
-          console.log("An error occurred " + err);
-        })
-        .finally(() => {
-          endLoadingSubmit();
-        });
     }
   };
 
@@ -513,4 +474,4 @@ const Step4Gallery = ({
     </ScrollView>
   );
 };
-export default Step4Gallery;
+export default EditStep4Gallery;

@@ -7,6 +7,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { useTheme } from "../../Theme/themeContext";
+import CustomButton from "../Buttons/CustomButton";
 
 const DeleteResortModalConfirmation = ({
   visible,
@@ -50,13 +51,25 @@ const DeleteResortModalConfirmation = ({
               <View
                 style={{ flexDirection: "row", justifyContent: "flex-end" }}
               >
-                <Button
+                <CustomButton
                   title="Cancel"
                   onPress={onCancel}
-                  color={theme.colors.primary}
+                  textColor={theme.colors.primaryContrast}
+                  backgroundColor={theme.colors.primary}
+                  paddingHorizontal={10}
+                  paddingVertical={8}
+                  borderRadius={100}
                 />
                 <View style={{ width: 10 }} />
-                <Button title="Confirm" onPress={onConfirm} color="red" />
+                <CustomButton
+                  title="Confirm"
+                  onPress={onConfirm}
+                  textColor={theme.colors.primaryContrast}
+                  backgroundColor={theme.colors.primaryDelete}
+                  paddingHorizontal={10}
+                  paddingVertical={8}
+                  borderRadius={100}
+                />
               </View>
             </View>
           </TouchableWithoutFeedback>
