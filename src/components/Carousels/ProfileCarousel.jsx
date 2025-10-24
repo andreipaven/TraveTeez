@@ -1,9 +1,8 @@
-import React, { useRef, useState } from "react";
-import { Dimensions, ScrollView } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import React, { useRef } from "react";
+import { Dimensions } from "react-native";
+
 import ProfileCarouselCard from "../Cards/ProfileCarouselCard";
-import Animated, { useSharedValue } from "react-native-reanimated";
-import CustomCarouselCard from "../Cards/CustomCarouselCard";
+import { useSharedValue } from "react-native-reanimated";
 import Carousel from "react-native-reanimated-carousel";
 
 const width = Dimensions.get("window").width;

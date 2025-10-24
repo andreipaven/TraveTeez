@@ -81,9 +81,10 @@ const ResortScreen = ({ route }) => {
               paddingHorizontal: 16,
               flexDirection: "row",
               justifyContent: "space-between",
+              width: "100%",
             }}
           >
-            <View>
+            <View style={{ flex: 1 }}>
               <Text
                 style={{
                   fontWeight: "bold",

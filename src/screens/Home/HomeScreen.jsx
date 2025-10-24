@@ -11,14 +11,14 @@ import { AuthContext } from "../../Secure/AuthProvider";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import CustomCarousel from "../../components/Carousels/CustomCarousel";
+import NewResortsList from "../../components/Carousels/NewResortsList";
 import APIService from "../../services/APIService";
 import { config } from "../../services/config";
 import CustomButton from "../../components/Buttons/CustomButton";
 import { useTheme } from "../../Theme/themeContext";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import { useTranslation } from "react-i18next";
-import TypeResortsBar from "../../components/Bars/TypeResortsBar";
+import CategoryResortsBar from "../../components/Bars/CategoryResortsBar";
 import * as Haptics from "expo-haptics";
 
 export default function HomeScreen() {
@@ -140,14 +140,14 @@ export default function HomeScreen() {
               paddingTop: 8,
               paddingBottom: 2,
               fontSize: 16,
-              fontWeight: "bold",
+              fontWeight: "600",
               color: theme.colors.textPrimary,
             }}
           >
             {t("home.newResortsTitle")}
           </Text>
-          <CustomCarousel dates={newResorts} />
-          <TypeResortsBar />
+          <NewResortsList dates={newResorts} />
+          <CategoryResortsBar />
         </View>
       </ScrollView>
     </SafeAreaView>

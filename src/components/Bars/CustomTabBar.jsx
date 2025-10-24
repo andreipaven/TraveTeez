@@ -1,5 +1,11 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Pressable,
+} from "react-native";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import { useTheme } from "../../Theme/themeContext";
 
@@ -54,7 +60,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
           };
 
           return (
-            <TouchableOpacity
+            <Pressable
               activeOpacity={1}
               key={index}
               accessibilityRole="button"
@@ -90,7 +96,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
               >
                 {label}
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           );
         })}
       </View>
