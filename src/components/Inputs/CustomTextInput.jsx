@@ -27,6 +27,8 @@ export default function CustomTextInput({
   multiLine,
   minHeight,
   maxLength,
+  style,
+  placeholder,
 }) {
   const { theme } = useTheme();
   const [isFocused, setIsFocused] = useState(false);
@@ -76,7 +78,7 @@ export default function CustomTextInput({
   };
 
   return (
-    <View style={{ marginVertical: 8, width: "100%" }}>
+    <View style={[{ marginVertical: 8, width: "100%" }, style]}>
       <View
         style={{
           position: "relative",
@@ -118,6 +120,7 @@ export default function CustomTextInput({
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           maxLength={maxLength || 250}
+          placeholder={placeholder}
         />
 
         {multiLine && maxLength && (

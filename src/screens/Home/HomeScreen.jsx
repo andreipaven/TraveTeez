@@ -73,9 +73,10 @@ export default function HomeScreen() {
       edges={["top", "left", "right"]}
     >
       <ScrollView
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
+        // refreshControl={
+        //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        // }
+        nestedScrollEnabled={true}
       >
         <View style={{ paddingHorizontal: 16, paddingTop: 4 }}>
           <CustomButton

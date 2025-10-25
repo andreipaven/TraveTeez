@@ -306,9 +306,9 @@ const Step4Gallery = ({
             });
 
             setTimeout(async () => {
-              // await resetResort();
-              // navigation.goBack();
-            }, 1500);
+              await resetResort();
+              navigation.goBack();
+            }, 1200);
           }
         })
         .catch((err) => {

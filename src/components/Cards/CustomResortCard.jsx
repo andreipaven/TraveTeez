@@ -2,42 +2,47 @@ import React from "react";
 import { ImageBackground, Pressable, Text, View } from "react-native";
 import RatingOneStar from "../Ratings/RatingOneStar";
 import Favorite from "../Favorite/Favorite";
+import { Icon } from "react-native-elements";
+import { TapGestureHandler } from "react-native-gesture-handler";
 
 const CustomResortCard = React.memo(({ item, navigation, theme }) => {
   return (
     <View
       style={{
-        marginHorizontal: 6,
+        marginHorizontal: 8,
         borderRadius: 8,
         shadowColor: theme.colors.shadowPrimary,
         shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 0.5,
         shadowRadius: 2.5,
         elevation: 2,
-        width: 148,
+        width: 164,
         height: "auto",
       }}
     >
-      <Pressable
-        style={{
-          width: "100%",
-          backgroundColor: "transparent",
-          height: 180,
-          position: "absolute",
-          zIndex: 1,
-          top: 0,
-          left: 0,
-        }}
-        onPress={() =>
+      <TapGestureHandler
+        onActivated={() =>
           navigation.navigate("ResortProfile", {
             state: { resortId: item.resort_id, isFavorite: item.isFavorite },
           })
         }
-      />
+      >
+        <View
+          style={{
+            width: "100%",
+            height: 180,
+            position: "absolute",
+            top: 0,
+            left: 0,
+            zIndex: 1,
+            backgroundColor: "transparent",
+          }}
+        />
+      </TapGestureHandler>
       <ImageBackground
         source={{ uri: item.mainImage.image_url || "" }}
         style={{
-          width: 148,
+          width: 164,
           height: 180,
           borderTopLeftRadius: 8,
           borderTopRightRadius: 8,
@@ -59,9 +64,18 @@ const CustomResortCard = React.memo(({ item, navigation, theme }) => {
         <Text style={{ color: theme.colors.textPrimary, fontWeight: 500 }}>
           {item.name.length > 18 ? item.name.slice(0, 15) + "..." : item.name}
         </Text>
-        <Text style={{ color: theme.colors.textSecondary }}>
-          {item.country}
-        </Text>
+        <View style={{ flexDirection: "row" }}>
+          <Icon
+            name={"map-marker"}
+            type={"material-community"}
+            size={16}
+            color={theme.colors.textSecondary}
+            style={{ marginLeft: -2 }}
+          />
+          <Text style={{ color: theme.colors.textSecondary }}>
+            {item.country}
+          </Text>
+        </View>
         <RatingOneStar
           resortId={item.resort_id}
           right={8}
@@ -72,7 +86,7 @@ const CustomResortCard = React.memo(({ item, navigation, theme }) => {
       </View>
       <Favorite
         resortId={item.resort_id}
-        size={20}
+        size={24}
         top={4}
         right={4}
         style={{ zIndex: 2, padding: 4 }}

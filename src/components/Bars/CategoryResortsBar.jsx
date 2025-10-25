@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   FlatList,
   ImageBackground,
+  Platform,
   Pressable,
   ScrollView,
   Text,
@@ -16,6 +17,10 @@ import { config } from "../../services/config";
 import { useNavigation } from "@react-navigation/native";
 import CustomResortCard from "../Cards/CustomResortCard";
 import Loading from "../Loading/Loading";
+import {
+  NativeViewGestureHandler,
+  TapGestureHandler,
+} from "react-native-gesture-handler";
 
 const CategoryResortsBar = () => {
   const { theme } = useTheme();
@@ -36,7 +41,7 @@ const CategoryResortsBar = () => {
       },
     )
       .then((response) => {
-        if (response?.data?.error) {
+        if (response?.data.error) {
           console.log("Something wrong happened " + response.data.error);
         } else {
           setData(response.data);
@@ -61,6 +66,13 @@ const CategoryResortsBar = () => {
     [],
   );
 
+  const PlatformFlatListWrapper = ({ children }) => {
+    if (Platform.OS === "ios") {
+      return <NativeViewGestureHandler>{children}</NativeViewGestureHandler>;
+    }
+    return <View>{children}</View>;
+  };
+
   return (
     <View>
       <View
@@ -77,9 +89,25 @@ const CategoryResortsBar = () => {
           { key: "urban", icon: "city", color: theme.colors.textPrimary },
           { key: "special", icon: "shimmer", color: theme.colors.primary },
         ].map((cat) => (
-          <CustomButton
+          <TapGestureHandler
             key={cat.key}
-            iconCenter={
+            onActivated={() => setSelectedCategory(cat.key)}
+          >
+            <View
+              style={{
+                width: 60,
+                height: 60,
+                borderRadius: 30,
+                backgroundColor: theme.colors.backgroundPrimary,
+                alignItems: "center",
+                justifyContent: "center",
+                shadowColor: theme.colors.shadowPrimary,
+                shadowOffset: { width: 1, height: 2 },
+                shadowOpacity: 0.5,
+                shadowRadius: 3.84,
+                elevation: theme.mode === "light" ? 2 : 21,
+              }}
+            >
               <Icon
                 raised
                 name={cat.icon}
@@ -89,22 +117,8 @@ const CategoryResortsBar = () => {
                 reverseColor={cat.color}
                 size={30}
               />
-            }
-            style={{
-              width: 60,
-              height: 60,
-              borderRadius: 30,
-              backgroundColor: theme.colors.backgroundPrimary,
-              alignItems: "center",
-              justifyContent: "center",
-              shadowColor: theme.colors.shadowPrimary,
-              shadowOffset: { width: 1, height: 2 },
-              shadowOpacity: 0.5,
-              shadowRadius: 3.84,
-              elevation: theme.mode === "light" ? 2 : 21,
-            }}
-            onPress={() => setSelectedCategory(cat.key)}
-          />
+            </View>
+          </TapGestureHandler>
         ))}
       </View>
       {fetchLoading ? (
@@ -121,21 +135,24 @@ const CategoryResortsBar = () => {
           ) : (
             <Text>Not resorts yet</Text>
           )}
-
-          <FlatList
-            horizontal
-            data={data}
-            keyboardShouldPersistTaps={"always"}
-            renderItem={renderItem}
-            keyExtractor={(item, index) => index.toString()}
-            contentContainerStyle={{ paddingVertical: 8, paddingHorizontal: 8 }}
-            showsHorizontalScrollIndicator={false}
-            initialNumToRender={4}
-            maxToRenderPerBatch={4}
-            windowSize={5}
-            removeClippedSubviews={true}
-            updateCellsBatchingPeriod={50}
-          />
+          <PlatformFlatListWrapper>
+            <FlatList
+              horizontal
+              data={data}
+              renderItem={renderItem}
+              keyExtractor={(item, index) => index.toString()}
+              contentContainerStyle={{
+                paddingVertical: 8,
+                paddingHorizontal: 8,
+              }}
+              showsHorizontalScrollIndicator={false}
+              initialNumToRender={10}
+              maxToRenderPerBatch={10}
+              windowSize={21}
+              removeClippedSubviews={true}
+              updateCellsBatchingPeriod={50}
+            />
+          </PlatformFlatListWrapper>
         </View>
       )}
     </View>
