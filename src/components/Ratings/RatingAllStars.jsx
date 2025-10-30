@@ -43,9 +43,9 @@ const RatingAllStars = ({ top, left, position, bottom, resortId }) => {
     >
       <CustomStarRatings size={20} rating={rating.avg_rating_value} />
 
-      <Text style={{ paddingLeft: 2, color: theme.colors.textPrimary }}>
-        {rating.total_ratings}
-      </Text>
+      {/*<Text style={{ paddingLeft: 2, color: theme.colors.textPrimary }}>*/}
+      {/*  {rating.total_ratings}*/}
+      {/*</Text>*/}
     </View>
   );
 };

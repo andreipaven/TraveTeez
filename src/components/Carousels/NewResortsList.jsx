@@ -1,19 +1,11 @@
 import React, { useCallback, useRef } from "react";
 import { View, FlatList, Platform } from "react-native";
-
-import { useTheme } from "../../Theme/themeContext";
 import CustomResortCard from "../Cards/CustomResortCard";
-import { useNavigation } from "@react-navigation/native";
 import { NativeViewGestureHandler } from "react-native-gesture-handler";
 
 export default function NewResortsList({ dates }) {
-  const { theme } = useTheme();
-  const navigation = useNavigation();
-
   const renderItem = useCallback(
-    ({ item }) => (
-      <CustomResortCard item={item} navigation={navigation} theme={theme} />
-    ),
+    ({ item }) => <CustomResortCard item={item} />,
     [],
   );
 

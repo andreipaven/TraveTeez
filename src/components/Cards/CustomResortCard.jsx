@@ -4,8 +4,12 @@ import RatingOneStar from "../Ratings/RatingOneStar";
 import Favorite from "../Favorite/Favorite";
 import { Icon } from "react-native-elements";
 import { TapGestureHandler } from "react-native-gesture-handler";
+import { useTheme } from "../../Theme/themeContext";
+import { useNavigation } from "@react-navigation/native";
 
-const CustomResortCard = React.memo(({ item, navigation, theme }) => {
+const CustomResortCard = React.memo(({ item }) => {
+  const { theme } = useTheme();
+  const navigation = useNavigation();
   return (
     <View
       style={{
@@ -23,7 +27,7 @@ const CustomResortCard = React.memo(({ item, navigation, theme }) => {
       <TapGestureHandler
         onActivated={() =>
           navigation.navigate("ResortProfile", {
-            state: { resortId: item.resort_id, isFavorite: item.isFavorite },
+            state: { resortId: item.resort_id },
           })
         }
       >
@@ -56,9 +60,14 @@ const CustomResortCard = React.memo(({ item, navigation, theme }) => {
           backgroundColor: theme.colors.backgroundPrimary,
           borderBottomRightRadius: 8,
           borderBottomLeftRadius: 8,
-          paddingHorizontal: 4,
+          paddingHorizontal: 6,
+          paddingVertical: 4,
           flex: 1,
           justifyContent: "flex-end",
+          borderTopLeftRadius: 8,
+          borderTopRightRadius: 8,
+          height: 50,
+          marginTop: -16,
         }}
       >
         <Text style={{ color: theme.colors.textPrimary, fontWeight: 500 }}>
@@ -72,14 +81,18 @@ const CustomResortCard = React.memo(({ item, navigation, theme }) => {
             color={theme.colors.textSecondary}
             style={{ marginLeft: -2 }}
           />
-          <Text style={{ color: theme.colors.textSecondary }}>
+          <Text
+            style={{
+              color: theme.colors.textSecondary,
+            }}
+          >
             {item.country}
           </Text>
         </View>
         <RatingOneStar
           resortId={item.resort_id}
           right={8}
-          bottom={0}
+          bottom={4}
           textSize={14}
           size={16}
         />

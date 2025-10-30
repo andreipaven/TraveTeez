@@ -30,7 +30,7 @@ const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
 
 //main function
-const ResortProfileCarousel = ({ resortId, images, isFavorite }) => {
+const ResortProfileCarousel = ({ resortId, images }) => {
   const { theme } = useTheme();
   const ref = useRef(null);
   const progress = useSharedValue(0);
@@ -126,7 +126,6 @@ const ResortProfileCarousel = ({ resortId, images, isFavorite }) => {
         }}
       >
         <Favorite
-          favorite={isFavorite}
           resortId={resortId}
           size={32}
           top={1}
@@ -135,11 +134,12 @@ const ResortProfileCarousel = ({ resortId, images, isFavorite }) => {
         />
       </View>
       <CustomButton
-        title={
+        iconCenter={
           <Ionicons
             name={Platform.OS === "ios" ? "chevron-back" : "arrow-back"}
-            size={20}
+            size={24}
             color={theme.colors.textPrimary}
+            style={{ left: -1 }}
           />
         }
         backgroundColor={theme.colors.textDark}

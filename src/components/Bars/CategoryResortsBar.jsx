@@ -60,9 +60,7 @@ const CategoryResortsBar = () => {
     }
   }, [selectedCategory]);
   const renderItem = useCallback(
-    ({ item }) => (
-      <CustomResortCard item={item} navigation={navigation} theme={theme} />
-    ),
+    ({ item }) => <CustomResortCard item={item} />,
     [],
   );
 

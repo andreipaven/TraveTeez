@@ -42,13 +42,7 @@ const SearchScreen = () => {
   };
 
   const renderItem = useCallback(
-    ({ item }) => (
-      <CustomResortSearchCard
-        item={item}
-        navigation={navigation}
-        theme={theme}
-      />
-    ),
+    ({ item }) => <CustomResortSearchCard item={item} />,
     [],
   );
   return (
@@ -56,7 +50,12 @@ const SearchScreen = () => {
       style={{ flex: 1, backgroundColor: theme.colors.backgroundPrimary }}
     >
       <TapGestureHandler onActivated={Keyboard.dismiss}>
-        <View style={{ flex: 1, marginHorizontal: 16 }}>
+        <View
+          style={{
+            flex: 1,
+            marginHorizontal: 16,
+          }}
+        >
           <CustomTextInput
             name={"name"}
             placeholder={"Search"}
@@ -84,6 +83,7 @@ const SearchScreen = () => {
               nestedScrollEnabled
               showsVerticalScrollIndicator={false}
               onScroll={() => Keyboard.dismiss()}
+              contentContainerStyle={{ paddingBottom: 150 }}
             />
           </View>
         </View>

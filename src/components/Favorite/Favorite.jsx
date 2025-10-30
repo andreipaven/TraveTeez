@@ -5,7 +5,6 @@ import { config } from "../../services/config";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import { useTheme } from "../../Theme/themeContext";
 import { useIsFocused } from "@react-navigation/native";
-import Loading from "../Loading/Loading";
 import * as Haptics from "expo-haptics";
 
 const Favorite = ({
@@ -32,7 +31,7 @@ const Favorite = ({
           resortId: resortId,
         });
       } else {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         await APIService.post(config.endpoints.legacy.favorite.addFavorite, {
           resortId: resortId,
         });

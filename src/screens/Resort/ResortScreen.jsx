@@ -71,11 +71,7 @@ const ResortScreen = ({ route }) => {
         <Loading />
       ) : (
         <View style={{ flex: 1 }}>
-          <ResortProfileCarousel
-            resortId={resortId}
-            isFavorite={isFavorite}
-            images={images}
-          />
+          <ResortProfileCarousel resortId={resortId} images={images} />
           <View
             style={{
               paddingHorizontal: 16,

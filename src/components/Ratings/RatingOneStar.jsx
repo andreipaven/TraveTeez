@@ -4,6 +4,7 @@ import { Icon } from "react-native-elements";
 import { useTheme } from "../../Theme/themeContext";
 import APIService from "../../services/APIService";
 import { config } from "../../services/config";
+import { useIsFocused } from "@react-navigation/native";
 
 const RatingOneStar = ({
   top,
@@ -17,6 +18,7 @@ const RatingOneStar = ({
 }) => {
   const [rating, setRating] = useState({});
   const { theme } = useTheme();
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     const fetchRatings = async () => {
@@ -36,31 +38,34 @@ const RatingOneStar = ({
         .finally(() => {});
     };
     fetchRatings();
-  }, [resortId]);
+  }, [resortId, isFocused]);
+
   return (
-    <View
-      style={{
-        top,
-        left,
-        bottom,
-        right,
-        position: position || "absolute",
-        flexDirection: "row",
-        alignItems: "center",
-      }}
-    >
-      <Icon size={size} type={"font-awesome"} name={"star"} color={"gold"} />
-      <Text
+    rating?.avg_rating_value && (
+      <View
         style={{
-          fontWeight: "bold",
-          fontSize: textSize,
-          color: theme.colors.textPrimary,
-          paddingLeft: 1,
+          top,
+          left,
+          bottom,
+          right,
+          position: position || "absolute",
+          flexDirection: "row",
+          alignItems: "center",
         }}
       >
-        {rating.avg_rating_value === null ? "0" : rating.avg_rating_value}
-      </Text>
-    </View>
+        <Icon size={size} type={"font-awesome"} name={"star"} color={"gold"} />
+        <Text
+          style={{
+            fontWeight: "bold",
+            fontSize: textSize,
+            color: theme.colors.textPrimary,
+            paddingLeft: 1,
+          }}
+        >
+          {rating.avg_rating_value || "0"}
+        </Text>
+      </View>
+    )
   );
 };
 

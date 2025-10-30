@@ -21,6 +21,7 @@ import CustomButton from "../Buttons/CustomButton";
 
 import Toast from "react-native-toast-message";
 import LottieView from "lottie-react-native";
+import StarRating from "react-native-star-rating-widget";
 
 const FeedbackModal = ({ ref, resortId }) => {
   const { theme } = useTheme();
@@ -43,7 +44,11 @@ const FeedbackModal = ({ ref, resortId }) => {
   ));
 
   const ratingCompleted = (rating) => {
-    setRatingValue(rating);
+    if (rating < 1) {
+      setRatingValue(1);
+    } else {
+      setRatingValue(rating);
+    }
   };
 
   const submitCancel = () => {
@@ -127,12 +132,13 @@ const FeedbackModal = ({ ref, resortId }) => {
         <Text style={{ fontWeight: "bold", fontSize: 20, paddingVertical: 16 }}>
           {t("feedback.title")}
         </Text>
-        <Rating
-          ratingCount={5}
-          showRating={false}
-          startingValue={ratingValue}
-          onFinishRating={ratingCompleted}
-          style={{ paddingVertical: 16 }}
+
+        <StarRating
+          rating={ratingValue}
+          onChange={ratingCompleted}
+          enableHalfStar={false}
+          starSize={42}
+          maxStars={5}
         />
         <View
           style={{
