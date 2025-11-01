@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useContext, useLayoutEffect, useState } from "react";
 import {
   Image,
   Keyboard,
+  KeyboardAvoidingView,
+  Platform,
   Text,
   TouchableWithoutFeedback,
   View,
@@ -18,12 +20,20 @@ import { useTranslation } from "react-i18next";
 import APIService from "../services/APIService";
 import { config } from "../services/config";
 import { saveAccessToken, saveRefreshToken } from "../Secure/secureHub";
+import { AuthContext } from "../Secure/AuthProvider";
+import { Icon } from "react-native-elements";
+import * as Haptics from "expo-haptics";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 
 const SingUp = () => {
   const { theme } = useTheme();
   const navigation = useNavigation();
   const { t } = useTranslation();
-  const [user, setUser] = useState({
+
+  const { setUser } = useContext(AuthContext);
+
+  const [state, setState] = useState({
     firstName: "",
     lastName: "",
     email: "",
@@ -39,10 +49,33 @@ const SingUp = () => {
     verifyPassword: false,
   });
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <CustomButton
+          iconLeft={
+            <Icon
+              color={theme.colors.textPrimary}
+              size={24}
+              type={"material-community"}
+              name={"close"}
+            />
+          }
+          style={{ paddingRight: 8 }}
+          paddingVertical={8}
+          onPress={async () => {
+            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            navigation.goBack();
+          }}
+        />
+      ),
+    });
+  }, []);
+
   const validate = (fieldValues) => {
     let newErrors = { ...errors };
 
-    const valuesToValidate = fieldValues || user;
+    const valuesToValidate = fieldValues || state;
 
     if (!valuesToValidate || typeof valuesToValidate !== "object") {
       return false;
@@ -81,7 +114,7 @@ const SingUp = () => {
     if ("verifyPassword" in valuesToValidate) {
       newErrors.verifyPassword =
         (valuesToValidate.verifyPassword || "") ===
-        (valuesToValidate.password ?? user.password)
+        (valuesToValidate.password ?? state.password)
           ? ""
           : t("signUp.errorPasswordMismatch");
     }
@@ -97,11 +130,11 @@ const SingUp = () => {
 
   const handleChange = (name, value) => {
     const updatedUser = {
-      ...user,
+      ...state,
       [name]: value,
     };
 
-    setUser(updatedUser);
+    setState(updatedUser);
 
     validate({ [name]: value });
   };
@@ -109,18 +142,19 @@ const SingUp = () => {
   const submitSignUp = async () => {
     if (validate()) {
       APIService.post(config.endpoints.legacy.auth.signUp, {
-        first_name: user.firstName,
-        last_name: user.lastName,
-        email: user.email,
-        password: user.password,
+        first_name: state.firstName,
+        last_name: state.lastName,
+        email: state.email,
+        password: state.password,
       })
         .then((response) => {
           if (response?.error) {
             console.log("Something wrong happened." + response.error);
           } else {
-            const { accessToken, refreshToken } = response.data;
+            const { accessToken, refreshToken, user } = response.data;
             saveAccessToken(accessToken);
             saveRefreshToken(refreshToken);
+            setUser(user);
           }
         })
         .catch((err) => {
@@ -133,198 +167,207 @@ const SingUp = () => {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View
-        style={{
-          backgroundColor: theme.colors.backgroundPrimary,
-          flex: 1,
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          paddingTop: 16,
-          paddingLeft: 16,
-          paddingRight: 16,
-          gap: 8,
-        }}
-      >
-        <Text
-          style={{
-            fontSize: 32,
-            fontWeight: "bold",
-            color: theme.colors.textPrimary,
-            textAlign: "center",
-            paddingBottom: 16,
-          }}
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: theme.colors.backgroundPrimary }}
+      edges={["bottom", "left", "right"]}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} style={{ flex: 1 }}>
+        <KeyboardAwareScrollView
+          bottomOffset={60}
+          style={{ flex: 1, marginBottom: 62 }}
         >
-          {t("signUp.title")}
-        </Text>
-
-        <CustomTextInput
-          name={"lastName"}
-          label={t("signUp.lastName")}
-          value={user.lastName}
-          onChangeText={handleChange}
-          borderColor={theme.colors.primary}
-          backgroundColor={theme.colors.backgroundPrimary}
-          iconLeft={
-            <Ionicons
-              name={"person"}
-              size={16}
-              color={theme.colors.textSecondary}
-            />
-          }
-          textColor={theme.colors.textSecondary}
-          error={errors.lastName}
-          borderWidth={1.5}
-        />
-        <CustomTextInput
-          name={"firstName"}
-          label={t("signUp.firstName")}
-          value={user.firstName}
-          onChangeText={handleChange}
-          borderColor={theme.colors.primary}
-          focusBorderColor={theme.colors.primary}
-          backgroundColor={theme.colors.backgroundPrimary}
-          borderWidth={1.5}
-          iconLeft={
-            <Ionicons
-              name={"person"}
-              size={16}
-              color={theme.colors.textSecondary}
-            />
-          }
-          textColor={theme.colors.textSecondary}
-          error={errors.firstName}
-        />
-        <CustomTextInput
-          name={"email"}
-          label={t("signUp.email")}
-          value={user.email}
-          onChangeText={handleChange}
-          borderColor={theme.colors.primary}
-          focusBorderColor={theme.colors.primary}
-          backgroundColor={theme.colors.backgroundPrimary}
-          borderWidth={1.5}
-          iconLeft={
-            <Ionicons
-              name={"mail"}
-              size={16}
-              color={theme.colors.textSecondary}
-            />
-          }
-          textColor={theme.colors.textSecondary}
-          error={errors.email}
-        />
-        <CustomTextInput
-          name={"password"}
-          label={t("signUp.password")}
-          value={user.password}
-          onChangeText={handleChange}
-          borderColor={theme.colors.primary}
-          focusBorderColor={theme.colors.primary}
-          backgroundColor={theme.colors.backgroundPrimary}
-          borderWidth={1.5}
-          iconLeft={
-            <Ionicons
-              name={"lock-closed"}
-              size={16}
-              color={theme.colors.textSecondary}
-            />
-          }
-          textColor={theme.colors.textSecondary}
-          error={errors.password}
-          secureTextEntry={true}
-        />
-        <CustomTextInput
-          name={"verifyPassword"}
-          label={t("signUp.verifyPassword")}
-          value={user.verifyPassword}
-          onChangeText={handleChange}
-          borderColor={theme.colors.primary}
-          focusBorderColor={theme.colors.primary}
-          backgroundColor={theme.colors.backgroundPrimary}
-          borderWidth={1.5}
-          iconLeft={
-            <Ionicons
-              name={"lock-closed"}
-              size={16}
-              color={theme.colors.textSecondary}
-            />
-          }
-          textColor={theme.colors.textSecondary}
-          error={errors.verifyPassword}
-          secureTextEntry={true}
-        />
-        <CustomButton
-          title={t("signUp.button")}
-          onPress={submitSignUp}
-          backgroundColor={theme.colors.primary}
-          textColor="#fff"
-          borderRadius={12}
-          paddingVertical={14}
-          paddingHorizontal={30}
-        />
-        <CustomDivider
-          text={t("signUp.divider")}
-          lineColor={theme.colors.textSecondary}
-        />
-        <View
-          style={{
-            flexDirection: "row",
-            width: "100%",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 16,
-          }}
-        >
-          <CustomButton
-            backgroundColor={theme.colors.backgroundPaper}
-            iconCenter={
-              <Image source={Facebook} style={{ height: 24, width: 24 }} />
-            }
-            paddingVertical={12}
-            paddingHorizontal={12}
-            borderRadius={50}
-            width={"fit-content"}
-          />
-          <CustomButton
-            backgroundColor={theme.colors.backgroundPaper}
-            iconCenter={
-              <Image source={Google} style={{ height: 24, width: 24 }} />
-            }
-            paddingVertical={12}
-            paddingHorizontal={12}
-            borderRadius={50}
-            width={"fit-content"}
-          />
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            width: "100%",
-            alignItems: "center",
-
-            justifyContent: "center",
-          }}
-        >
-          <Text
+          <View
             style={{
-              width: "auto",
-              paddingRight: 8,
-              fontSize: 16,
+              backgroundColor: theme.colors.backgroundPrimary,
+              flex: 1,
+              flexDirection: "column",
+              alignItems: "center",
+              paddingTop: 16,
+              paddingLeft: 16,
+              paddingRight: 16,
+              gap: 2,
             }}
           >
-            {t("signUp.alreadyHaveAccount")}
-          </Text>
-          <CustomButton
-            width={"auto"}
-            title={t("signUp.alreadyHaveAccountButton")}
-            textColor={theme.colors.primary}
-            onPress={() => navigation.navigate("SignIn")}
-          />
-        </View>
-      </View>
-    </TouchableWithoutFeedback>
+            <Text
+              style={{
+                fontSize: 32,
+                fontWeight: "bold",
+                color: theme.colors.textPrimary,
+                textAlign: "center",
+                paddingBottom: 16,
+              }}
+            >
+              {t("signUp.title")}
+            </Text>
+
+            <CustomTextInput
+              name={"lastName"}
+              label={t("signUp.lastName")}
+              value={state.lastName}
+              onChangeText={handleChange}
+              borderColor={theme.colors.primary}
+              backgroundColor={theme.colors.backgroundPrimary}
+              iconLeft={
+                <Ionicons
+                  name={"person"}
+                  size={16}
+                  color={theme.colors.textSecondary}
+                />
+              }
+              textColor={theme.colors.textSecondary}
+              error={errors.lastName}
+              borderWidth={1.5}
+            />
+            <CustomTextInput
+              name={"firstName"}
+              label={t("signUp.firstName")}
+              value={state.firstName}
+              onChangeText={handleChange}
+              borderColor={theme.colors.primary}
+              focusBorderColor={theme.colors.primary}
+              backgroundColor={theme.colors.backgroundPrimary}
+              borderWidth={1.5}
+              iconLeft={
+                <Ionicons
+                  name={"person"}
+                  size={16}
+                  color={theme.colors.textSecondary}
+                />
+              }
+              textColor={theme.colors.textSecondary}
+              error={errors.firstName}
+            />
+            <CustomTextInput
+              name={"email"}
+              label={t("signUp.email")}
+              value={state.email}
+              onChangeText={handleChange}
+              borderColor={theme.colors.primary}
+              focusBorderColor={theme.colors.primary}
+              backgroundColor={theme.colors.backgroundPrimary}
+              borderWidth={1.5}
+              iconLeft={
+                <Ionicons
+                  name={"mail"}
+                  size={16}
+                  color={theme.colors.textSecondary}
+                />
+              }
+              textColor={theme.colors.textSecondary}
+              error={errors.email}
+            />
+            <CustomTextInput
+              name={"password"}
+              label={t("signUp.password")}
+              value={state.password}
+              onChangeText={handleChange}
+              borderColor={theme.colors.primary}
+              focusBorderColor={theme.colors.primary}
+              backgroundColor={theme.colors.backgroundPrimary}
+              borderWidth={1.5}
+              iconLeft={
+                <Ionicons
+                  name={"lock-closed"}
+                  size={16}
+                  color={theme.colors.textSecondary}
+                />
+              }
+              textColor={theme.colors.textSecondary}
+              error={errors.password}
+              secureTextEntry={true}
+            />
+            <CustomTextInput
+              name={"verifyPassword"}
+              label={t("signUp.verifyPassword")}
+              value={state.verifyPassword}
+              onChangeText={handleChange}
+              borderColor={theme.colors.primary}
+              focusBorderColor={theme.colors.primary}
+              backgroundColor={theme.colors.backgroundPrimary}
+              borderWidth={1.5}
+              iconLeft={
+                <Ionicons
+                  name={"lock-closed"}
+                  size={16}
+                  color={theme.colors.textSecondary}
+                />
+              }
+              textColor={theme.colors.textSecondary}
+              error={errors.verifyPassword}
+              secureTextEntry={true}
+            />
+            <CustomButton
+              title={t("signUp.button")}
+              onPress={submitSignUp}
+              backgroundColor={theme.colors.primary}
+              textColor="#fff"
+              borderRadius={12}
+              paddingVertical={14}
+              paddingHorizontal={30}
+            />
+            <CustomDivider
+              text={t("signUp.divider")}
+              lineColor={theme.colors.textSecondary}
+            />
+            <View
+              style={{
+                flexDirection: "row",
+                width: "100%",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 16,
+              }}
+            >
+              <CustomButton
+                backgroundColor={theme.colors.backgroundPaper}
+                iconCenter={
+                  <Image source={Facebook} style={{ height: 24, width: 24 }} />
+                }
+                paddingVertical={12}
+                paddingHorizontal={12}
+                borderRadius={50}
+                width={"fit-content"}
+              />
+              <CustomButton
+                backgroundColor={theme.colors.backgroundPaper}
+                iconCenter={
+                  <Image source={Google} style={{ height: 24, width: 24 }} />
+                }
+                paddingVertical={12}
+                paddingHorizontal={12}
+                borderRadius={50}
+                width={"fit-content"}
+              />
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                width: "100%",
+                alignItems: "center",
+
+                justifyContent: "center",
+              }}
+            >
+              <Text
+                style={{
+                  width: "auto",
+                  paddingRight: 8,
+                  fontSize: 16,
+                }}
+              >
+                {t("signUp.alreadyHaveAccount")}
+              </Text>
+              <CustomButton
+                width={"auto"}
+                title={t("signUp.alreadyHaveAccountButton")}
+                textColor={theme.colors.primary}
+                onPress={() => navigation.goBack()}
+              />
+            </View>
+          </View>
+        </KeyboardAwareScrollView>
+      </TouchableWithoutFeedback>
+    </SafeAreaView>
   );
 };
 export default SingUp;

@@ -34,6 +34,10 @@
     "myResorts": "My resorts",
     "addResortButton": "Add New Resort"
   },
+  "containerGuestProfile": {
+    "title": "Profile",
+    "mainButton": "Sign in or sign up"
+  },
   "resortScreen": {
     "about": "About",
     "noDescription": "No description yet"

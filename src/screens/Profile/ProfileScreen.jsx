@@ -9,7 +9,6 @@ import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import APIService from "../../services/APIService";
 import { config } from "../../services/config";
-import { getAccessToken } from "../../Secure/secureHub";
 
 import ProfileCarousel from "../../components/Carousels/ProfileCarousel";
 import Loading from "../../components/Loading/Loading";
@@ -17,6 +16,8 @@ import Toast from "react-native-toast-message";
 import { useTheme } from "../../Theme/themeContext";
 import ThemeSwitch from "../../components/Buttons/ThemeSwitch";
 import * as Haptics from "expo-haptics";
+import { saveAccessToken, saveRefreshToken } from "../../Secure/secureHub";
+import ContainerGuestProfile from "../../components/Containers/ContainerGuestProfile";
 
 const ProfileScreen = () => {
   const [fetchLoading, setFetchLoading] = useState(true);
@@ -32,15 +33,8 @@ const ProfileScreen = () => {
   useEffect(() => {
     async function getResorts() {
       try {
-        const token = await getAccessToken();
         const response = await APIService.post(
           config.endpoints.legacy.resort.getResortsByUser,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
         );
         if (response.data?.error) {
           console.log("Something wrong happened: " + response.data.error);
@@ -59,17 +53,20 @@ const ProfileScreen = () => {
       }
     }
 
-    getResorts();
+    if (user) {
+      getResorts();
+    }
   }, [isFocused]);
 
-  return (
+  return !user ? (
+    <ContainerGuestProfile />
+  ) : (
     <SafeAreaView
       style={{
         backgroundColor: theme.colors.backgroundPrimary,
         flex: 1,
         justifyContent: "start",
         alignItems: "start",
-
         gap: 16, // or not
       }}
     >
@@ -133,12 +130,27 @@ const ProfileScreen = () => {
               />
             }
             style={{ marginTop: 8 }}
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+            onPress={async () => {
+              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
               navigation.navigate("AddResort");
             }}
           />
           <ThemeSwitch />
+          <CustomButton
+            title={"switch accessToken"}
+            onPress={async () => {
+              await saveAccessToken("jfdklas");
+            }}
+            borderWidth={1}
+          />
+          <CustomButton
+            title={"switch refreshToken"}
+            onPress={async () => {
+              await saveRefreshToken("jfdklasfd");
+            }}
+            borderWidth={1}
+            style={{ marginTop: 32 }}
+          />
         </View>
       )}
     </SafeAreaView>

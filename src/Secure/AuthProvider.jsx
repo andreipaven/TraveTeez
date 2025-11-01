@@ -3,6 +3,9 @@ import {
   getAccessToken,
   deleteAccessToken,
   deleteRefreshToken,
+  getRefreshToken,
+  saveAccessToken,
+  saveRefreshToken,
 } from "./secureHub";
 
 import APIService from "../services/APIService";
@@ -18,27 +21,29 @@ export const AuthProvider = ({ children }) => {
     setLoading(true);
 
     try {
-      const token = await getAccessToken();
+      const token = await getRefreshToken();
+
       if (!token) {
         setUser(null);
-        setLoading(false);
         return;
       }
 
       const response = await APIService.get(
         config.endpoints.legacy.auth.checkAuth,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
+        {},
       );
-      setUser(response.data.user);
+
+      if (response?.data.error) {
+        setUser(null);
+      } else {
+        setUser(response?.data.user);
+      }
     } catch (error) {
-      console.log("Token invalid or expired", error);
-      await deleteAccessToken();
-      await deleteRefreshToken();
+      console.log("Error checking auth:", error);
       setUser(null);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {

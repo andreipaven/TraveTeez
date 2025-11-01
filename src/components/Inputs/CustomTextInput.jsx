@@ -52,7 +52,7 @@ export default function CustomTextInput({
     left: iconLeft
       ? animatedLabel.interpolate({
           inputRange: [0, 1],
-          outputRange: [32, 20],
+          outputRange: [36, 20],
         })
       : animatedLabel.interpolate({
           inputRange: [0, 1],
@@ -97,7 +97,7 @@ export default function CustomTextInput({
       >
         {label && <Animated.Text style={labelStyle}>{label}</Animated.Text>}
 
-        {/* Icon stânga */}
+        {/* Icon left */}
         {iconLeft && (
           <View style={{ paddingLeft: 12, paddingRight: 4 }}>{iconLeft}</View>
         )}
@@ -139,7 +139,7 @@ export default function CustomTextInput({
           </Text>
         )}
 
-        {/* Icon dreapta sau buton pentru parolă */}
+        {/* Icon right or button for password */}
         {secureTextEntry ? (
           <TouchableOpacity
             onPress={() => setHidePassword(!hidePassword)}

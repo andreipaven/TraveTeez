@@ -24,25 +24,18 @@ import * as Haptics from "expo-haptics";
 export default function HomeScreen() {
   const { theme } = useTheme();
   const { t } = useTranslation();
-  const { user, loading } = useContext(AuthContext);
+
   const [refreshing, setRefreshing] = React.useState(false);
   const navigation = useNavigation();
   const [newResorts, setNewResorts] = useState([]);
-
-  useEffect(() => {
-    if (!(!loading && !user)) {
-      return;
-    }
-    navigation.replace("SignIn");
-  }, [user, loading]);
+  const { user, loading } = useContext(AuthContext);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-
     setTimeout(() => {
       setRefreshing(false);
-      navigation.navigate("HomeScreen");
-    }, 1000);
+      fetchNewResorts();
+    }, 500);
   }, []);
 
   const fetchNewResorts = () => {
@@ -64,6 +57,12 @@ export default function HomeScreen() {
     fetchNewResorts();
   }, []);
 
+  useEffect(() => {
+    if (!user && !loading) {
+      navigation.navigate("SignIn");
+    }
+  }, [user, loading]);
+
   return (
     <SafeAreaView
       style={[
@@ -73,9 +72,9 @@ export default function HomeScreen() {
       edges={["top", "left", "right"]}
     >
       <ScrollView
-        // refreshControl={
-        //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        // }
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         nestedScrollEnabled={true}
       >
         <View style={{ paddingHorizontal: 16, paddingTop: 4 }}>

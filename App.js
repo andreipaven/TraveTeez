@@ -12,6 +12,7 @@ import ThemeProvider from "./src/Theme/themeContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { ResortProvider } from "./src/components/Hooks/useEditResort";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 
 export default function App() {
   return (
@@ -22,7 +23,9 @@ export default function App() {
             <ThemeProvider>
               <I18nextProvider i18n={i18n}>
                 <AuthProvider>
-                  <AppNavigator />
+                  <KeyboardProvider>
+                    <AppNavigator />
+                  </KeyboardProvider>
                 </AuthProvider>
               </I18nextProvider>
             </ThemeProvider>

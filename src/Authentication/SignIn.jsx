@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useLayoutEffect, useState } from "react";
 import {
   Image,
   Keyboard,
@@ -19,6 +19,9 @@ import APIService from "../services/APIService";
 import { config } from "../services/config";
 import { saveAccessToken, saveRefreshToken } from "../Secure/secureHub";
 import { AuthContext } from "../Secure/AuthProvider";
+import { Icon } from "react-native-elements";
+import * as Haptics from "expo-haptics";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SignIn() {
   const { theme } = useTheme();
@@ -33,6 +36,29 @@ export default function SignIn() {
 
   const [errors, setErrors] = useState({ email: "", password: "" });
   const [signInError, setSignInError] = useState(false);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <CustomButton
+          iconLeft={
+            <Icon
+              color={theme.colors.textPrimary}
+              size={24}
+              type={"material-community"}
+              name={"close"}
+            />
+          }
+          style={{ paddingRight: 8 }}
+          paddingVertical={8}
+          onPress={async () => {
+            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            navigation.goBack();
+          }}
+        />
+      ),
+    });
+  }, []);
 
   const handleChange = (name, value) => {
     setState((prev) => ({
@@ -103,136 +129,139 @@ export default function SignIn() {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} style={{ flex: 1 }}>
-      <View
-        style={{
-          backgroundColor: theme.colors.backgroundPrimary,
-          flex: 1,
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: 16,
-          gap: 8, // or not
-        }}
-      >
-        <Text
-          style={{
-            fontSize: 32,
-            fontWeight: "bold",
-            color: theme.colors.textPrimary,
-            textAlign: "center",
-            paddingBottom: 16,
-          }}
-        >
-          {t("signIn.title")}
-        </Text>
-        <CustomTextInput
-          name={"email"}
-          placeholder={t("signIn.email")}
-          value={state.email}
-          onChangeText={handleChange}
-          borderColor={theme.colors.primary}
-          label="Email"
-          focusBorderColor={theme.colors.primary}
-          backgroundColor={theme.colors.backgroundPrimary}
-          iconLeft={
-            <Ionicons
-              name={"person"}
-              size={16}
-              color={theme.colors.textSecondary}
-            />
-          }
-          textColor={theme.colors.textSecondary}
-          error={errors.email}
-          borderWidth={1.5}
-        />
-        <CustomTextInput
-          name={"password"}
-          label={t("signIn.password")}
-          value={state.password}
-          onChangeText={handleChange}
-          borderColor={theme.colors.primary}
-          focusBorderColor={theme.colors.primary}
-          backgroundColor={theme.colors.backgroundPrimary}
-          textColor={theme.colors.textSecondary}
-          error={errors.password}
-          secureTextEntry={true}
-          iconLeft={
-            <Ionicons
-              name={"lock-closed"}
-              size={16}
-              color={theme.colors.textSecondary}
-            />
-          }
-          borderWidth={1.5}
-        />
-        {signInError && (
-          <Text style={{ color: "red" }}>{t("signIn.errorInvalid")}</Text>
-        )}
-        <CustomButton
-          title={t("signIn.button")}
-          onPress={submitSignIn}
-          backgroundColor={theme.colors.primary}
-          textColor="#fff"
-          borderRadius={12}
-          paddingVertical={14}
-          paddingHorizontal={30}
-        />
-
-        <CustomDivider
-          text={t("signIn.divider")}
-          lineColor={theme.colors.textSecondary}
-        />
-
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: theme.colors.backgroundPrimary }}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} style={{ flex: 1 }}>
         <View
           style={{
-            flexDirection: "row",
-            width: "100%",
+            backgroundColor: theme.colors.backgroundPrimary,
+            flex: 1,
+            flexDirection: "column",
+            justifyContent: "start",
             alignItems: "center",
-            justifyContent: "center",
-            gap: 16,
+            padding: 16,
+            gap: 8, // or not
           }}
         >
-          <CustomButton
-            backgroundColor={theme.colors.backgroundPaper}
-            iconCenter={
-              <Image source={Facebook} style={{ height: 24, width: 24 }} />
-            }
-            paddingVertical={12}
-            paddingHorizontal={12}
-            borderRadius={50}
-            width={"fit-content"}
-          />
-          <CustomButton
-            backgroundColor={theme.colors.backgroundPaper}
-            iconCenter={
-              <Image source={Google} style={{ height: 24, width: 24 }} />
-            }
-            paddingVertical={12}
-            paddingHorizontal={12}
-            borderRadius={50}
-            width={"fit-content"}
-          />
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            width: "100%",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Text style={{ width: "auto", paddingRight: 8, fontSize: 16 }}>
-            {t("signIn.noAccount")}
+          <Text
+            style={{
+              fontSize: 32,
+              fontWeight: "bold",
+              color: theme.colors.textPrimary,
+              textAlign: "center",
+              paddingBottom: 16,
+            }}
+          >
+            {t("signIn.title")}
           </Text>
-          <CustomButton
-            width={"auto"}
-            title={t("signIn.noAccountButton")}
-            textColor={theme.colors.primary}
-            onPress={() => navigation.navigate("SignUp")}
+          <CustomTextInput
+            name={"email"}
+            value={state.email}
+            onChangeText={handleChange}
+            borderColor={theme.colors.primary}
+            label={t("signIn.email")}
+            focusBorderColor={theme.colors.primary}
+            backgroundColor={theme.colors.backgroundPrimary}
+            iconLeft={
+              <Ionicons
+                name={"person"}
+                size={16}
+                color={theme.colors.textSecondary}
+              />
+            }
+            textColor={theme.colors.textSecondary}
+            error={errors.email}
+            borderWidth={1.5}
           />
+          <CustomTextInput
+            name={"password"}
+            label={t("signIn.password")}
+            value={state.password}
+            onChangeText={handleChange}
+            borderColor={theme.colors.primary}
+            focusBorderColor={theme.colors.primary}
+            backgroundColor={theme.colors.backgroundPrimary}
+            textColor={theme.colors.textSecondary}
+            error={errors.password}
+            secureTextEntry={true}
+            iconLeft={
+              <Ionicons
+                name={"lock-closed"}
+                size={16}
+                color={theme.colors.textSecondary}
+              />
+            }
+            borderWidth={1.5}
+          />
+          {signInError && (
+            <Text style={{ color: "red" }}>{t("signIn.errorInvalid")}</Text>
+          )}
+          <CustomButton
+            title={t("signIn.button")}
+            onPress={submitSignIn}
+            backgroundColor={theme.colors.primary}
+            textColor="#fff"
+            borderRadius={12}
+            paddingVertical={14}
+            paddingHorizontal={30}
+          />
+
+          <CustomDivider
+            text={t("signIn.divider")}
+            lineColor={theme.colors.textSecondary}
+          />
+
+          <View
+            style={{
+              flexDirection: "row",
+              width: "100%",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 16,
+            }}
+          >
+            <CustomButton
+              backgroundColor={theme.colors.backgroundPaper}
+              iconCenter={
+                <Image source={Facebook} style={{ height: 24, width: 24 }} />
+              }
+              paddingVertical={12}
+              paddingHorizontal={12}
+              borderRadius={50}
+              width={"fit-content"}
+            />
+            <CustomButton
+              backgroundColor={theme.colors.backgroundPaper}
+              iconCenter={
+                <Image source={Google} style={{ height: 24, width: 24 }} />
+              }
+              paddingVertical={12}
+              paddingHorizontal={12}
+              borderRadius={50}
+              width={"fit-content"}
+            />
+          </View>
+          <View
+            style={{
+              flexDirection: "row",
+              width: "100%",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Text style={{ width: "auto", paddingRight: 8, fontSize: 16 }}>
+              {t("signIn.noAccount")}
+            </Text>
+            <CustomButton
+              width={"auto"}
+              title={t("signIn.noAccountButton")}
+              textColor={theme.colors.primary}
+              onPress={() => navigation.navigate("SignUp")}
+            />
+          </View>
         </View>
-      </View>
-    </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>
+    </SafeAreaView>
   );
 }

@@ -6,6 +6,7 @@ export const config = {
         signUp: "/auth/register",
         signIn: "/auth/login",
         checkAuth: "/auth/check-auth",
+        refresh: "/auth/refresh",
       },
       resort: {
         addResort: "/resort/add-resort",

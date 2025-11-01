@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { AuthContext } from "./AuthProvider";
 import { useTranslation } from "react-i18next";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -8,6 +8,7 @@ import Loading from "../components/Loading/Loading";
 import { useTheme } from "../Theme/themeContext";
 import { NavigationContainer } from "@react-navigation/native";
 import TabNavigator from "../components/Bars/TabNavigator";
+import { Icon } from "react-native-elements";
 
 const AppNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -30,32 +31,38 @@ const AppNavigator = () => {
           headerTintColor: theme.colors.textPrimary,
         })}
       >
-        {loading ? (
+        {loading && (
           <Stack.Screen
             name="Loading"
             component={Loading}
             options={{ headerShown: false }}
           />
-        ) : !user ? (
-          <Stack.Group>
-            <Stack.Screen
-              name="SignIn"
-              component={SignIn}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="SignUp"
-              component={SingUp}
-              options={{ headerShown: false }}
-            />
-          </Stack.Group>
-        ) : (
-          <Stack.Screen
-            name="MainTabs"
-            component={TabNavigator}
-            options={{ headerShown: false }}
-          />
         )}
+
+        <Stack.Screen
+          name="MainTabs"
+          component={TabNavigator}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="SignIn"
+          component={SignIn}
+          options={{
+            headerShown: true,
+            presentation: "modal",
+            title: "Sign in or Sign up",
+          }}
+        />
+        <Stack.Screen
+          name="SignUp"
+          component={SingUp}
+          options={{
+            headerShown: true,
+            presentation: "modal",
+            title: "Sign in or Sign up",
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
