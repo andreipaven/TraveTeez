@@ -4,7 +4,7 @@ import APIService from "../../services/APIService";
 import { config } from "../../services/config";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import { useTheme } from "../../Theme/themeContext";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
 
 const Favorite = ({
@@ -21,6 +21,7 @@ const Favorite = ({
   const { theme } = useTheme();
   const isFocused = useIsFocused();
   const [fetchLoading, setFetchLoading] = useState(false);
+  const navigation = useNavigation();
 
   const onToggleFavorite = async () => {
     const newValue = isFavorite;
@@ -37,6 +38,7 @@ const Favorite = ({
         });
       }
     } catch (err) {
+      navigation.navigate("SignIn");
       console.log("Error updating favorite", err);
       setIsFavorite((prev) => !prev);
     }

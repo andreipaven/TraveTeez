@@ -22,8 +22,10 @@ import { AuthContext } from "../Secure/AuthProvider";
 import { Icon } from "react-native-elements";
 import * as Haptics from "expo-haptics";
 import { SafeAreaView } from "react-native-safe-area-context";
+import loadingButton from "../components/Loading/LoadingButton";
+import LottieView from "lottie-react-native";
 
-export default function SignIn() {
+export default function SignIn({ isOpen, setIsOpen }) {
   const { theme } = useTheme();
   const navigation = useNavigation();
   const { setUser } = useContext(AuthContext);
@@ -36,6 +38,8 @@ export default function SignIn() {
 
   const [errors, setErrors] = useState({ email: "", password: "" });
   const [signInError, setSignInError] = useState(false);
+
+  const [signInLoading, setSignInLoading] = useState(false);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -97,6 +101,7 @@ export default function SignIn() {
 
   const submitSignIn = () => {
     if (validate()) {
+      setSignInLoading(true);
       APIService.post(config.endpoints.legacy.auth.signIn, {
         email: state.email,
         password: state.password,
@@ -111,6 +116,7 @@ export default function SignIn() {
             await saveRefreshToken(refreshToken);
             setUser(user);
             setSignInError(false);
+            navigation.goBack();
           }
         })
         .catch((err) => {
@@ -122,7 +128,9 @@ export default function SignIn() {
             password: "z",
           });
         })
-        .finally(() => {});
+        .finally(() => {
+          setSignInLoading(false);
+        });
     } else {
       console.log("Error to signIn");
     }
@@ -130,7 +138,11 @@ export default function SignIn() {
 
   return (
     <SafeAreaView
-      style={{ flex: 1, backgroundColor: theme.colors.backgroundPrimary }}
+      style={{
+        flex: 1,
+        backgroundColor: theme.colors.backgroundPrimary,
+        display: isOpen ? "flex" : "none",
+      }}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} style={{ flex: 1 }}>
         <View
@@ -173,6 +185,7 @@ export default function SignIn() {
             textColor={theme.colors.textSecondary}
             error={errors.email}
             borderWidth={1.5}
+            borderRadius={100}
           />
           <CustomTextInput
             name={"password"}
@@ -193,18 +206,39 @@ export default function SignIn() {
               />
             }
             borderWidth={1.5}
+            borderRadius={100}
           />
           {signInError && (
             <Text style={{ color: "red" }}>{t("signIn.errorInvalid")}</Text>
           )}
           <CustomButton
-            title={t("signIn.button")}
+            title={!signInLoading ? t("signIn.button") : ""}
             onPress={submitSignIn}
             backgroundColor={theme.colors.primary}
             textColor="#fff"
-            borderRadius={12}
+            borderRadius={100}
             paddingVertical={14}
             paddingHorizontal={30}
+            maxHeight={48}
+            height={48}
+            width={"100%"}
+            iconCenter={
+              signInLoading && (
+                <LottieView
+                  source={require("../../assets/Trail loading.json")}
+                  autoPlay
+                  loop
+                  style={{ width: 54, height: 54, position: "relative" }}
+                  resizeMode={"cover"}
+                  colorFilters={[
+                    {
+                      keypath: "*",
+                      color: "#ffffff",
+                    },
+                  ]}
+                />
+              )
+            }
           />
 
           <CustomDivider
@@ -257,7 +291,7 @@ export default function SignIn() {
               width={"auto"}
               title={t("signIn.noAccountButton")}
               textColor={theme.colors.primary}
-              onPress={() => navigation.navigate("SignUp")}
+              onPress={setIsOpen}
             />
           </View>
         </View>

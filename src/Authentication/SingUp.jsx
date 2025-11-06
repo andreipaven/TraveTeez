@@ -25,8 +25,9 @@ import { Icon } from "react-native-elements";
 import * as Haptics from "expo-haptics";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
+import LottieView from "lottie-react-native";
 
-const SingUp = () => {
+const SingUp = ({ isOpen, setIsOpen }) => {
   const { theme } = useTheme();
   const navigation = useNavigation();
   const { t } = useTranslation();
@@ -48,6 +49,10 @@ const SingUp = () => {
     password: false,
     verifyPassword: false,
   });
+  const [firstVerify, setFirstVerify] = useState(true);
+  const [signUpError, setSignUpError] = useState(false);
+
+  const [signUpLoading, setSignUpLoading] = useState(false);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -97,6 +102,7 @@ const SingUp = () => {
 
     // Email
     if ("email" in valuesToValidate) {
+      setSignUpError(false);
       newErrors.email = /^\S+@\S+\.\S+$/.test(valuesToValidate.email || "")
         ? ""
         : t("signUp.errorInvalidEmail");
@@ -108,9 +114,15 @@ const SingUp = () => {
         (valuesToValidate.password || "").length >= 6
           ? ""
           : t("signUp.errorWeakPassword");
+      newErrors.verifyPassword =
+        (valuesToValidate.password || "") ===
+        (valuesToValidate.verifyPassword ?? state.verifyPassword)
+          ? ""
+          : t("signUp.errorPasswordMismatch");
     }
 
     // Verify Password
+    console.log(valuesToValidate);
     if ("verifyPassword" in valuesToValidate) {
       newErrors.verifyPassword =
         (valuesToValidate.verifyPassword || "") ===
@@ -135,12 +147,15 @@ const SingUp = () => {
     };
 
     setState(updatedUser);
-
-    validate({ [name]: value });
+    if (!firstVerify) {
+      validate({ [name]: value });
+    }
   };
 
   const submitSignUp = async () => {
+    setFirstVerify(false);
     if (validate()) {
+      setSignUpLoading(true);
       APIService.post(config.endpoints.legacy.auth.signUp, {
         first_name: state.firstName,
         last_name: state.lastName,
@@ -155,12 +170,17 @@ const SingUp = () => {
             saveAccessToken(accessToken);
             saveRefreshToken(refreshToken);
             setUser(user);
+            setSignUpError(false);
+            navigation.goBack();
           }
         })
         .catch((err) => {
+          setSignUpError(true);
           console.log("An error occurred!" + err);
         })
-        .finally(() => {});
+        .finally(() => {
+          setSignUpLoading(false);
+        });
     } else {
       console.log("Form invalid", errors);
     }
@@ -168,7 +188,11 @@ const SingUp = () => {
 
   return (
     <SafeAreaView
-      style={{ flex: 1, backgroundColor: theme.colors.backgroundPrimary }}
+      style={{
+        flex: 1,
+        backgroundColor: theme.colors.backgroundPrimary,
+        display: isOpen ? "flex" : "none",
+      }}
       edges={["bottom", "left", "right"]}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} style={{ flex: 1 }}>
@@ -217,6 +241,7 @@ const SingUp = () => {
               textColor={theme.colors.textSecondary}
               error={errors.lastName}
               borderWidth={1.5}
+              borderRadius={100}
             />
             <CustomTextInput
               name={"firstName"}
@@ -236,6 +261,7 @@ const SingUp = () => {
               }
               textColor={theme.colors.textSecondary}
               error={errors.firstName}
+              borderRadius={100}
             />
             <CustomTextInput
               name={"email"}
@@ -246,6 +272,7 @@ const SingUp = () => {
               focusBorderColor={theme.colors.primary}
               backgroundColor={theme.colors.backgroundPrimary}
               borderWidth={1.5}
+              borderRadius={100}
               iconLeft={
                 <Ionicons
                   name={"mail"}
@@ -265,6 +292,7 @@ const SingUp = () => {
               focusBorderColor={theme.colors.primary}
               backgroundColor={theme.colors.backgroundPrimary}
               borderWidth={1.5}
+              borderRadius={100}
               iconLeft={
                 <Ionicons
                   name={"lock-closed"}
@@ -285,6 +313,7 @@ const SingUp = () => {
               focusBorderColor={theme.colors.primary}
               backgroundColor={theme.colors.backgroundPrimary}
               borderWidth={1.5}
+              borderRadius={100}
               iconLeft={
                 <Ionicons
                   name={"lock-closed"}
@@ -296,14 +325,39 @@ const SingUp = () => {
               error={errors.verifyPassword}
               secureTextEntry={true}
             />
+            {signUpError && (
+              <Text style={{ color: "red" }}>
+                {t("signUp.errorEmailAlreadyUsed")}
+              </Text>
+            )}
             <CustomButton
-              title={t("signUp.button")}
+              title={signUpLoading ? "" : t("signUp.button")}
               onPress={submitSignUp}
               backgroundColor={theme.colors.primary}
               textColor="#fff"
-              borderRadius={12}
+              borderRadius={100}
+              width={"100%"}
               paddingVertical={14}
               paddingHorizontal={30}
+              height={48}
+              maxHeight={48}
+              iconCenter={
+                signUpLoading && (
+                  <LottieView
+                    source={require("../../assets/Trail loading.json")}
+                    autoPlay
+                    loop
+                    style={{ width: 54, height: 54, position: "relative" }}
+                    resizeMode={"cover"}
+                    colorFilters={[
+                      {
+                        keypath: "*",
+                        color: "#ffffff",
+                      },
+                    ]}
+                  />
+                )
+              }
             />
             <CustomDivider
               text={t("signUp.divider")}
@@ -361,7 +415,7 @@ const SingUp = () => {
                 width={"auto"}
                 title={t("signUp.alreadyHaveAccountButton")}
                 textColor={theme.colors.primary}
-                onPress={() => navigation.goBack()}
+                onPress={setIsOpen}
               />
             </View>
           </View>

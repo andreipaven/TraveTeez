@@ -9,6 +9,7 @@ import { useTheme } from "../Theme/themeContext";
 import { NavigationContainer } from "@react-navigation/native";
 import TabNavigator from "../components/Bars/TabNavigator";
 import { Icon } from "react-native-elements";
+import Auth from "../Authentication/Auth";
 
 const AppNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -47,16 +48,7 @@ const AppNavigator = () => {
 
         <Stack.Screen
           name="SignIn"
-          component={SignIn}
-          options={{
-            headerShown: true,
-            presentation: "modal",
-            title: "Sign in or Sign up",
-          }}
-        />
-        <Stack.Screen
-          name="SignUp"
-          component={SingUp}
+          component={Auth}
           options={{
             headerShown: true,
             presentation: "modal",

@@ -28,7 +28,8 @@
     "errorRequired": "This field is required",
     "errorInvalidEmail": "Invalid email address",
     "errorPasswordMismatch": "Passwords do not match",
-    "errorWeakPassword": "Password must be at least 6 characters"
+    "errorWeakPassword": "Password must be at least 6 characters",
+    "errorEmailAlreadyUsed": "This email is already in use"
   },
   "profileScreen": {
     "myResorts": "My resorts",

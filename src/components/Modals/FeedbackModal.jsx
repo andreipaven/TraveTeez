@@ -22,10 +22,12 @@ import CustomButton from "../Buttons/CustomButton";
 import Toast from "react-native-toast-message";
 import LottieView from "lottie-react-native";
 import StarRating from "react-native-star-rating-widget";
+import { useNavigation } from "@react-navigation/native";
 
 const FeedbackModal = ({ ref, resortId }) => {
   const { theme } = useTheme();
   const { t } = useTranslation();
+  const navigation = useNavigation();
   const [ratingValue, setRatingValue] = useState(3);
   const [isOpen, setIsOpen] = useState(false);
   const [screenLoadin, setScreenLoading] = useState({
@@ -76,6 +78,7 @@ const FeedbackModal = ({ ref, resortId }) => {
         }
       })
       .catch((err) => {
+        navigation.navigate("SignIn");
         console.log("An error occurred " + err);
       })
       .finally(() => {

@@ -342,8 +342,8 @@ const Step4Gallery = ({
       </Text>
       <Pressable
         style={{
-          width: "80%",
-          height: 180,
+          width: 240,
+          height: 200,
           borderWidth: 2,
           borderColor: errors.mainImage
             ? theme.colors.error
@@ -467,7 +467,7 @@ const Step4Gallery = ({
           <View
             style={{
               width: screenWidth / 2 - 20,
-              height: 200,
+              height: 180,
               borderRadius: 10,
               margin: 2,
             }}

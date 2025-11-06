@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
-import { View, Text, StyleSheet, Button } from "react-native";
+import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AddResortProgressBar from "../../components/Bars/Progress/AddResortProgressBar";
 import Step1Info from "../../components/AddNewResortSteps/Step1Info";
@@ -18,7 +18,6 @@ import EditStep4Gallery from "../../components/EditResortSteps/EditStep4Gallery"
 import { useEditResort } from "../../components/Hooks/useEditResort";
 import { Icon } from "react-native-elements";
 import DeleteResortModalConfirmation from "../../components/Modals/DeleteResortModalConfirmation";
-import Step4Gallery from "../../components/AddNewResortSteps/Step4Gallery";
 import * as Haptics from "expo-haptics";
 
 const EditResort = () => {
@@ -56,7 +55,6 @@ const EditResort = () => {
         <View style={{ flexDirection: "row", gap: 8 }}>
           <CustomButton
             onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
               setModalVisible((prev) => ({ ...prev, deleteResort: true }));
             }}
             iconCenter={
@@ -134,8 +132,8 @@ const EditResort = () => {
           }
           style={{ paddingRight: 8 }}
           paddingVertical={8}
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          onPress={async () => {
+            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
             navigation.goBack();
           }}
         />
@@ -144,7 +142,6 @@ const EditResort = () => {
   }, [navigation, theme, resort, loadingButton]);
 
   const deleteResort = () => {
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setModalVisible((prev) => ({ ...prev, deleteResort: false }));
     setLoadingButton((prev) => ({
       ...prev,
@@ -158,12 +155,16 @@ const EditResort = () => {
         if (response?.data.error) {
           console.log("Something wrong happened" + response.data.error);
         } else {
-          Toast.show({
-            type: "custom",
-            text1: t("editResort.successDeleteSubmitNotify"),
-            position: "bottom",
+          Haptics.notificationAsync(
+            Haptics.NotificationFeedbackType.Success,
+          ).then(() => {
+            Toast.show({
+              type: "custom",
+              text1: t("editResort.successDeleteSubmitNotify"),
+              position: "bottom",
+            });
+            navigation.goBack();
           });
-          navigation.goBack();
         }
       })
       .catch((err) => {
@@ -185,7 +186,6 @@ const EditResort = () => {
   //update resort
   const updateResort = () => {
     if (Object.values(errors).every((x) => x === "")) {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       setLoadingButton((prev) => ({
         ...prev,
         update: true,
@@ -210,10 +210,14 @@ const EditResort = () => {
           if (response.data?.error) {
             console.log("Something wrong happened: " + response.data.error);
           } else {
-            Toast.show({
-              type: "custom",
-              text1: t("editResort.successSubmitNotify"),
-              position: "bottom",
+            Haptics.notificationAsync(
+              Haptics.NotificationFeedbackType.Success,
+            ).then(() => {
+              Toast.show({
+                type: "custom",
+                text1: t("editResort.successSubmitNotify"),
+                position: "bottom",
+              });
             });
           }
         })

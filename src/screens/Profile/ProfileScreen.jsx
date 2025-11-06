@@ -93,25 +93,27 @@ const ProfileScreen = () => {
               {user.first_name} {user.last_name}
             </Text>
           </View>
-          <View
-            style={{
-              alignItems: "start",
-              justifyContent: "center",
-              width: "100%",
-            }}
-          >
-            <Text
+          {resorts.length !== 0 && (
+            <View
               style={{
-                fontWeight: "bold",
-                fontSize: 16,
-                paddingHorizontal: 16,
+                alignItems: "start",
+                justifyContent: "center",
+                width: "100%",
               }}
             >
-              {t(`profileScreen.myResorts`)}
-            </Text>
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  fontSize: 16,
+                  paddingHorizontal: 16,
+                }}
+              >
+                {t(`profileScreen.myResorts`)}
+              </Text>
 
-            <ProfileCarousel resorts={resorts} />
-          </View>
+              <ProfileCarousel resorts={resorts} />
+            </View>
+          )}
           <CustomButton
             title={t("profileScreen.addResortButton")}
             backgroundColor={theme.colors.primary}
