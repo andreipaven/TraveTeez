@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
-import { View } from "react-native";
+import { Keyboard, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AddResortProgressBar from "../../components/Bars/Progress/AddResortProgressBar";
 import Step1Info from "../../components/AddNewResortSteps/Step1Info";
@@ -55,6 +55,7 @@ const EditResort = () => {
         <View style={{ flexDirection: "row", gap: 8 }}>
           <CustomButton
             onPress={() => {
+              Keyboard.dismiss();
               setModalVisible((prev) => ({ ...prev, deleteResort: true }));
             }}
             iconCenter={
@@ -185,6 +186,7 @@ const EditResort = () => {
 
   //update resort
   const updateResort = () => {
+    Keyboard.dismiss();
     if (Object.values(errors).every((x) => x === "")) {
       setLoadingButton((prev) => ({
         ...prev,
@@ -203,7 +205,7 @@ const EditResort = () => {
         },
         types: resort.type,
         resortId: resortId,
-        images: [resort.mainImage, resort.images],
+        images: [resort.mainImage, ...(resort.images || [])],
         deletedImages: deletedImages,
       })
         .then((response) => {

@@ -27,12 +27,12 @@ const Favorite = ({
     const newValue = isFavorite;
     setIsFavorite((prev) => !prev);
     try {
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       if (newValue) {
         await APIService.post(config.endpoints.legacy.favorite.deleteFavorite, {
           resortId: resortId,
         });
       } else {
-        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         await APIService.post(config.endpoints.legacy.favorite.addFavorite, {
           resortId: resortId,
         });

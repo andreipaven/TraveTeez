@@ -159,7 +159,8 @@ const FeedbackModal = ({ ref, resortId }) => {
             paddingVertical={12}
             textColor={theme.colors.primaryContrast}
             flex={1}
-            maxHeight={45}
+            maxHeight={48}
+            height={48}
             onPress={submitCancel}
             borderRadius={100}
           />
@@ -181,7 +182,8 @@ const FeedbackModal = ({ ref, resortId }) => {
             paddingVertical={12}
             textColor={theme.colors.primaryContrast}
             flex={1}
-            maxHeight={45}
+            maxHeight={48}
+            height={48}
             onPress={submitAddFeedback}
             borderRadius={100}
           />

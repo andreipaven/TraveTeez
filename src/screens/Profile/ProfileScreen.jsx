@@ -39,10 +39,11 @@ const ProfileScreen = () => {
         if (response.data?.error) {
           console.log("Something wrong happened: " + response.data.error);
         } else {
+          console.log("aicidd");
           setResorts(response.data);
         }
       } catch (err) {
-        console.error("An error occurred! " + err);
+        console.log("An error occurred! " + err);
         Toast.show({
           type: "custom",
           text1: t("error.catchError"),

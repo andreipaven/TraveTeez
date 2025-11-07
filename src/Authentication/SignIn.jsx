@@ -2,6 +2,7 @@ import React, { useContext, useLayoutEffect, useState } from "react";
 import {
   Image,
   Keyboard,
+  Platform,
   Text,
   TouchableWithoutFeedback,
   View,
@@ -186,6 +187,9 @@ export default function SignIn({ isOpen, setIsOpen }) {
             error={errors.email}
             borderWidth={1.5}
             borderRadius={100}
+            keyboardType={"email-address"}
+            autoCapitalize={"none"}
+            autoCorrect={false}
           />
           <CustomTextInput
             name={"password"}
@@ -207,6 +211,8 @@ export default function SignIn({ isOpen, setIsOpen }) {
             }
             borderWidth={1.5}
             borderRadius={100}
+            autoCapitalize={"none"}
+            autoCorrect={false}
           />
           {signInError && (
             <Text style={{ color: "red" }}>{t("signIn.errorInvalid")}</Text>

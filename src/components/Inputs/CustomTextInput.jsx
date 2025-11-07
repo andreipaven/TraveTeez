@@ -29,6 +29,9 @@ export default function CustomTextInput({
   maxLength,
   style,
   placeholder,
+  keyboardType,
+  autoCapitalize,
+  autoCorrect,
 }) {
   const { theme } = useTheme();
   const [isFocused, setIsFocused] = useState(false);
@@ -121,6 +124,9 @@ export default function CustomTextInput({
           onBlur={() => setIsFocused(false)}
           maxLength={maxLength || 250}
           placeholder={placeholder}
+          keyboardType={keyboardType}
+          autoCapitalize={autoCapitalize}
+          autoCorrect={autoCorrect}
         />
 
         {multiLine && maxLength && (

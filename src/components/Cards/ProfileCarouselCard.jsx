@@ -10,7 +10,7 @@ import Carousel from "react-native-reanimated-carousel";
 import { useSharedValue } from "react-native-reanimated";
 
 import { useTheme } from "../../Theme/themeContext";
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import APIService from "../../services/APIService";
 import { config } from "../../services/config";
 import Loading from "../Loading/Loading";
@@ -23,6 +23,8 @@ export default function ProfileCarouselCard({ item, resortId }) {
   const progress = useSharedValue(0);
   const [images, setImages] = useState([]);
   const [fetchLoading, setFetchLoading] = useState({ images: false });
+  const isFocused = useIsFocused();
+
   useEffect(() => {
     setFetchLoading((prev) => ({
       ...prev,
@@ -47,7 +49,7 @@ export default function ProfileCarouselCard({ item, resortId }) {
           images: false,
         }));
       });
-  }, [resortId]);
+  }, [isFocused]);
 
   return (
     <View
