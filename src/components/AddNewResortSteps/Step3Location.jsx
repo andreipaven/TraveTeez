@@ -258,10 +258,10 @@ const Step3Location = ({ ref, resort, setResort, errors, setErrors }) => {
 
     geocode(resort.city, resort.state, resort.country);
   }, []);
-  useEffect(() => {
-    console.log(resort.stateValue);
-    console.log(resort.cityValue);
-  }, [resort]);
+  // useEffect(() => {
+  //   console.log(resort.stateValue);
+  //   console.log(resort.cityValue);
+  // }, [resort]);
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}

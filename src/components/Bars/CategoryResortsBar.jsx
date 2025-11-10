@@ -22,7 +22,7 @@ import {
   TapGestureHandler,
 } from "react-native-gesture-handler";
 
-const CategoryResortsBar = () => {
+const CategoryResortsBar = ({ refreshing }) => {
   const { theme } = useTheme();
   const navigation = useNavigation();
   const [data, setData] = useState([]);
@@ -52,6 +52,10 @@ const CategoryResortsBar = () => {
         setFetchLoading(false);
       });
   };
+
+  useEffect(() => {
+    fetchData(selectedCategory);
+  }, [refreshing]);
 
   useEffect(() => {
     fetchData(selectedCategory);

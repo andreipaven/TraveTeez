@@ -147,7 +147,7 @@ export default function HomeScreen() {
             {t("home.newResortsTitle")}
           </Text>
           <NewResortsList dates={newResorts} />
-          <CategoryResortsBar />
+          <CategoryResortsBar refreshing={refreshing} />
         </View>
       </ScrollView>
     </SafeAreaView>

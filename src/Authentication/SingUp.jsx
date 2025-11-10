@@ -282,6 +282,9 @@ const SingUp = ({ isOpen, setIsOpen }) => {
               }
               textColor={theme.colors.textSecondary}
               error={errors.email}
+              keyboardType={"email-address"}
+              autoCapitalize={"none"}
+              autoCorrect={false}
             />
             <CustomTextInput
               name={"password"}

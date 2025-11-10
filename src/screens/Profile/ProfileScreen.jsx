@@ -39,7 +39,6 @@ const ProfileScreen = () => {
         if (response.data?.error) {
           console.log("Something wrong happened: " + response.data.error);
         } else {
-          console.log("aicidd");
           setResorts(response.data);
         }
       } catch (err) {
