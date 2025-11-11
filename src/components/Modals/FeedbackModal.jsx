@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 
 import {
@@ -14,7 +8,6 @@ import {
 } from "@gorhom/bottom-sheet";
 import { useTheme } from "../../Theme/themeContext";
 import { useTranslation } from "react-i18next";
-import { Rating } from "react-native-ratings";
 import APIService from "../../services/APIService";
 import { config } from "../../services/config";
 import CustomButton from "../Buttons/CustomButton";

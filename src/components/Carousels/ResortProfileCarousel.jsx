@@ -25,6 +25,7 @@ import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import RatingAllStars from "../Ratings/RatingAllStars";
+import * as Haptics from "expo-haptics";
 
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
@@ -112,27 +113,24 @@ const ResortProfileCarousel = ({ resortId, images }) => {
           };
         }}
       />
-      <View
+
+      <Favorite
+        resortId={resortId}
+        size={24}
+        top={60}
+        right={16}
+        position={"absolute"}
+        backgroundColor={theme.colors.backgroundPrimary + "b5"}
+        padding={8}
+        borderRadius={100}
         style={{
-          position: "absolute",
-          top: 60,
-          right: 16,
-          backgroundColor: theme.colors.textPrimary + "55",
-          borderRadius: 100,
-          width: 52,
-          height: 52,
-          alignItems: "center",
+          width: 42,
+          height: 42,
           justifyContent: "center",
+          alignItems: "center",
         }}
-      >
-        <Favorite
-          resortId={resortId}
-          size={32}
-          top={1}
-          right={0}
-          position={"relative"}
-        />
-      </View>
+      />
+
       <CustomButton
         iconCenter={
           <Ionicons
@@ -142,7 +140,7 @@ const ResortProfileCarousel = ({ resortId, images }) => {
             style={{ left: -1 }}
           />
         }
-        backgroundColor={theme.colors.textDark}
+        backgroundColor={theme.colors.backgroundPrimary}
         width={42}
         height={42}
         borderRadius={100}
@@ -153,7 +151,10 @@ const ResortProfileCarousel = ({ resortId, images }) => {
           left: 10,
           top: 60,
         }}
-        onPress={() => navigation.goBack()}
+        onPress={async () => {
+          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          navigation.goBack();
+        }}
       />
       <RatingAllStars
         position={"absolute"}

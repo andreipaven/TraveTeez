@@ -47,8 +47,8 @@ const AddResort = () => {
           }
           style={{ paddingRight: 8 }}
           paddingVertical={8}
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          onPress={async () => {
+            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
             navigation.goBack();
           }}
         />

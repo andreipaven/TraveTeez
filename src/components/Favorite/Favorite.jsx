@@ -16,6 +16,9 @@ const Favorite = ({
   position,
   left,
   bottom,
+  backgroundColor,
+  padding,
+  borderRadius,
 }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const { theme } = useTheme();
@@ -78,6 +81,9 @@ const Favorite = ({
           right,
           left,
           bottom,
+          backgroundColor,
+          padding,
+          borderRadius,
         },
         style,
       ]}
@@ -85,7 +91,8 @@ const Favorite = ({
       <Icon
         name={isFavorite ? "heart" : "heart-outline"}
         size={size || 28}
-        color={isFavorite ? theme.colors.primary : "#ffffff"}
+        color={isFavorite ? theme.colors.primary : theme.colors.textPrimary}
+        style={{ opacity: 1 }}
       />
     </Pressable>
   );

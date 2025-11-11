@@ -25,7 +25,7 @@ const CustomResortSearchCard = React.memo(({ item }) => {
           backgroundColor: "transparent",
           left: 0,
           top: 0,
-          zIndex: 3,
+          zIndex: 6,
         }}
         onPress={() =>
           navigation.navigate("ResortProfile", {

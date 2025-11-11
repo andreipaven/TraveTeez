@@ -2,6 +2,7 @@
   "expo": {
     "name": "TraveTeez",
     "slug": "TraveTeez",
+    "scheme": "traveteez",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -40,7 +41,8 @@
         {
           "locationAlwaysAndWhenInUsePermission": "Allow Traveteez to use your location."
         }
-      ]
+      ],
+      "expo-web-browser"
     ]
   }
 }

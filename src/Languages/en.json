@@ -52,7 +52,6 @@
     "subtitle": "Fill in a few details to get started",
     "descriptionHint": "Add a description that reflects the atmosphere of the resort",
     "errorsField": "Please complete all required fields."
-
   },
   "step2Type": {
     "typeLabel": "Types",
@@ -164,6 +163,14 @@
     "saveButton": "Save",
     "cancelButton": "Cancel",
     "notifySuccess": "Feedback saved"
+  },
+  "filters": {
+    "title": "Filters",
+    "countryLabel": "Country",
+    "stateLabel": "State",
+    "cityLabel": "City",
+    "categoryLabel": "Categories",
+    "typeLabel": "Types"
   },
   "error": {
     "catchError": "Something went wrong. Please try again."

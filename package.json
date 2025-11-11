@@ -16,6 +16,7 @@
     "@react-navigation/bottom-tabs": "^7.4.7",
     "@react-navigation/native": "^7.1.17",
     "@react-navigation/native-stack": "^7.3.26",
+    "@supabase/supabase-js": "^2.80.0",
     "axios": "^1.12.2",
     "babel-preset-expo": "~54.0.0",
     "expo": "~54.0.7",
@@ -38,6 +39,7 @@
     "react-native-element-dropdown": "^2.12.4",
     "react-native-elements": "^3.4.3",
     "react-native-gesture-handler": "~2.28.0",
+    "react-native-keyboard-controller": "1.18.5",
     "react-native-localize": "^3.5.2",
     "react-native-maps": "1.20.1",
     "react-native-progress": "^5.0.1",
@@ -51,7 +53,8 @@
     "react-native-toast-message": "^2.3.3",
     "react-native-worklets": "0.5.1",
     "react-navigation": "^5.0.0",
-    "react-native-keyboard-controller": "1.18.5"
+    "expo-web-browser": "~15.0.9",
+    "expo-linking": "~8.0.8"
   },
   "private": true,
   "devDependencies": {

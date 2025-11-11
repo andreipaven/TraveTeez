@@ -90,7 +90,7 @@ const ResortScreen = ({ route }) => {
               >
                 {resortDetails?.name}
               </Text>
-              <View>
+              <View style={{ paddingTop: 8 }}>
                 <Text
                   style={{
                     color: theme.colors.textSecondary,
@@ -106,7 +106,7 @@ const ResortScreen = ({ route }) => {
             </View>
             <View
               style={{
-                justifyContent: "center",
+                justifyContent: "flex-start",
                 alignItems: "flex-end",
               }}
             >
@@ -127,19 +127,32 @@ const ResortScreen = ({ route }) => {
               />
             </View>
           </View>
-          <View style={{ paddingHorizontal: 16, paddingTop: 8 }}>
+          <View
+            style={{
+              paddingHorizontal: 16,
+              paddingTop: 8,
+            }}
+          >
             <Text
               style={{
                 fontWeight: "bold",
                 fontSize: 20,
+                color: theme.colors.textPrimary,
+                paddingBottom: 4,
               }}
             >
               {t("resortScreen.about")}
             </Text>
             {resortDetails.description ? (
-              <Text style={{ marginTop: -4 }}>{resortDetails.description}</Text>
+              <Text
+                style={{ marginTop: -4, color: theme.colors.textSecondary }}
+              >
+                {resortDetails.description}
+              </Text>
             ) : (
-              <Text style={{ marginTop: -4 }}>
+              <Text
+                style={{ marginTop: -4, color: theme.colors.textSecondary }}
+              >
                 {t("resortScreen.noDescription")}
               </Text>
             )}

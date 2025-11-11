@@ -5,12 +5,15 @@ import {
   TouchableOpacity,
   View,
   Animated,
+  Pressable,
 } from "react-native";
 import { useTheme } from "../../Theme/themeContext";
 import { Ionicons } from "@expo/vector-icons";
+import { Icon } from "react-native-elements";
 
 export default function CustomTextInput({
   label,
+  width,
   value,
   onChangeText,
   secureTextEntry,
@@ -32,6 +35,7 @@ export default function CustomTextInput({
   keyboardType,
   autoCapitalize,
   autoCorrect,
+  buttonRight,
 }) {
   const { theme } = useTheme();
   const [isFocused, setIsFocused] = useState(false);
@@ -81,7 +85,7 @@ export default function CustomTextInput({
   };
 
   return (
-    <View style={[{ marginVertical: 8, width: "100%" }, style]}>
+    <View style={[{ marginVertical: 8, width: width || "100%" }, style]}>
       <View
         style={{
           position: "relative",
@@ -115,6 +119,7 @@ export default function CustomTextInput({
             color: textColor || theme.colors.textPrimary,
             minHeight: minHeight || 0,
           }}
+          placeholderTextColor={textColor}
           textAlignVertical={"top"}
           multiline={multiLine || false}
           value={value}
@@ -160,6 +165,8 @@ export default function CustomTextInput({
         ) : (
           iconRight && <View style={{ paddingRight: 12 }}>{iconRight}</View>
         )}
+
+        {buttonRight && <View style={{ paddingRight: 12 }}>{buttonRight}</View>}
       </View>
 
       {error && error !== "z" && (

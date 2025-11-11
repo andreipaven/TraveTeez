@@ -26,6 +26,10 @@ import * as Haptics from "expo-haptics";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import LottieView from "lottie-react-native";
+import * as WebBrowser from "expo-web-browser";
+import * as Linking from "expo-linking";
+
+import { supabase } from "./utils/supabase";
 
 const SingUp = ({ isOpen, setIsOpen }) => {
   const { theme } = useTheme();
@@ -149,6 +153,29 @@ const SingUp = ({ isOpen, setIsOpen }) => {
     setState(updatedUser);
     if (!firstVerify) {
       validate({ [name]: value });
+    }
+  };
+
+  const signUpWithGoogle = async () => {
+    try {
+      const redirectUrl = Linking.createURL("/auth");
+      console.log("1: " + redirectUrl);
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: redirectUrl },
+      });
+      console.log("2: " + error);
+      if (error) {
+        console.log("Supabase OAuth error:", error.message);
+        return;
+      }
+
+      if (data.url) {
+        console.log("3: " + redirectUrl);
+        await WebBrowser.openAuthSessionAsync(data.url, redirectUrl);
+      }
+    } catch (err) {
+      console.log("Unexpected error during Google sign-in:", err);
     }
   };
 
@@ -394,6 +421,7 @@ const SingUp = ({ isOpen, setIsOpen }) => {
                 paddingHorizontal={12}
                 borderRadius={50}
                 width={"fit-content"}
+                onPress={signUpWithGoogle}
               />
             </View>
             <View
