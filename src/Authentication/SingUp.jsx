@@ -2,8 +2,6 @@ import React, { useContext, useLayoutEffect, useState } from "react";
 import {
   Image,
   Keyboard,
-  KeyboardAvoidingView,
-  Platform,
   Text,
   TouchableWithoutFeedback,
   View,
@@ -223,10 +221,7 @@ const SingUp = ({ isOpen, setIsOpen }) => {
       edges={["bottom", "left", "right"]}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} style={{ flex: 1 }}>
-        <KeyboardAwareScrollView
-          bottomOffset={60}
-          style={{ flex: 1, marginBottom: 62 }}
-        >
+        <KeyboardAwareScrollView bottomOffset={60} style={{ flex: 1 }}>
           <View
             style={{
               backgroundColor: theme.colors.backgroundPrimary,
@@ -236,7 +231,6 @@ const SingUp = ({ isOpen, setIsOpen }) => {
               paddingTop: 16,
               paddingLeft: 16,
               paddingRight: 16,
-              gap: 2,
             }}
           >
             <Text
@@ -245,7 +239,7 @@ const SingUp = ({ isOpen, setIsOpen }) => {
                 fontWeight: "bold",
                 color: theme.colors.textPrimary,
                 textAlign: "center",
-                paddingBottom: 16,
+                paddingBottom: 8,
               }}
             >
               {t("signUp.title")}

@@ -77,11 +77,16 @@ export default function HomeScreen() {
         }
         nestedScrollEnabled={true}
       >
-        <View style={{ paddingHorizontal: 16, paddingTop: 4 }}>
+        <View
+          style={{
+            paddingHorizontal: 16,
+            paddingTop: 4,
+          }}
+        >
           <CustomButton
             activeOpacity={1}
             backgroundColor={theme.colors.backgroundPrimary}
-            title={
+            iconCenter={
               <View
                 style={{
                   flexDirection: "row",
@@ -127,8 +132,8 @@ export default function HomeScreen() {
               elevation: 4,
               justifyContent: "space-between",
             }}
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+            onPress={async () => {
+              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
               navigation.navigate("SearchScreen");
             }}
           />
@@ -159,6 +164,5 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingTop: 12,
   },
 });

@@ -16,6 +16,7 @@ import Toast from "react-native-toast-message";
 import LottieView from "lottie-react-native";
 import StarRating from "react-native-star-rating-widget";
 import { useNavigation } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const FeedbackModal = ({ ref, resortId }) => {
   const { theme } = useTheme();
@@ -63,6 +64,7 @@ const FeedbackModal = ({ ref, resortId }) => {
         if (response?.data.error) {
           console.log("Something wrong happened " + response.data.error);
         } else {
+          submitCancel();
           Toast.show({
             type: "custom",
             text1: t("feedback.notifySuccess"),
@@ -124,63 +126,75 @@ const FeedbackModal = ({ ref, resortId }) => {
         backgroundColor: theme.colors.textPrimary,
       }}
     >
-      <BottomSheetView style={styles.contentContainer}>
-        <Text style={{ fontWeight: "bold", fontSize: 20, paddingVertical: 16 }}>
-          {t("feedback.title")}
-        </Text>
+      <BottomSheetView style={{ flex: 1, height: "100%" }}>
+        <SafeAreaView style={{ flex: 1 }} edges={["bottom", "right", "left"]}>
+          <View style={styles.contentContainer}>
+            <View style={{ flex: 1, alignItems: "center" }}>
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  fontSize: 20,
+                  paddingVertical: 16,
+                }}
+              >
+                {t("feedback.title")}
+              </Text>
 
-        <StarRating
-          rating={ratingValue}
-          onChange={ratingCompleted}
-          enableHalfStar={false}
-          starSize={42}
-          maxStars={5}
-        />
-        <View
-          style={{
-            flexDirection: "row",
-            paddingHorizontal: 16,
-            paddingTop: 24,
-            width: "100%",
-            justifyContent: "center",
-            gap: 16,
-          }}
-        >
-          <CustomButton
-            title={t("feedback.cancelButton")}
-            backgroundColor={theme.colors.textSecondary}
-            paddingVertical={12}
-            textColor={theme.colors.primaryContrast}
-            flex={1}
-            maxHeight={48}
-            height={48}
-            onPress={submitCancel}
-            borderRadius={100}
-          />
-          <CustomButton
-            title={
-              screenLoadin.submitAddFeedback ? (
-                <LottieView
-                  source={require("../../../assets/Trail loading.json")}
-                  autoPlay
-                  loop
-                  style={{ width: 54, height: 54 }}
-                  resizeMode={"cover"}
-                />
-              ) : (
-                t("feedback.saveButton")
-              )
-            }
-            backgroundColor={theme.colors.primary}
-            paddingVertical={12}
-            textColor={theme.colors.primaryContrast}
-            flex={1}
-            maxHeight={48}
-            height={48}
-            onPress={submitAddFeedback}
-            borderRadius={100}
-          />
-        </View>
+              <StarRating
+                rating={ratingValue}
+                onChange={ratingCompleted}
+                enableHalfStar={false}
+                starSize={42}
+                maxStars={5}
+              />
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                paddingHorizontal: 16,
+                paddingTop: 24,
+                width: "100%",
+                justifyContent: "center",
+                gap: 16,
+              }}
+            >
+              <CustomButton
+                title={t("feedback.cancelButton")}
+                backgroundColor={theme.colors.textSecondary}
+                paddingVertical={12}
+                textColor={theme.colors.primaryContrast}
+                flex={1}
+                maxHeight={48}
+                height={48}
+                onPress={submitCancel}
+                borderRadius={100}
+              />
+              <CustomButton
+                title={
+                  screenLoadin.submitAddFeedback ? (
+                    <LottieView
+                      source={require("../../../assets/Trail loading.json")}
+                      autoPlay
+                      loop
+                      style={{ width: 54, height: 54 }}
+                      resizeMode={"cover"}
+                    />
+                  ) : (
+                    t("feedback.saveButton")
+                  )
+                }
+                backgroundColor={theme.colors.primary}
+                paddingVertical={12}
+                textColor={theme.colors.primaryContrast}
+                flex={1}
+                maxHeight={48}
+                height={48}
+                onPress={submitAddFeedback}
+                borderRadius={100}
+              />
+            </View>
+          </View>
+        </SafeAreaView>
       </BottomSheetView>
     </BottomSheetModal>
   );
@@ -196,6 +210,9 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
     alignItems: "center",
+    paddingTop: 8,
+
+    justifyContent: "space-between",
   },
 });
 

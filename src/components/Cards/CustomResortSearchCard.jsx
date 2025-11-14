@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, ImageBackground, Pressable } from "react-native";
+import { View, Text, ImageBackground, Pressable, Keyboard } from "react-native";
 import { useTheme } from "../../Theme/themeContext";
 import { useNavigation } from "@react-navigation/native";
 
@@ -27,11 +27,12 @@ const CustomResortSearchCard = React.memo(({ item }) => {
           top: 0,
           zIndex: 6,
         }}
-        onPress={() =>
+        onPress={() => {
           navigation.navigate("ResortProfile", {
             state: { resortId: item.resort_id },
-          })
-        }
+          });
+          Keyboard.dismiss();
+        }}
       />
       <ImageBackground
         source={{ uri: item.mainImage.image_url || "" }}

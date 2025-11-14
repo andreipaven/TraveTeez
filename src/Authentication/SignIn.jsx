@@ -144,6 +144,7 @@ export default function SignIn({ isOpen, setIsOpen }) {
         backgroundColor: theme.colors.backgroundPrimary,
         display: isOpen ? "flex" : "none",
       }}
+      edges={["bottom", "left", "right"]}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} style={{ flex: 1 }}>
         <View
@@ -154,7 +155,6 @@ export default function SignIn({ isOpen, setIsOpen }) {
             justifyContent: "start",
             alignItems: "center",
             padding: 16,
-            gap: 8, // or not
           }}
         >
           <Text
@@ -163,7 +163,7 @@ export default function SignIn({ isOpen, setIsOpen }) {
               fontWeight: "bold",
               color: theme.colors.textPrimary,
               textAlign: "center",
-              paddingBottom: 16,
+              paddingBottom: 8,
             }}
           >
             {t("signIn.title")}
@@ -245,6 +245,7 @@ export default function SignIn({ isOpen, setIsOpen }) {
                 />
               )
             }
+            style={{ marginTop: 8 }}
           />
 
           <CustomDivider
@@ -288,6 +289,7 @@ export default function SignIn({ isOpen, setIsOpen }) {
               width: "100%",
               alignItems: "center",
               justifyContent: "center",
+              paddingTop: 8,
             }}
           >
             <Text style={{ width: "auto", paddingRight: 8, fontSize: 16 }}>

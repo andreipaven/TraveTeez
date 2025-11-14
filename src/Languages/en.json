@@ -122,7 +122,6 @@
     "lake": "Lake",
     "island": "Island",
     "family": "Family-Friendly",
-    "adultsOnly": "Adults Only",
     "theme": "Theme / Entertainment",
     "retreat": "Wellness / Yoga Retreat",
     "natureB": "Nature & Adventure",
@@ -170,7 +169,9 @@
     "stateLabel": "State",
     "cityLabel": "City",
     "categoryLabel": "Categories",
-    "typeLabel": "Types"
+    "typeLabel": "Types",
+    "resetButton": "Reset",
+    "submitButton": "Apply Filters"
   },
   "error": {
     "catchError": "Something went wrong. Please try again."

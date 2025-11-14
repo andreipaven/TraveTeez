@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import { useTheme } from "../../Theme/themeContext";
 import { Ionicons } from "@expo/vector-icons";
-import { Icon } from "react-native-elements";
 
 export default function CustomTextInput({
   label,
@@ -36,6 +35,8 @@ export default function CustomTextInput({
   autoCapitalize,
   autoCorrect,
   buttonRight,
+  paddingVertical,
+  setParentIsFocus,
 }) {
   const { theme } = useTheme();
   const [isFocused, setIsFocused] = useState(false);
@@ -52,6 +53,7 @@ export default function CustomTextInput({
       duration: 180,
       useNativeDriver: false,
     }).start();
+    if (setParentIsFocus) setParentIsFocus(isFocused);
   }, [isFocused, value]);
 
   const labelStyle = {
@@ -99,7 +101,7 @@ export default function CustomTextInput({
               : borderColor + "88",
           borderRadius: borderRadius || 16,
           backgroundColor: backgroundColor,
-          paddingVertical: 8,
+          paddingVertical: paddingVertical || 8,
         }}
       >
         {label && <Animated.Text style={labelStyle}>{label}</Animated.Text>}
@@ -113,7 +115,7 @@ export default function CustomTextInput({
         <TextInput
           style={{
             flex: 1,
-            paddingVertical: 6,
+            paddingVertical: paddingVertical || 6,
             paddingHorizontal: iconLeft ? 8 : 16,
             fontSize: 16,
             color: textColor || theme.colors.textPrimary,
@@ -166,7 +168,7 @@ export default function CustomTextInput({
           iconRight && <View style={{ paddingRight: 12 }}>{iconRight}</View>
         )}
 
-        {buttonRight && <View style={{ paddingRight: 12 }}>{buttonRight}</View>}
+        {buttonRight && <View style={{ paddingRight: 0 }}>{buttonRight}</View>}
       </View>
 
       {error && error !== "z" && (

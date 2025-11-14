@@ -29,10 +29,10 @@ const MultiSelectComponent = ({
   const { theme } = useTheme();
   const [isFocused, setIsFocused] = useState(false);
 
-  const handleChange = (items) => {
+  const handleChange = async (items) => {
     setSelected(items);
     if (onValueChange) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
       onValueChange(items);
     }
   };
@@ -99,6 +99,10 @@ const MultiSelectComponent = ({
     zIndex: 10,
     borderRadius: 100,
   };
+
+  useEffect(() => {
+    setSelected(selectedValue || []);
+  }, [selectedValue]);
 
   return (
     <View style={[styles.container, { marginTop }]}>

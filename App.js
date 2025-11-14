@@ -1,5 +1,4 @@
 import * as React from "react";
-import { NavigationContainer } from "@react-navigation/native";
 import "./i18n";
 import { I18nextProvider } from "react-i18next";
 import i18n from "./i18n";
@@ -17,22 +16,22 @@ import { KeyboardProvider } from "react-native-keyboard-controller";
 export default function App() {
   return (
     <SafeAreaProvider>
-      <ResortProvider>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <BottomSheetModalProvider>
-            <ThemeProvider>
-              <I18nextProvider i18n={i18n}>
-                <AuthProvider>
-                  <KeyboardProvider>
+      <KeyboardProvider>
+        <ResortProvider>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <BottomSheetModalProvider>
+              <ThemeProvider>
+                <I18nextProvider i18n={i18n}>
+                  <AuthProvider>
                     <AppNavigator />
-                  </KeyboardProvider>
-                </AuthProvider>
-              </I18nextProvider>
-            </ThemeProvider>
-          </BottomSheetModalProvider>
-        </GestureHandlerRootView>
-        <Toast config={{ custom: CustomToast }} />
-      </ResortProvider>
+                  </AuthProvider>
+                </I18nextProvider>
+              </ThemeProvider>
+            </BottomSheetModalProvider>
+          </GestureHandlerRootView>
+          <Toast config={{ custom: CustomToast }} />
+        </ResortProvider>
+      </KeyboardProvider>
     </SafeAreaProvider>
   );
 }
