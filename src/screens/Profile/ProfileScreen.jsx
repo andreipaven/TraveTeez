@@ -118,8 +118,9 @@ const ProfileScreen = () => {
             title={t("profileScreen.addResortButton")}
             backgroundColor={theme.colors.primary}
             textColor={theme.colors.primaryContrast}
-            fontSize={14}
-            paddingVertical={8}
+            fontSize={16}
+            height={42}
+            paddingVertical={0}
             paddingHorizontal={16}
             marginHorizontal={16}
             width={"50%"}
@@ -127,7 +128,7 @@ const ProfileScreen = () => {
             iconLeft={
               <Icon
                 name={"plus"}
-                size={24}
+                size={16}
                 color={theme.colors.primaryContrast}
               />
             }

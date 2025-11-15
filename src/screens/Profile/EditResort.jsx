@@ -38,7 +38,6 @@ const EditResort = () => {
     4: useRef(),
   };
 
-  const [loadingSubmitResort, setLoadingSubmitResort] = useState(false);
   const [loadingButton, setLoadingButton] = useState({
     delete: false,
     update: false,
@@ -92,6 +91,7 @@ const EditResort = () => {
 
           <CustomButton
             onPress={updateResort}
+            fontSize={16}
             height={34}
             title={
               loadingButton.update ? (
@@ -384,45 +384,25 @@ const EditResort = () => {
               backgroundColor={theme.colors.textSecondary}
               textColor={theme.colors.primaryContrast}
               flex={step === 4 ? 1 : 1 / 3}
-              maxHeight={56}
-              minHeight={56}
-              paddingVertical={12}
+              height={46}
+              paddingVertical={0}
               borderRadius={100}
               paddingHorizontal={8}
               onPress={prevStep}
-              fontSize={20}
+              fontSize={16}
             />
             {step !== 4 && (
               <CustomButton
-                title={
-                  loadingSubmitResort ? (
-                    <LottieView
-                      source={require("../../../assets/Trail loading.json")}
-                      autoPlay
-                      loop
-                      style={{ width: 54, height: 54, position: "relative" }}
-                      resizeMode={"cover"}
-                      colorFilters={[
-                        {
-                          keypath: "*",
-                          color: "#ffffff",
-                        },
-                      ]}
-                    />
-                  ) : (
-                    t("step1Info.nextButton")
-                  )
-                }
+                title={t("step1Info.nextButton")}
                 backgroundColor={theme.colors.primary}
                 textColor={theme.colors.primaryContrast}
                 flex={1}
-                maxHeight={56}
-                minHeight={56}
-                paddingVertical={12}
+                height={46}
+                paddingVertical={0}
                 borderRadius={100}
                 paddingHorizontal={8}
                 onPress={nextStep}
-                fontSize={20}
+                fontSize={16}
               />
             )}
           </View>

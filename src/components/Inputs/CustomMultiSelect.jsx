@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Text,
   Animated,
+  Platform,
 } from "react-native";
 import { MultiSelect } from "react-native-element-dropdown";
 import { useTheme } from "../../Theme/themeContext";
@@ -24,6 +25,8 @@ const MultiSelectComponent = ({
   selectedValue,
   focusBorderColor,
   search,
+  containerStylePosition,
+  containerStyleMarginBottom,
 }) => {
   const [selected, setSelected] = useState(selectedValue);
   const { theme } = useTheme();
@@ -124,7 +127,6 @@ const MultiSelectComponent = ({
         placeholderStyle={{
           left: 14,
           color: theme.colors.textPrimary,
-
           marginRight: 14,
         }}
         selectedTextStyle={styles.selectedTextStyle}
@@ -204,10 +206,13 @@ const MultiSelectComponent = ({
             width: 0,
             height: 2,
           },
-          shadowOpacity: 0.3,
+          shadowOpacity: 0.5,
           shadowRadius: 3.84,
-
           elevation: 3,
+          position: containerStylePosition,
+          bottom: containerStyleMarginBottom,
+          borderRadius: Platform.OS === "ios" ? 0 : 16,
+          overflow: Platform.OS === "ios" ? "default" : "hidden",
         }}
       />
     </View>

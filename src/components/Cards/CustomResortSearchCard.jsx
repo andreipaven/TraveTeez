@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, ImageBackground, Pressable, Keyboard } from "react-native";
 import { useTheme } from "../../Theme/themeContext";
 import { useNavigation } from "@react-navigation/native";
+import RatingOneStar from "../Ratings/RatingOneStar";
 
 const CustomResortSearchCard = React.memo(({ item }) => {
   const { theme } = useTheme();
@@ -46,6 +47,7 @@ const CustomResortSearchCard = React.memo(({ item }) => {
         }}
         resizeMode={"cover"}
       />
+
       <View
         style={{
           flex: 1,
@@ -76,6 +78,12 @@ const CustomResortSearchCard = React.memo(({ item }) => {
             {item.city && item.city + ","} {item.state}, {item.country}
           </Text>
         </View>
+        <RatingOneStar
+          resortId={item.resort_id}
+          position={"relative"}
+          size={16}
+          textSize={16}
+        />
       </View>
     </View>
   );

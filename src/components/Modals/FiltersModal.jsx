@@ -5,6 +5,8 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   Keyboard,
+  ScrollView,
+  Platform,
 } from "react-native";
 import {
   BottomSheetBackdrop,
@@ -77,7 +79,13 @@ const FiltersModal = ({ ref, setParentFilters }) => {
     }));
   const handleComponent = () => {
     return (
-      <View style={{ padding: 16, paddingTop: 8 }}>
+      <View
+        style={{
+          padding: 16,
+          paddingTop: 8,
+          backgroundColor: theme.colors.backgroundPrimary,
+        }}
+      >
         <View
           style={{
             width: 28,
@@ -126,7 +134,7 @@ const FiltersModal = ({ ref, setParentFilters }) => {
       enableDynamicSizing={false}
       backdropComponent={backDrop}
       enablePanDownToClose={true}
-      enableContentPanningGesture={true}
+      enableContentPanningGesture={false}
       style={{
         shadowColor: theme.colors.shadowPrimary,
         shadowOffset: {
@@ -142,12 +150,19 @@ const FiltersModal = ({ ref, setParentFilters }) => {
       }}
       handleComponent={handleComponent}
     >
-      <BottomSheetView style={{ flex: 1, height: "100%" }}>
+      <BottomSheetView
+        style={{
+          flex: 1,
+          height: "100%",
+          backgroundColor: theme.colors.backgroundPrimary,
+        }}
+      >
         <SafeAreaView style={{ flex: 1 }} edges={["bottom", "left", "right"]}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <KeyboardAwareScrollView
-              bottomOffset={60}
+              bottomOffset={100}
               style={{ flex: 1 }}
+              scrollEnabled={true}
               keyboardShouldPersistTaps={"handled"}
             >
               <View style={styles.contentContainer}>
@@ -158,6 +173,7 @@ const FiltersModal = ({ ref, setParentFilters }) => {
                       alignSelf: "flex-start",
                       fontWeight: 500,
                       marginBottom: 8,
+                      color: theme.colors.textPrimary,
                     }}
                   >
                     {t("filters.title")}
@@ -185,9 +201,6 @@ const FiltersModal = ({ ref, setParentFilters }) => {
                     textColor={theme.colors.textPrimary}
                     borderRadius={100}
                     borderWidth={1.5}
-                    setParentIsFocus={(isFocused) =>
-                      console.log("focuseed: " + isFocused)
-                    }
                   />
                   <CustomTextInput
                     label={t("filters.cityLabel")}
@@ -214,6 +227,9 @@ const FiltersModal = ({ ref, setParentFilters }) => {
                       handleMultiSelectChange("types", selectedItems)
                     }
                     selectedValue={filters?.types}
+                    marginTop={8}
+                    containerStyleMarginBottom={Platform.OS === "ios" ? 20 : 10}
+                    containerStylePosition={"absolute"}
                   />
                 </View>
               </View>

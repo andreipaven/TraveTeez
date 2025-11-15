@@ -17,20 +17,20 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <KeyboardProvider>
-        <ResortProvider>
-          <GestureHandlerRootView style={{ flex: 1 }}>
-            <BottomSheetModalProvider>
-              <ThemeProvider>
+        <ThemeProvider>
+          <ResortProvider>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              <BottomSheetModalProvider>
                 <I18nextProvider i18n={i18n}>
                   <AuthProvider>
                     <AppNavigator />
                   </AuthProvider>
                 </I18nextProvider>
-              </ThemeProvider>
-            </BottomSheetModalProvider>
-          </GestureHandlerRootView>
-          <Toast config={{ custom: CustomToast }} />
-        </ResortProvider>
+              </BottomSheetModalProvider>
+            </GestureHandlerRootView>
+            <Toast config={{ custom: CustomToast }} />
+          </ResortProvider>
+        </ThemeProvider>
       </KeyboardProvider>
     </SafeAreaProvider>
   );

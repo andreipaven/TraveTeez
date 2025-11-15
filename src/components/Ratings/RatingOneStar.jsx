@@ -15,6 +15,9 @@ const RatingOneStar = ({
   position,
   size = 16,
   textSize,
+  zIndex,
+  fontWeight,
+  textColor,
 }) => {
   const [rating, setRating] = useState({});
   const { theme } = useTheme();
@@ -48,6 +51,7 @@ const RatingOneStar = ({
           left,
           bottom,
           right,
+          zIndex,
           position: position || "absolute",
           flexDirection: "row",
           alignItems: "center",
@@ -56,9 +60,9 @@ const RatingOneStar = ({
         <Icon size={size} type={"font-awesome"} name={"star"} color={"gold"} />
         <Text
           style={{
-            fontWeight: "bold",
+            fontWeight: fontWeight || "600",
             fontSize: textSize,
-            color: theme.colors.textPrimary,
+            color: textColor || theme.colors.textPrimary,
             paddingLeft: 1,
           }}
         >

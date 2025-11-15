@@ -12,7 +12,7 @@ export default function CustomButton({
   paddingHorizontal = 0,
   marginHorizontal,
   fontSize = 16,
-  fontWeight = "bold",
+  fontWeight = "600",
   iconLeft,
   iconRight,
   style,

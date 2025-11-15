@@ -10,6 +10,9 @@ import { useNavigation } from "@react-navigation/native";
 const CustomResortCard = React.memo(({ item }) => {
   const { theme } = useTheme();
   const navigation = useNavigation();
+  if (item.resort_id === 2240) {
+    console.log(item);
+  }
   return (
     <View
       style={{
@@ -20,7 +23,7 @@ const CustomResortCard = React.memo(({ item }) => {
         shadowOpacity: 0.5,
         shadowRadius: 2.5,
         elevation: 2,
-        width: 164,
+        width: 160,
         height: "auto",
       }}
     >
@@ -34,7 +37,7 @@ const CustomResortCard = React.memo(({ item }) => {
         <View
           style={{
             width: "100%",
-            height: 180,
+            height: "100%",
             position: "absolute",
             top: 0,
             left: 0,
@@ -46,8 +49,8 @@ const CustomResortCard = React.memo(({ item }) => {
       <ImageBackground
         source={{ uri: item.mainImage.image_url || "" }}
         style={{
-          width: 164,
-          height: 180,
+          width: 160,
+          height: 140,
           borderTopLeftRadius: 8,
           borderTopRightRadius: 8,
           overflow: "hidden",
@@ -63,15 +66,21 @@ const CustomResortCard = React.memo(({ item }) => {
           paddingHorizontal: 6,
           paddingVertical: 4,
           flex: 1,
-          justifyContent: "flex-end",
+          justifyContent: "flex-start",
           borderTopLeftRadius: 8,
           borderTopRightRadius: 8,
-          height: 50,
+          height: 80,
           marginTop: -16,
         }}
       >
-        <Text style={{ color: theme.colors.textPrimary, fontWeight: 500 }}>
-          {item.name.length > 18 ? item.name.slice(0, 15) + "..." : item.name}
+        <Text
+          style={{
+            color: theme.colors.textPrimary,
+            fontWeight: 500,
+            fontSize: 14,
+          }}
+        >
+          {item.name.length > 36 ? item.name.slice(0, 33) + "..." : item.name}
         </Text>
         <View style={{ flexDirection: "row" }}>
           <Icon
@@ -84,17 +93,22 @@ const CustomResortCard = React.memo(({ item }) => {
           <Text
             style={{
               color: theme.colors.textSecondary,
+              flexShrink: 1,
+              flexWrap: "wrap",
             }}
           >
-            {item.country}
+            {item.country}, {item.state}
+            {item.city && ", " + item.city}
           </Text>
         </View>
         <RatingOneStar
           resortId={item.resort_id}
           right={8}
-          bottom={4}
+          bottom={6}
           textSize={14}
-          size={16}
+          size={12}
+          fontWeight={"normal"}
+          textColor={theme.colors.textSecondary}
         />
       </View>
       <Favorite

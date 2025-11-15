@@ -158,13 +158,13 @@ const AddResort = () => {
           backgroundColor={theme.colors.textSecondary}
           textColor={theme.colors.primaryContrast}
           flex={1 / 3}
-          maxHeight={56}
-          minHeight={56}
-          paddingVertical={12}
+          maxHeight={46}
+          minHeight={46}
+          paddingVertical={0}
           borderRadius={100}
           paddingHorizontal={8}
           onPress={prevStep}
-          fontSize={20}
+          fontSize={16}
         />
         <CustomButton
           title={
@@ -191,13 +191,13 @@ const AddResort = () => {
           backgroundColor={theme.colors.primary}
           textColor={theme.colors.primaryContrast}
           flex={1}
-          maxHeight={56}
-          minHeight={56}
-          paddingVertical={12}
+          maxHeight={46}
+          minHeight={46}
+          paddingVertical={0}
           borderRadius={100}
           paddingHorizontal={8}
           onPress={nextStep}
-          fontSize={20}
+          fontSize={16}
         />
       </View>
     </SafeAreaView>
