@@ -48,23 +48,23 @@ const Favorite = ({
   };
 
   useEffect(() => {
-    setFetchLoading(true);
-    APIService.post(config.endpoints.legacy.favorite.verifyFavorite, {
-      resortId: resortId,
-    })
-      .then((response) => {
-        if (response?.data.error) {
-          console.log("Something wrong happened " + response.data.error);
-        } else {
-          setIsFavorite(response.data);
-        }
-      })
-      .catch((err) => {
-        console.log("An error occurred " + err);
-      })
-      .finally(() => {
-        setFetchLoading(false);
-      });
+    // setFetchLoading(true);
+    // APIService.post(config.endpoints.legacy.favorite.verifyFavorite, {
+    //   resortId: resortId,
+    // })
+    //   .then((response) => {
+    //     if (response?.data.error) {
+    //       console.log("Something wrong happened " + response.data.error);
+    //     } else {
+    //       setIsFavorite(response.data);
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     console.log("An error occurred " + err);
+    //   })
+    //   .finally(() => {
+    //     setFetchLoading(false);
+    //   });
   }, [isFocused]);
 
   return fetchLoading ? (

@@ -5,7 +5,6 @@ import {
   FlatList,
   TouchableWithoutFeedback,
   ActivityIndicator,
-  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomTextInput from "../../components/Inputs/CustomTextInput";
@@ -14,7 +13,6 @@ import { useTranslation } from "react-i18next";
 import APIService from "../../services/APIService";
 import { config } from "../../services/config";
 import { Icon } from "react-native-elements";
-import { useNavigation } from "@react-navigation/native";
 import CustomResortSearchCard from "../../components/Cards/CustomResortSearchCard";
 import CustomButton from "../../components/Buttons/CustomButton";
 import FiltersModal from "../../components/Modals/FiltersModal";
@@ -28,8 +26,6 @@ const SearchScreen = () => {
     offset: 0,
     limit: 5,
   });
-  const firstRender = useRef(true);
-  const navigation = useNavigation();
   const inputRef = useRef(null);
   const [filters, setFilters] = useState({});
   const [hasMore, setHasMore] = useState(true);
@@ -103,21 +99,6 @@ const SearchScreen = () => {
     });
 
     return cleaned;
-  };
-
-  const handleScroll = (event) => {
-    Keyboard.dismiss();
-    const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
-    const paddingToBottom = Platform.OS === "ios" ? 40 : 0;
-
-    if (
-      contentOffset.y + layoutMeasurement.height >=
-      contentSize.height + paddingToBottom
-    ) {
-      if (!isLoading && hasMore) {
-        fetchResorts(searchValue);
-      }
-    }
   };
 
   useEffect(() => {

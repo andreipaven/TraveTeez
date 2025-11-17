@@ -23,7 +23,12 @@
       },
       "softwareKeyboardLayoutMode": "pan",
       "edgeToEdgeEnabled": true,
-      "package": "com.xtezii.TraveTeez"
+      "package": "com.xtezii.TraveTeez",
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -39,10 +44,17 @@
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "Allow Traveteez to use your location."
+          "locationAlwaysAndWhenInUsePermission": "Allow Traveteez to use your location.",
+          "locationWhenInUsePermission": "Allow Traveteez to access your location while using the app."
         }
       ],
       "expo-web-browser"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "d6ac5e44-839f-43a9-9ea6-7819f26ecddb"
+      }
+    },
+    "owner": "xtezii"
   }
 }

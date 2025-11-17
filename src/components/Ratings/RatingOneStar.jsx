@@ -40,7 +40,7 @@ const RatingOneStar = ({
         })
         .finally(() => {});
     };
-    fetchRatings();
+    // fetchRatings();
   }, [resortId, isFocused]);
 
   return (

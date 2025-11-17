@@ -18,6 +18,7 @@ export const config = {
         getNewResorts: "/resort/get-new-resorts",
         getLimitedResortsByCategory: "/resort/get-limited-resorts-by-category",
         getSearchedResorts: "/resort/get-searched-resorts",
+        getMapResorts: "/resort/get-map-resorts",
       },
       favorite: {
         addFavorite: "/favorite/add-favorite",
