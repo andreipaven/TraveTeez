@@ -19,7 +19,7 @@ export default function App() {
       <KeyboardProvider>
         <ThemeProvider>
           <ResortProvider>
-            <GestureHandlerRootView style={{ flex: 1 }}>
+            <GestureHandlerRootView>
               <BottomSheetModalProvider>
                 <I18nextProvider i18n={i18n}>
                   <AuthProvider>

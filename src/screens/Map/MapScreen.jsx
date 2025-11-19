@@ -1,28 +1,30 @@
-import React, { useEffect, useState, useRef } from "react";
-import { View, Text, Linking, Alert } from "react-native";
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import React, { useEffect, useState, useRef, useMemo } from "react";
+import { View, Text, Linking, Alert, Platform } from "react-native";
+import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
 import MapViewCluster from "react-native-map-clustering";
 import APIService from "../../services/APIService";
 import { config } from "../../services/config";
 import { useTheme } from "../../Theme/themeContext";
 import * as Location from "expo-location";
-import MapResortModal from "../../components/Modals/MapResortModal";
-import Loading from "../../components/Loading/Loading";
+
 import MapFetchLoading from "../../components/Loading/MapFetchLoading";
 import { Icon } from "react-native-elements";
+import { useNavigation } from "@react-navigation/native";
+import MapResortSheet from "../../components/Sheets/MapResortSheet";
 
 const MapScreen = () => {
+  const navigation = useNavigation();
   const [markers, setMarkers] = useState([]);
-  const [location, setLocation] = useState(null);
+  const [userLocation, setUserLocation] = useState(null);
   const { theme } = useTheme();
-
+  const bottomSheetRef = useRef(null);
   const mapRef = useRef(null);
   const [fetchLoading, setFetchLoading] = useState(false);
 
   const debounceRef = useRef(null);
   const [resortIdSelected, setResortIdSelected] = useState(null);
 
-  const bottomSheetModalRefResort = useRef(null);
+  const [sheetIndex, setSheetIndex] = useState(-1);
 
   useEffect(() => {
     async function getCurrentLocation() {
@@ -41,7 +43,7 @@ const MapScreen = () => {
       }
 
       let loc = await Location.getCurrentPositionAsync({});
-      setLocation(loc);
+      setUserLocation(loc);
     }
 
     getCurrentLocation();
@@ -118,16 +120,19 @@ const MapScreen = () => {
   };
   const openMapResortModal = (markerId) => {
     setResortIdSelected(markerId);
-    bottomSheetModalRefResort.current.present();
+    navigation.getParent()?.setOptions({
+      tabBarStyle: { display: "none" },
+    });
+    bottomSheetRef.current?.expand();
   };
 
   //animate to user location
   useEffect(() => {
-    if (mapRef.current && location) {
+    if (mapRef.current && userLocation) {
       mapRef.current.animateToRegion(
         {
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
+          latitude: userLocation.coords.latitude,
+          longitude: userLocation.coords.longitude,
           latitudeDelta: 0.05,
           longitudeDelta: 0.05,
         },
@@ -135,26 +140,28 @@ const MapScreen = () => {
       );
 
       fetchMarkers({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
+        latitude: userLocation.coords.latitude,
+        longitude: userLocation.coords.longitude,
         latitudeDelta: 0.5,
         longitudeDelta: 0.5,
       });
     }
-  }, [location]);
+  }, [userLocation]);
+
+  const snapPoints = useMemo(() => ["25%", "50%", "75%"], []);
 
   return (
-    <>
+    <View style={{ flex: 1 }}>
       <MapViewCluster
         ref={mapRef}
         style={{ flex: 1 }}
         region={{
-          latitude: location ? location.coords.latitude : 0.0,
-          longitude: location ? location.coords.longitude : 0.0,
-          latitudeDelta: location ? 0.05 : 5,
-          longitudeDelta: location ? 0.05 : 5,
+          latitude: userLocation ? userLocation.coords.latitude : 0.0,
+          longitude: userLocation ? userLocation.coords.longitude : 0.0,
+          latitudeDelta: userLocation ? 0.05 : 5,
+          longitudeDelta: userLocation ? 0.05 : 5,
         }}
-        showsUserLocation={!!location}
+        showsUserLocation={!!userLocation}
         rotateEnabled={false}
         zoomControlEnabled={false}
         showsMyLocationButton={false}
@@ -176,16 +183,14 @@ const MapScreen = () => {
             }}
             onPress={() => openMapResortModal(marker.resort_id)}
           >
-            <ResortMarker item={marker} />
+            {Platform.OS === "ios" && <ResortMarker item={marker} />}
           </Marker>
         ))}
       </MapViewCluster>
-      <MapResortModal
-        ref={bottomSheetModalRefResort}
-        resortId={resortIdSelected}
-      />
+      <MapResortSheet resortId={resortIdSelected} ref={bottomSheetRef} />
+      {/*<MapResortModal resortId={resortIdSelected} ref={bottomSheetRef} />*/}
       {fetchLoading && <MapFetchLoading top={60} />}
-    </>
+    </View>
   );
 };
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, Text } from "react-native";
+import { View, Text, Platform, Dimensions } from "react-native";
 import ResortProfileCarousel from "../../components/Carousels/ResortProfileCarousel";
 import { SafeAreaView } from "react-native-safe-area-context";
 import APIService from "../../services/APIService";
@@ -11,10 +11,17 @@ import FeedbackModal from "../../components/Modals/FeedbackModal";
 import CustomButton from "../../components/Buttons/CustomButton";
 import { useTranslation } from "react-i18next";
 import * as Haptics from "expo-haptics";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import Favorite from "../../components/Favorite/Favorite";
+
+const width = Dimensions.get("window").width;
+const height = Dimensions.get("window").height;
 
 const ResortScreen = ({ route }) => {
   const { state } = route.params;
-  const { resortId, isFavorite } = state;
+  const { resortId } = state;
+  const navigation = useNavigation();
   const { theme } = useTheme();
   const { t } = useTranslation();
   const [fetchLoading, setFetchLoading] = useState({ resort: false });
@@ -71,7 +78,56 @@ const ResortScreen = ({ route }) => {
         <Loading />
       ) : (
         <View style={{ flex: 1 }}>
-          <ResortProfileCarousel resortId={resortId} images={images} />
+          <CustomButton
+            iconCenter={
+              <Ionicons
+                name={Platform.OS === "ios" ? "chevron-back" : "arrow-back"}
+                size={24}
+                color={theme.colors.textPrimary}
+                style={{ left: -1 }}
+              />
+            }
+            backgroundColor={theme.colors.backgroundPrimary}
+            width={42}
+            height={42}
+            borderRadius={100}
+            activeOpacity={0.5}
+            style={{
+              opacity: 0.7,
+              position: "absolute",
+              left: 16,
+              top: 60,
+              zIndex: 3,
+            }}
+            onPress={async () => {
+              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              navigation.goBack();
+            }}
+          />
+          <Favorite
+            resortId={resortId}
+            size={24}
+            top={60}
+            right={16}
+            position={"absolute"}
+            backgroundColor={theme.colors.backgroundPrimary + "b5"}
+            padding={8}
+            borderRadius={100}
+            style={{
+              width: 42,
+              height: 42,
+              justifyContent: "center",
+              alignItems: "center",
+              zIndex: 3,
+            }}
+          />
+
+          <ResortProfileCarousel
+            resortId={resortId}
+            images={images}
+            width={width}
+            height={height / 2.5}
+          />
           <View
             style={{
               paddingHorizontal: 16,
@@ -94,7 +150,6 @@ const ResortScreen = ({ route }) => {
                 <Text
                   style={{
                     color: theme.colors.textSecondary,
-
                     marginLeft: -2,
                   }}
                 >
@@ -120,8 +175,8 @@ const ResortScreen = ({ route }) => {
                 textColor={theme.colors.primaryContrast}
                 borderColor={"transparent"}
                 borderRadius={100}
-                onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+                onPress={async () => {
+                  await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
                   handlePresentPressFeedback();
                 }}
               />

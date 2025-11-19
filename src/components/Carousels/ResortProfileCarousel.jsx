@@ -1,42 +1,21 @@
-import React, { useEffect, useRef, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  ImageBackground,
-  Image,
-  Pressable,
-  Platform,
-} from "react-native";
+import React, { useRef } from "react";
+import { View, ImageBackground } from "react-native";
 import Carousel, { Pagination } from "react-native-reanimated-carousel";
 import {
   Extrapolation,
   interpolate,
-  useDerivedValue,
   useSharedValue,
 } from "react-native-reanimated";
 
-import Loading from "../Loading/Loading";
 import { useTheme } from "../../Theme/themeContext";
-import Favorite from "../Favorite/Favorite";
-import CustomButton from "../Buttons/CustomButton";
-import Icon from "@expo/vector-icons/MaterialCommunityIcons";
-import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import RatingAllStars from "../Ratings/RatingAllStars";
-import * as Haptics from "expo-haptics";
 
-const width = Dimensions.get("window").width;
-const height = Dimensions.get("window").height;
+import RatingAllStars from "../Ratings/RatingAllStars";
 
 //main function
-const ResortProfileCarousel = ({ resortId, images }) => {
+const ResortProfileCarousel = ({ resortId, images, width, height }) => {
   const { theme } = useTheme();
   const ref = useRef(null);
   const progress = useSharedValue(0);
-  const navigation = useNavigation();
-
   const onPressPagination = (index) => {
     ref.current?.scrollTo({
       /**
@@ -49,7 +28,7 @@ const ResortProfileCarousel = ({ resortId, images }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={{ width, height }}>
       <Carousel
         autoPlay={true}
         autoPlayInterval={2000}
@@ -57,12 +36,15 @@ const ResortProfileCarousel = ({ resortId, images }) => {
         vertical={false}
         ref={ref}
         width={width}
-        height={height / 2.5}
+        height={height}
         data={images}
         onProgressChange={progress}
-        renderItem={({ index, item }) => (
+        onConfigurePanGesture={(gesture) =>
+          gesture.activeOffsetX([-5, 5]).failOffsetY([-5, 5])
+        }
+        renderItem={({ item }) => (
           <ImageBackground
-            source={{ uri: item.image_url }}
+            source={{ uri: item?.image_url }}
             resizeMode="cover"
             style={{
               width: "100%",
@@ -114,48 +96,6 @@ const ResortProfileCarousel = ({ resortId, images }) => {
         }}
       />
 
-      <Favorite
-        resortId={resortId}
-        size={24}
-        top={60}
-        right={16}
-        position={"absolute"}
-        backgroundColor={theme.colors.backgroundPrimary + "b5"}
-        padding={8}
-        borderRadius={100}
-        style={{
-          width: 42,
-          height: 42,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      />
-
-      <CustomButton
-        iconCenter={
-          <Ionicons
-            name={Platform.OS === "ios" ? "chevron-back" : "arrow-back"}
-            size={24}
-            color={theme.colors.textPrimary}
-            style={{ left: -1 }}
-          />
-        }
-        backgroundColor={theme.colors.backgroundPrimary}
-        width={42}
-        height={42}
-        borderRadius={100}
-        activeOpacity={0.5}
-        style={{
-          opacity: 0.7,
-          position: "absolute",
-          left: 10,
-          top: 60,
-        }}
-        onPress={async () => {
-          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-          navigation.goBack();
-        }}
-      />
       <RatingAllStars
         position={"absolute"}
         left={10}
@@ -166,7 +106,4 @@ const ResortProfileCarousel = ({ resortId, images }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: { width: "100%" },
-});
 export default ResortProfileCarousel;
