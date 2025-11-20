@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, Text, Platform, Dimensions } from "react-native";
+import { View, Text, Platform, Dimensions, Animated } from "react-native";
 import ResortProfileCarousel from "../../components/Carousels/ResortProfileCarousel";
 import { SafeAreaView } from "react-native-safe-area-context";
 import APIService from "../../services/APIService";
@@ -121,13 +121,14 @@ const ResortScreen = ({ route }) => {
               zIndex: 3,
             }}
           />
-
-          <ResortProfileCarousel
-            resortId={resortId}
-            images={images}
-            width={width}
-            height={height / 2.5}
-          />
+          <View>
+            <ResortProfileCarousel
+              resortId={resortId}
+              images={images}
+              width={width}
+              height={height / 2.5}
+            />
+          </View>
           <View
             style={{
               paddingHorizontal: 16,

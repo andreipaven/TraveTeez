@@ -13,8 +13,8 @@ import Auth from "../Authentication/Auth";
 
 const AppNavigator = () => {
   const Stack = createNativeStackNavigator();
-  const { user, loading } = useContext(AuthContext);
-  const { t } = useTranslation();
+  const { loading } = useContext(AuthContext);
+
   const { theme } = useTheme();
 
   return (

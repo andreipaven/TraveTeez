@@ -1,27 +1,69 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
   Pressable,
+  Animated,
 } from "react-native";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import { useTheme } from "../../Theme/themeContext";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
 
 const CustomTabBar = ({ state, descriptors, navigation }) => {
   const { theme } = useTheme();
+  const [opacity] = useState(new Animated.Value(1));
+  const [translateY] = useState(new Animated.Value(0));
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const activeRoute = state.routes[state.index];
+
+      if (
+        activeRoute.name === "MapScreen" &&
+        activeRoute.params?.bottomSheetOpen
+      ) {
+        Animated.parallel([
+          Animated.timing(opacity, {
+            toValue: 0,
+            duration: 150,
+            useNativeDriver: true,
+          }),
+          Animated.timing(translateY, {
+            toValue: 50,
+            duration: 200,
+            useNativeDriver: true,
+          }),
+        ]).start();
+      } else {
+        Animated.parallel([
+          Animated.timing(opacity, {
+            toValue: 1,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+          Animated.timing(translateY, {
+            toValue: 0,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+        ]).start();
+      }
+    }, [state]),
+  );
 
   return (
-    <View
+    <Animated.View
       style={{
         width: "100%",
         height: "auto",
-        // backgroundColor: theme.colors.backgroundPrimary,
         backgroundColor: "transparent",
         zIndex: 999,
         position: "absolute",
         bottom: 0,
+        opacity,
+        transform: [{ translateY }],
       }}
     >
       <View
@@ -100,7 +142,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
           );
         })}
       </View>
-    </View>
+    </Animated.View>
   );
 };
 

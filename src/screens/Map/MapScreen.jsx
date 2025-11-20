@@ -120,9 +120,7 @@ const MapScreen = () => {
   };
   const openMapResortModal = (markerId) => {
     setResortIdSelected(markerId);
-    navigation.getParent()?.setOptions({
-      tabBarStyle: { display: "none" },
-    });
+    navigation.setParams({ bottomSheetOpen: true });
     bottomSheetRef.current?.expand();
   };
 
@@ -147,8 +145,6 @@ const MapScreen = () => {
       });
     }
   }, [userLocation]);
-
-  const snapPoints = useMemo(() => ["25%", "50%", "75%"], []);
 
   return (
     <View style={{ flex: 1 }}>
@@ -188,7 +184,7 @@ const MapScreen = () => {
         ))}
       </MapViewCluster>
       <MapResortSheet resortId={resortIdSelected} ref={bottomSheetRef} />
-      {/*<MapResortModal resortId={resortIdSelected} ref={bottomSheetRef} />*/}
+
       {fetchLoading && <MapFetchLoading top={60} />}
     </View>
   );

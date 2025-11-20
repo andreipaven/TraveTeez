@@ -21,7 +21,6 @@ import AddResort from "../../screens/Profile/AddResort";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
-const AddResortStack = createNativeStackNavigator();
 
 // Main stack
 function MainStackGroup() {
@@ -43,7 +42,11 @@ function MainStackGroup() {
       <Stack.Screen
         name={"ResortProfile"}
         component={ResortScreen}
-        options={{ presentation: "card", headerShown: false }}
+        options={{
+          presentation: "card",
+          headerShown: false,
+          animation: "fade",
+        }}
       />
 
       <Stack.Screen
