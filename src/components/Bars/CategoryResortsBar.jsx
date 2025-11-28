@@ -2,21 +2,16 @@ import React, { useRef, useState, useEffect, useCallback } from "react";
 import {
   ActivityIndicator,
   FlatList,
-  ImageBackground,
   Platform,
-  Pressable,
-  ScrollView,
   Text,
   View,
 } from "react-native";
-import CustomButton from "../Buttons/CustomButton";
+
 import { Icon } from "react-native-elements";
 import { useTheme } from "../../Theme/themeContext";
 import APIService from "../../services/APIService";
 import { config } from "../../services/config";
-import { useNavigation } from "@react-navigation/native";
 import CustomResortCard from "../Cards/CustomResortCard";
-import Loading from "../Loading/Loading";
 import {
   NativeViewGestureHandler,
   TapGestureHandler,
@@ -24,29 +19,47 @@ import {
 
 const CategoryResortsBar = ({ refreshing }) => {
   const { theme } = useTheme();
-  const navigation = useNavigation();
-  const [data, setData] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("nature");
-  const [categoryTitle, setCategoryTitle] = useState("nature");
   const [fetchLoading, setFetchLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
-  const listRef = useRef(null);
+  const [state, setState] = useState({
+    resorts: [],
+    offset: 0,
+    limit: 3,
+  });
 
-  const fetchData = (category) => {
+  const fetchData = (category, reset = false) => {
+    if (fetchLoading) return;
     setFetchLoading(true);
     APIService.post(
       config.endpoints.legacy.resort.getLimitedResortsByCategory,
       {
         category: category,
+        offset: reset ? 0 : state.offset,
+        limit: state.limit,
       },
     )
       .then((response) => {
         if (response?.data.error) {
           console.log("Something wrong happened " + response.data.error);
         } else {
-          setData(response.data);
-          setCategoryTitle(selectedCategory);
+          setState((prev) => ({
+            ...prev,
+            resorts: reset
+              ? response.data
+              : [...prev.resorts, ...response.data],
+            offset: reset ? response.data.length : prev.offset + prev.limit,
+          }));
+          if (response.data.length < state.limit) {
+            setHasMore(false);
+          } else {
+            setHasMore(true);
+          }
         }
+      })
+      .catch((err) => {
+        console.log("An error occurred " + err);
       })
       .finally(() => {
         setFetchLoading(false);
@@ -54,27 +67,24 @@ const CategoryResortsBar = ({ refreshing }) => {
   };
 
   useEffect(() => {
-    fetchData(selectedCategory);
+    if (refreshing) {
+      fetchData(selectedCategory, true);
+    }
   }, [refreshing]);
 
   useEffect(() => {
-    fetchData(selectedCategory);
-    if (listRef.current) {
-      listRef.current.scrollToOffset({ offset: 1, animated: true });
-    }
+    fetchData(selectedCategory, true);
   }, [selectedCategory]);
   const renderItem = useCallback(
     ({ item }) => <CustomResortCard item={item} />,
     [],
   );
 
-  const PlatformFlatListWrapper = ({ children }) => {
-    if (Platform.OS === "ios") {
-      return <NativeViewGestureHandler>{children}</NativeViewGestureHandler>;
+  const onEndReachedHandler = () => {
+    if (!fetchLoading && hasMore) {
+      fetchData(selectedCategory);
     }
-    return <View>{children}</View>;
   };
-
   return (
     <View>
       <View
@@ -123,40 +133,31 @@ const CategoryResortsBar = ({ refreshing }) => {
           </TapGestureHandler>
         ))}
       </View>
-      {fetchLoading ? (
-        <ActivityIndicator />
-      ) : (
+
+      <View>
+        <Text style={{ fontWeight: 600, fontSize: 16, paddingHorizontal: 16 }}>
+          {selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}{" "}
+          resorts
+        </Text>
+
         <View>
-          {data ? (
-            <Text
-              style={{ fontWeight: 600, fontSize: 16, paddingHorizontal: 16 }}
-            >
-              {categoryTitle.charAt(0).toUpperCase() + categoryTitle.slice(1)}{" "}
-              resorts
-            </Text>
-          ) : (
-            <Text>Not resorts yet</Text>
-          )}
-          <PlatformFlatListWrapper>
-            <FlatList
-              horizontal
-              data={data}
-              renderItem={renderItem}
-              keyExtractor={(item, index) => index.toString()}
-              contentContainerStyle={{
-                paddingVertical: 8,
-                paddingHorizontal: 8,
-              }}
-              showsHorizontalScrollIndicator={false}
-              initialNumToRender={10}
-              maxToRenderPerBatch={10}
-              windowSize={21}
-              removeClippedSubviews={true}
-              updateCellsBatchingPeriod={50}
-            />
-          </PlatformFlatListWrapper>
+          <FlatList
+            horizontal
+            data={state.resorts}
+            keyExtractor={(item) => item.resort_id.toString()}
+            renderItem={renderItem}
+            contentContainerStyle={{
+              paddingVertical: 8,
+              paddingHorizontal: 8,
+            }}
+            showsHorizontalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+            ListFooterComponent={fetchLoading ? <ActivityIndicator /> : null}
+            onEndReachedThreshold={0.5}
+            onEndReached={onEndReachedHandler}
+          />
         </View>
-      )}
+      </View>
     </View>
   );
 };

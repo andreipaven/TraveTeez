@@ -17,13 +17,8 @@ const CustomResortCard = React.memo(({ item }) => {
     <View
       style={{
         marginHorizontal: 8,
-        borderRadius: 8,
-        shadowColor: theme.colors.shadowPrimary,
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.5,
-        shadowRadius: 2.5,
-        elevation: 2,
-        width: 160,
+        borderRadius: 32,
+        width: 170,
         height: "auto",
       }}
     >
@@ -49,10 +44,9 @@ const CustomResortCard = React.memo(({ item }) => {
       <ImageBackground
         source={{ uri: item.mainImage.image_url || "" }}
         style={{
-          width: 160,
-          height: 140,
-          borderTopLeftRadius: 8,
-          borderTopRightRadius: 8,
+          width: 170,
+          height: 150,
+          borderRadius: 24,
           overflow: "hidden",
           backgroundColor: theme.colors.backgroundPrimary,
         }}
@@ -61,51 +55,45 @@ const CustomResortCard = React.memo(({ item }) => {
       <View
         style={{
           backgroundColor: theme.colors.backgroundPrimary,
-          borderBottomRightRadius: 8,
-          borderBottomLeftRadius: 8,
           paddingHorizontal: 6,
           paddingVertical: 4,
           flex: 1,
           justifyContent: "flex-start",
-          borderTopLeftRadius: 8,
-          borderTopRightRadius: 8,
           height: 80,
-          marginTop: -16,
         }}
       >
         <Text
+          numberOfLines={2}
+          ellipsizeMode="tail"
           style={{
-            color: theme.colors.textPrimary,
-            fontWeight: 500,
             fontSize: 14,
+            fontWeight: 500,
           }}
         >
-          {item.name.length > 36 ? item.name.slice(0, 33) + "..." : item.name}
+          {item.name}
         </Text>
         <View style={{ flexDirection: "row" }}>
           <Icon
             name={"map-marker"}
             type={"material-community"}
-            size={16}
+            size={12}
             color={theme.colors.textSecondary}
             style={{ marginLeft: -2 }}
           />
           <Text
-            style={{
-              color: theme.colors.textSecondary,
-              flexShrink: 1,
-              flexWrap: "wrap",
-            }}
+            style={{ fontSize: 12, color: theme.colors.textSecondary }}
+            numberOfLines={2}
+            ellipsizeMode="tail"
           >
-            {item.country}, {item.state}
-            {item.city && ", " + item.city}
+            {item.city && `${item.city}, `}
+            {item.state}, {item.country}
           </Text>
         </View>
         <RatingOneStar
           resortId={item.resort_id}
           right={8}
           bottom={6}
-          textSize={14}
+          textSize={12}
           size={12}
           fontWeight={"normal"}
           textColor={theme.colors.textSecondary}

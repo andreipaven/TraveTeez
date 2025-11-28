@@ -1,19 +1,28 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, Text, Platform, Dimensions, Animated } from "react-native";
+import {
+  View,
+  Text,
+  Platform,
+  Dimensions,
+  Animated,
+  Share,
+} from "react-native";
 import ResortProfileCarousel from "../../components/Carousels/ResortProfileCarousel";
 import { SafeAreaView } from "react-native-safe-area-context";
 import APIService from "../../services/APIService";
 import { config } from "../../services/config";
 import { useTheme } from "../../Theme/themeContext";
-import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import Loading from "../../components/Loading/Loading";
 import FeedbackModal from "../../components/Modals/FeedbackModal";
 import CustomButton from "../../components/Buttons/CustomButton";
 import { useTranslation } from "react-i18next";
 import * as Haptics from "expo-haptics";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import Favorite from "../../components/Favorite/Favorite";
+import CustomDivider from "../../components/Divider/CustomDivider";
+import { Divider, Icon } from "react-native-elements";
+import * as Linking from "expo-linking";
 
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
@@ -34,6 +43,28 @@ const ResortScreen = ({ route }) => {
   //modal functions
   const handlePresentPressFeedback = () =>
     bottomSheetModalRefFeedback.current.present();
+
+  //share
+  const onShare = async () => {
+    // const link = Linking.createURL(`resort/${resortId}`);
+    const link = `traveteez://resort/${resortId}`;
+    try {
+      const result = await Share.share({
+        message: link,
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          console.log("shared with " + result.activityType);
+        } else {
+          console.log("shared");
+        }
+      } else if (result.action === Share.dismissedAction) {
+        console.log("dismissed");
+      }
+    } catch (err) {
+      console.log("An error occurred " + err);
+    }
+  };
 
   useEffect(() => {
     const fetchResort = () => {
@@ -91,9 +122,9 @@ const ResortScreen = ({ route }) => {
             width={42}
             height={42}
             borderRadius={100}
-            activeOpacity={0.5}
+            activeOpacity={0.8}
             style={{
-              opacity: 0.7,
+              opacity: 0.8,
               position: "absolute",
               left: 16,
               top: 60,
@@ -103,6 +134,30 @@ const ResortScreen = ({ route }) => {
               await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
               navigation.goBack();
             }}
+          />
+          <CustomButton
+            iconCenter={
+              <Icon
+                name={"share-variant"}
+                type={"material-community"}
+                size={24}
+                color={theme.colors.textPrimary}
+                style={{ left: -1 }}
+              />
+            }
+            backgroundColor={theme.colors.backgroundPrimary}
+            width={42}
+            height={42}
+            borderRadius={100}
+            activeOpacity={0.8}
+            style={{
+              opacity: 0.8,
+              position: "absolute",
+              right: 68,
+              top: 60,
+              zIndex: 3,
+            }}
+            onPress={onShare}
           />
           <Favorite
             resortId={resortId}
@@ -135,6 +190,7 @@ const ResortScreen = ({ route }) => {
               flexDirection: "row",
               justifyContent: "space-between",
               width: "100%",
+              paddingTop: 8,
             }}
           >
             <View style={{ flex: 1 }}>
@@ -147,14 +203,18 @@ const ResortScreen = ({ route }) => {
               >
                 {resortDetails?.name}
               </Text>
-              <View style={{ paddingTop: 8 }}>
+              <View style={{ paddingTop: 4 }}>
                 <Text
                   style={{
                     color: theme.colors.textSecondary,
                     marginLeft: -2,
                   }}
                 >
-                  <Icon name={"map-marker"} size={16} />
+                  <Icon
+                    name={"map-marker"}
+                    size={16}
+                    type={"material-community"}
+                  />
                   {resortDetails?.city}, {resortDetails?.state},{" "}
                   {resortDetails?.country}
                 </Text>
@@ -183,22 +243,13 @@ const ResortScreen = ({ route }) => {
               />
             </View>
           </View>
+          <Divider style={{ marginHorizontal: 16, marginVertical: 4 }} />
           <View
             style={{
               paddingHorizontal: 16,
-              paddingTop: 8,
+              paddingTop: 4,
             }}
           >
-            <Text
-              style={{
-                fontWeight: "bold",
-                fontSize: 20,
-                color: theme.colors.textPrimary,
-                paddingBottom: 4,
-              }}
-            >
-              {t("resortScreen.about")}
-            </Text>
             {resortDetails.description ? (
               <Text
                 style={{ marginTop: -4, color: theme.colors.textSecondary }}

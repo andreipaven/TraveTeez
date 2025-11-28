@@ -167,7 +167,6 @@ const MultiSelectComponent = ({
             style={[
               styles.selectedStyle,
               {
-                shadowColor: theme.colors.shadowPrimary,
                 backgroundColor: theme.colors.backgroundPrimary,
                 flexDirection: "row",
                 marginHorizontal: 8,
@@ -200,7 +199,7 @@ const MultiSelectComponent = ({
         )}
         containerStyle={{
           backgroundColor: theme.colors.backgroundPrimary,
-          borderWidth: 0,
+          borderWidth: 1,
           shadowColor: theme.colors.shadowPrimary,
           shadowOffset: {
             width: 0,
@@ -211,8 +210,8 @@ const MultiSelectComponent = ({
           elevation: 3,
           position: containerStylePosition,
           bottom: containerStyleMarginBottom,
-          borderRadius: Platform.OS === "ios" ? 0 : 16,
-          overflow: Platform.OS === "ios" ? "default" : "hidden",
+          borderRadius: 16,
+          overflow: "hidden",
         }}
       />
     </View>

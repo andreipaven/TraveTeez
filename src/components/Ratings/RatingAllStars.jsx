@@ -26,7 +26,7 @@ const RatingAllStars = ({ top, left, position, bottom, resortId }) => {
         })
         .finally(() => {});
     };
-    // fetchRatings();
+    fetchRatings();
   }, [resortId]);
 
   return (

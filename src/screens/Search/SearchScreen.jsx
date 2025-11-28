@@ -5,6 +5,7 @@ import {
   FlatList,
   TouchableWithoutFeedback,
   ActivityIndicator,
+  Animated,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomTextInput from "../../components/Inputs/CustomTextInput";
@@ -112,6 +113,14 @@ const SearchScreen = () => {
       fetchResorts(searchValue);
     }
   };
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: searchValue ? 1 : 0,
+      duration: 100,
+      useNativeDriver: true,
+    }).start();
+  }, [searchValue]);
 
   return (
     <SafeAreaView
@@ -134,7 +143,7 @@ const SearchScreen = () => {
             <CustomTextInput
               ref={inputRef}
               name={"name"}
-              placeholder={"Search"}
+              placeholder={"Search by name"}
               value={searchValue}
               onChangeText={handleChange}
               borderColor={theme.colors.primary}
@@ -153,23 +162,25 @@ const SearchScreen = () => {
               }
               style={{ flex: 1 }}
               buttonRight={
-                <Icon
-                  type={"material-community"}
-                  size={12}
-                  name={"window-close"}
-                  color={theme.colors.textSecondary}
-                  onPress={() => {
-                    setSearchValue("");
-                    inputRef.current?.focus();
-                    fetchResorts("", true);
-                  }}
-                  containerStyle={{
-                    padding: 7,
-                    position: "relative",
+                <Animated.View
+                  style={{
                     width: 40,
-                    display: searchValue ? "flex" : "none",
+                    opacity: fadeAnim,
                   }}
-                />
+                >
+                  <Icon
+                    type="material-community"
+                    size={12}
+                    name="window-close"
+                    color={theme.colors.textSecondary}
+                    onPress={() => {
+                      setSearchValue("");
+                      inputRef.current?.focus();
+                      fetchResorts("", true);
+                    }}
+                    style={{ padding: 7 }}
+                  />
+                </Animated.View>
               }
             />
             <CustomButton
@@ -207,8 +218,9 @@ const SearchScreen = () => {
                 paddingBottom: 150,
               }}
               ListFooterComponent={isLoading ? <ActivityIndicator /> : null}
-              onEndReachedThreshold={0.4}
+              onEndReachedThreshold={0.2}
               onEndReached={onEndReachedHandler}
+              scrollEventThrottle={16}
             />
           </View>
         </View>

@@ -228,7 +228,7 @@ const FiltersModal = ({ ref, setParentFilters }) => {
                     }
                     selectedValue={filters?.types}
                     marginTop={8}
-                    containerStyleMarginBottom={Platform.OS === "ios" ? 20 : 10}
+                    containerStyleMarginBottom={Platform.OS === "ios" ? 30 : 10}
                     containerStylePosition={"absolute"}
                   />
                 </View>

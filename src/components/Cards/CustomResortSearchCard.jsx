@@ -1,8 +1,16 @@
 import React from "react";
-import { View, Text, ImageBackground, Pressable, Keyboard } from "react-native";
+import {
+  View,
+  Text,
+  ImageBackground,
+  Pressable,
+  Keyboard,
+  Platform,
+} from "react-native";
 import { useTheme } from "../../Theme/themeContext";
 import { useNavigation } from "@react-navigation/native";
 import RatingOneStar from "../Ratings/RatingOneStar";
+import { Icon } from "react-native-elements";
 
 const CustomResortSearchCard = React.memo(({ item }) => {
   const { theme } = useTheme();
@@ -40,8 +48,7 @@ const CustomResortSearchCard = React.memo(({ item }) => {
         style={{
           width: 120,
           height: 100,
-          borderTopLeftRadius: 16,
-          borderBottomLeftRadius: 16,
+          borderRadius: 24,
           overflow: "hidden",
           zIndex: 1,
         }}
@@ -51,19 +58,19 @@ const CustomResortSearchCard = React.memo(({ item }) => {
       <View
         style={{
           flex: 1,
-          justifyContent: "center",
-          marginLeft: -20,
+          justifyContent: "flex-start",
           zIndex: 5,
           backgroundColor: theme.colors.backgroundPrimary,
           borderRadius: 16,
-          paddingLeft: 10,
+          paddingLeft: 4,
         }}
       >
         <Text
+          numberOfLines={2}
+          ellipsizeMode="tail"
           style={{
-            fontWeight: "600",
-            fontSize: 20,
-            color: theme.colors.textPrimary,
+            fontSize: 16,
+            fontWeight: 500,
           }}
         >
           {item.name}
@@ -71,18 +78,33 @@ const CustomResortSearchCard = React.memo(({ item }) => {
         <View
           style={{
             flexDirection: "row",
-            alignItems: "center",
+            alignItems: "flex-start",
           }}
         >
-          <Text style={{ fontSize: 16, color: theme.colors.textSecondary }}>
-            {item.city && item.city + ","} {item.state}, {item.country}
+          <Icon
+            name="map-marker"
+            type="material-community"
+            size={14}
+            color={theme.colors.textSecondary}
+            style={{ marginTop: Platform.OS === "ios" ? 0 : 2 }}
+          />
+          <Text
+            style={{
+              fontSize: 14,
+              color: theme.colors.textSecondary,
+            }}
+            numberOfLines={2}
+            ellipsizeMode="tail"
+          >
+            {item.city && `${item.city}, `}
+            {item.state}, {item.country}
           </Text>
         </View>
         <RatingOneStar
           resortId={item.resort_id}
           position={"relative"}
-          size={16}
-          textSize={16}
+          size={14}
+          textSize={14}
         />
       </View>
     </View>

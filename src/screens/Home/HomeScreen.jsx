@@ -34,27 +34,7 @@ export default function HomeScreen() {
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
-      fetchNewResorts();
     }, 500);
-  }, []);
-
-  const fetchNewResorts = () => {
-    APIService.post(config.endpoints.legacy.resort.getNewResorts, {})
-      .then((response) => {
-        if (response?.data.error) {
-          console.log("Something wrong happened " + response.data.error);
-        } else {
-          setNewResorts(response.data);
-        }
-      })
-      .catch((err) => {
-        console.log("An error occurred " + err);
-      })
-      .finally(() => {});
-  };
-
-  useEffect(() => {
-    fetchNewResorts();
   }, []);
 
   useEffect(() => {
@@ -139,19 +119,7 @@ export default function HomeScreen() {
           />
         </View>
         <View>
-          <Text
-            style={{
-              paddingHorizontal: 16,
-              paddingTop: 8,
-              paddingBottom: 2,
-              fontSize: 16,
-              fontWeight: "600",
-              color: theme.colors.textPrimary,
-            }}
-          >
-            {t("home.newResortsTitle")}
-          </Text>
-          <NewResortsList dates={newResorts} />
+          <NewResortsList refreshing={refreshing} />
           <CategoryResortsBar refreshing={refreshing} />
         </View>
       </ScrollView>

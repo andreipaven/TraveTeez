@@ -116,7 +116,7 @@ const MapResortSheet = ({ resortId, ref }) => {
           style={{
             opacity,
             backgroundColor: theme.colors.backgroundPrimary,
-            borderRadius: 16,
+            borderRadius: 24,
           }}
         >
           <CustomButton
@@ -185,11 +185,11 @@ const MapResortSheet = ({ resortId, ref }) => {
               maxDeltaY={3}
               maxDist={6}
             >
-              <View style={{ flex: 1, gap: 12 }}>
+              <View style={{ flex: 1, gap: 8 }}>
                 <View
                   style={{
-                    borderTopRightRadius: 16,
-                    borderTopLeftRadius: 16,
+                    borderTopRightRadius: 24,
+                    borderTopLeftRadius: 24,
                     overflow: "hidden",
                   }}
                 >
@@ -217,37 +217,6 @@ const MapResortSheet = ({ resortId, ref }) => {
                     </Text>
                   </View>
                 </View>
-                <View style={{ paddingHorizontal: 16 }}>
-                  <Text
-                    style={{
-                      fontWeight: "bold",
-                      fontSize: 20,
-                      color: theme.colors.textPrimary,
-                      paddingBottom: 4,
-                    }}
-                  >
-                    {t("resortScreen.about")}
-                  </Text>
-                  {resort?.description ? (
-                    <Text
-                      style={{
-                        marginTop: -4,
-                        color: theme.colors.textSecondary,
-                      }}
-                    >
-                      {resort?.description}
-                    </Text>
-                  ) : (
-                    <Text
-                      style={{
-                        marginTop: -4,
-                        color: theme.colors.textSecondary,
-                      }}
-                    >
-                      {t("resortScreen.noDescription")}
-                    </Text>
-                  )}
-                </View>
               </View>
             </TapGestureHandler>
           </PanGestureHandler>
@@ -260,7 +229,7 @@ const MapResortSheet = ({ resortId, ref }) => {
 const styles = StyleSheet.create({
   sheetContainer: {
     marginHorizontal: 16,
-    borderRadius: 16,
+
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 4.65,

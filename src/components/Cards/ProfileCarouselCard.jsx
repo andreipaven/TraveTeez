@@ -56,7 +56,7 @@ export default function ProfileCarouselCard({ item, resortId }) {
       style={{
         width: width / 1.5,
         height: 220,
-        borderRadius: 12,
+        borderRadius: 24,
         overflow: "hidden",
         borderColor: theme.colors.primary,
         borderWidth: 2,
@@ -92,16 +92,17 @@ export default function ProfileCarouselCard({ item, resortId }) {
       <Text
         style={{
           position: "absolute",
-          bottom: 4,
-          left: 4,
+          bottom: 8,
+          left: 8,
           fontWeight: "bold",
           maxWidth: "70%",
           flexShrink: 1,
           backgroundColor: theme.colors.textDark,
           color: theme.colors.textPrimary,
           padding: 6,
-          borderRadius: 8,
+          borderRadius: 16,
         }}
+        numberOfLines={2}
       >
         {item.name}
       </Text>

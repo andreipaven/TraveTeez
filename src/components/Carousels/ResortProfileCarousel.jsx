@@ -1,5 +1,5 @@
-import React, { useRef } from "react";
-import { View, ImageBackground } from "react-native";
+import React, { useRef, useState } from "react";
+import { View, ImageBackground, Text } from "react-native";
 import Carousel, { Pagination } from "react-native-reanimated-carousel";
 import {
   Extrapolation,
@@ -10,23 +10,14 @@ import {
 import { useTheme } from "../../Theme/themeContext";
 
 import RatingAllStars from "../Ratings/RatingAllStars";
+import PaginationDot from "react-native-animated-pagination-dot";
 
 //main function
 const ResortProfileCarousel = ({ resortId, images, width, height }) => {
   const { theme } = useTheme();
   const ref = useRef(null);
-  const progress = useSharedValue(0);
-  const onPressPagination = (index) => {
-    ref.current?.scrollTo({
-      /**
-       * Calculate the difference between the current index and the target index
-       * to ensure that the carousel scrolls to the nearest index
-       */
-      count: index - progress.value,
-      animated: true,
-    });
-  };
 
+  const [curPage, setCurPage] = useState(0);
   return (
     <View style={{ width, height }}>
       <Carousel
@@ -34,11 +25,14 @@ const ResortProfileCarousel = ({ resortId, images, width, height }) => {
         autoPlayInterval={2000}
         scrollAnimationDuration={1000}
         vertical={false}
+        loop={false}
         ref={ref}
         width={width}
         height={height}
         data={images}
-        onProgressChange={progress}
+        onProgressChange={(offsetProgress, absoluteProgress) => {
+          setCurPage(Math.round(absoluteProgress));
+        }}
         onConfigurePanGesture={(gesture) =>
           gesture.activeOffsetX([-5, 5]).failOffsetY([-5, 5])
         }
@@ -53,48 +47,39 @@ const ResortProfileCarousel = ({ resortId, images, width, height }) => {
           />
         )}
       />
-      <Pagination.Custom
-        progress={progress}
-        data={images.map((color) => ({ color }))}
-        size={8}
-        dotStyle={{
-          borderRadius: 16,
-          backgroundColor: theme.colors.shadowPrimary,
-        }}
-        activeDotStyle={{
-          borderRadius: 8,
-          width: 16,
-          height: 6,
-          overflow: "hidden",
-          backgroundColor: theme.colors.primary,
-        }}
-        containerStyle={{
-          gap: 5,
-          alignItems: "center",
-          bottom: 20,
-        }}
-        horizontal
-        onPress={onPressPagination}
-        customReanimatedStyle={(progress, index, length) => {
-          let val = Math.abs(progress - index);
-          if (index === 0 && progress > length - 1) {
-            val = Math.abs(progress - length);
-          }
 
-          return {
-            transform: [
-              {
-                translateY: interpolate(
-                  val,
-                  [0, 1],
-                  [0, 0],
-                  Extrapolation.CLAMP,
-                ),
-              },
-            ],
-          };
+      <View
+        style={{
+          position: "absolute",
+          bottom: 10,
+          alignSelf: "center",
+          borderRadius: 20,
         }}
-      />
+      >
+        <PaginationDot
+          activeDotColor={theme.colors.primary}
+          curPage={curPage}
+          maxPage={images.length}
+          sizeRatio={1}
+        />
+      </View>
+      <View
+        style={{
+          position: "absolute",
+          bottom: 10,
+          right: 10,
+          alignSelf: "flex-end",
+          backgroundColor: theme.colors.backgroundPrimary + "b5",
+          padding: 4,
+          borderRadius: 100,
+          width: 50,
+          alignItems: "center",
+        }}
+      >
+        <Text style={{ fontWeight: "500" }}>
+          {curPage + 1}/{images.length}
+        </Text>
+      </View>
 
       <RatingAllStars
         position={"absolute"}

@@ -73,8 +73,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
             backgroundColor: theme.colors.backgroundPrimary,
             shadowColor: theme.colors.shadowPrimary,
             shadowOffset: { width: 0, height: 0 },
-            shadowOpacity: 0.4,
-            shadowRadius: 8,
+            shadowOpacity: 0.35,
             elevation: 6,
           },
         ]}
