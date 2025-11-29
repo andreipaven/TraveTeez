@@ -6,10 +6,12 @@ import {
   StyleSheet,
   Pressable,
   Animated,
+  Platform,
 } from "react-native";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import { useTheme } from "../../Theme/themeContext";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
+import { BlurView } from "expo-blur";
 
 const CustomTabBar = ({ state, descriptors, navigation }) => {
   const { theme } = useTheme();
@@ -70,76 +72,97 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
         style={[
           styles.tabContainer,
           {
-            backgroundColor: theme.colors.backgroundPrimary,
+            backgroundColor: "transparent",
             shadowColor: theme.colors.shadowPrimary,
-            shadowOffset: { width: 0, height: 0 },
-            shadowOpacity: 0.35,
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
             elevation: 6,
           },
         ]}
       >
-        {state.routes.map((route, index) => {
-          const { options } = descriptors[route.key];
-          const label =
-            options.tabBarLabel !== undefined
-              ? options.tabBarLabel
-              : options.title !== undefined
-                ? options.title
-                : route.name;
+        <BlurView
+          style={{
+            flexDirection: "row",
+            backgroundColor:
+              Platform.OS === "ios"
+                ? theme.colors.backgroundPrimary + "88"
+                : theme.colors.backgroundPrimary,
+            justifyContent: "space-around",
+            alignItems: "center",
+            flex: 1,
+            padding: 4,
+            width: "100%",
+            overflow: "hidden",
+            borderRadius: 100,
+            opacity: 0.99,
+          }}
+          intensity={20}
+          experimentalBlurMethod={"none"}
+        >
+          {state.routes.map((route, index) => {
+            const { options } = descriptors[route.key];
+            const label =
+              options.tabBarLabel !== undefined
+                ? options.tabBarLabel
+                : options.title !== undefined
+                  ? options.title
+                  : route.name;
 
-          const isFocused = state.index === index;
+            const isFocused = state.index === index;
 
-          const onPress = () => {
-            const event = navigation.emit({
-              type: "tabPress",
-              target: route.key,
-              canPreventDefault: true,
-            });
-            if (!isFocused && !event.defaultPrevented) {
-              navigation.navigate(route.name);
-            }
-          };
+            const onPress = () => {
+              const event = navigation.emit({
+                type: "tabPress",
+                target: route.key,
+                canPreventDefault: true,
+              });
+              if (!isFocused && !event.defaultPrevented) {
+                navigation.navigate(route.name);
+              }
+            };
 
-          return (
-            <Pressable
-              activeOpacity={1}
-              key={index}
-              accessibilityRole="button"
-              accessibilityState={isFocused ? { selected: true } : {}}
-              onPress={onPress}
-              style={[
-                styles.tabItem,
-                isFocused && { backgroundColor: theme.colors.primary },
-              ]}
-            >
-              <Icon
-                name={
-                  isFocused
-                    ? options.tabBarIconActive
-                    : options.tabBarIconInactive
-                }
-                size={24}
-                color={
-                  isFocused
-                    ? theme.colors.primaryContrast
-                    : theme.colors.textPrimary
-                }
-              />
-              <Text
+            return (
+              <Pressable
+                activeOpacity={1}
+                key={index}
+                accessibilityRole="button"
+                accessibilityState={isFocused ? { selected: true } : {}}
+                onPress={onPress}
                 style={[
-                  styles.tabLabel,
-                  {
-                    color: isFocused
-                      ? theme.colors.primaryContrast
-                      : theme.colors.textPrimary,
-                  },
+                  styles.tabItem,
+                  isFocused && { backgroundColor: theme.colors.primary },
                 ]}
               >
-                {label}
-              </Text>
-            </Pressable>
-          );
-        })}
+                <Icon
+                  name={
+                    isFocused
+                      ? options.tabBarIconActive
+                      : options.tabBarIconInactive
+                  }
+                  size={24}
+                  color={
+                    isFocused
+                      ? theme.colors.primaryContrast
+                      : theme.colors.textPrimary
+                  }
+                />
+                <Text
+                  style={[
+                    styles.tabLabel,
+                    {
+                      color: isFocused
+                        ? theme.colors.primaryContrast
+                        : theme.colors.textPrimary,
+                    },
+                  ]}
+                >
+                  {label}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </BlurView>
       </View>
     </Animated.View>
   );
@@ -147,13 +170,9 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
 
 const styles = StyleSheet.create({
   tabContainer: {
-    flexDirection: "row",
     marginHorizontal: 40,
     marginBottom: 42,
     borderRadius: 100,
-    padding: 8,
-    justifyContent: "space-around",
-    alignItems: "center",
   },
   tabItem: {
     justifyContent: "center",

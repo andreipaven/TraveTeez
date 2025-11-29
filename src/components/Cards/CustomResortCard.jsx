@@ -91,12 +91,12 @@ const CustomResortCard = React.memo(({ item }) => {
         </View>
         <RatingOneStar
           resortId={item.resort_id}
-          right={8}
-          bottom={6}
-          textSize={12}
-          size={12}
+          textSize={10}
+          size={10}
           fontWeight={"normal"}
           textColor={theme.colors.textSecondary}
+          position={"relative"}
+          style={{ justifyContent: "flex-end" }}
         />
       </View>
       <Favorite

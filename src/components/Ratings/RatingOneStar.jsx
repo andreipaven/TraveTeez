@@ -18,6 +18,7 @@ const RatingOneStar = ({
   zIndex,
   fontWeight,
   textColor,
+  style,
 }) => {
   const [rating, setRating] = useState({});
   const { theme } = useTheme();
@@ -46,16 +47,19 @@ const RatingOneStar = ({
   return (
     rating?.avg_rating_value && (
       <View
-        style={{
-          top,
-          left,
-          bottom,
-          right,
-          zIndex,
-          position: position || "absolute",
-          flexDirection: "row",
-          alignItems: "center",
-        }}
+        style={[
+          {
+            top,
+            left,
+            bottom,
+            right,
+            zIndex,
+            position: position || "absolute",
+            flexDirection: "row",
+            alignItems: "center",
+          },
+          style,
+        ]}
       >
         <Icon size={size} type={"font-awesome"} name={"star"} color={"gold"} />
         <Text
