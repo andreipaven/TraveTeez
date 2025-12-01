@@ -19,6 +19,7 @@ const RatingOneStar = ({
   fontWeight,
   textColor,
   style,
+  color,
 }) => {
   const [rating, setRating] = useState({});
   const { theme } = useTheme();
@@ -61,7 +62,12 @@ const RatingOneStar = ({
           style,
         ]}
       >
-        <Icon size={size} type={"font-awesome"} name={"star"} color={"gold"} />
+        <Icon
+          size={size}
+          type={"font-awesome"}
+          name={"star"}
+          color={color || theme.colors.primary}
+        />
         <Text
           style={{
             fontWeight: fontWeight || "600",

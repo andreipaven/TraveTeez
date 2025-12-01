@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, Pressable, Dimensions } from "react-native";
 import APIService from "../../services/APIService";
 import { config } from "../../services/config";
@@ -19,6 +19,7 @@ const Favorite = ({
   backgroundColor,
   padding,
   borderRadius,
+  refreshing,
 }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const { theme } = useTheme();
@@ -47,7 +48,8 @@ const Favorite = ({
     }
   };
 
-  useEffect(() => {
+  const fetchFavorites = () => {
+    if (fetchLoading) return;
     setFetchLoading(true);
     APIService.post(config.endpoints.legacy.favorite.verifyFavorite, {
       resortId: resortId,
@@ -65,7 +67,16 @@ const Favorite = ({
       .finally(() => {
         setFetchLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchFavorites();
   }, [isFocused]);
+
+  useEffect(() => {
+    if (!refreshing) return;
+    fetchFavorites();
+  }, [refreshing]);
 
   return fetchLoading ? (
     <></>

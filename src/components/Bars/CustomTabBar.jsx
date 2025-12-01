@@ -8,10 +8,10 @@ import {
   Animated,
   Platform,
 } from "react-native";
-import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import { useTheme } from "../../Theme/themeContext";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import { BlurView } from "expo-blur";
+import { Icon } from "react-native-elements";
 
 const CustomTabBar = ({ state, descriptors, navigation }) => {
   const { theme } = useTheme();
@@ -131,7 +131,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
                 onPress={onPress}
                 style={[
                   styles.tabItem,
-                  isFocused && { backgroundColor: theme.colors.primary },
+                  // isFocused && { backgroundColor: theme.colors.primary },
                 ]}
               >
                 <Icon
@@ -142,17 +142,16 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
                   }
                   size={24}
                   color={
-                    isFocused
-                      ? theme.colors.primaryContrast
-                      : theme.colors.textPrimary
+                    isFocused ? theme.colors.primary : theme.colors.textPrimary
                   }
+                  type={"material-community"}
                 />
                 <Text
                   style={[
                     styles.tabLabel,
                     {
                       color: isFocused
-                        ? theme.colors.primaryContrast
+                        ? theme.colors.primary
                         : theme.colors.textPrimary,
                     },
                   ]}

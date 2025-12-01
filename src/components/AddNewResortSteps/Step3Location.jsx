@@ -364,14 +364,15 @@ const Step3Location = ({ ref, resort, setResort, errors, setErrors }) => {
               top: 10,
               display: mapButtonIsVisible ? "flex" : "none",
             }}
+            isBlur={true}
             paddingVertical={10}
             paddingHorizontal={10}
             borderRadius={100}
             backgroundColor={theme.colors.backgroundPrimary}
             iconCenter={
               <Icon
-                type={"font-awesome"}
-                name={"check"}
+                type={"material-community"}
+                name={"check-bold"}
                 size={32}
                 color={theme.colors.textPrimary}
               />

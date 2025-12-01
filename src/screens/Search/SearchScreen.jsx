@@ -25,7 +25,7 @@ const SearchScreen = () => {
   const [state, setState] = useState({
     resorts: [],
     offset: 0,
-    limit: 5,
+    limit: 10,
   });
   const inputRef = useRef(null);
   const [filters, setFilters] = useState({});
@@ -33,6 +33,8 @@ const SearchScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const bottomSheetModalRefFilters = useRef(null);
+
+  const fadeAnim = useRef(new Animated.Value(0)).current;
 
   //modal functions
   const handlePresentPressFilters = () =>
@@ -113,7 +115,7 @@ const SearchScreen = () => {
       fetchResorts(searchValue);
     }
   };
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+
   useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: searchValue ? 1 : 0,

@@ -17,12 +17,12 @@ import FeedbackModal from "../../components/Modals/FeedbackModal";
 import CustomButton from "../../components/Buttons/CustomButton";
 import { useTranslation } from "react-i18next";
 import * as Haptics from "expo-haptics";
-import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Favorite from "../../components/Favorite/Favorite";
-import CustomDivider from "../../components/Divider/CustomDivider";
+
 import { Divider, Icon } from "react-native-elements";
-import * as Linking from "expo-linking";
+import blurViewWeb from "expo-blur/src/BlurView.web";
+import { BlurView } from "expo-blur";
 
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
@@ -109,73 +109,103 @@ const ResortScreen = ({ route }) => {
         <Loading />
       ) : (
         <View style={{ flex: 1 }}>
-          <CustomButton
-            iconCenter={
-              <Ionicons
-                name={Platform.OS === "ios" ? "chevron-back" : "arrow-back"}
-                size={24}
-                color={theme.colors.textPrimary}
-                style={{ left: -1 }}
-              />
-            }
-            backgroundColor={theme.colors.backgroundPrimary}
-            width={42}
-            height={42}
-            borderRadius={100}
-            activeOpacity={0.8}
+          <BlurView
+            intensity={50}
             style={{
-              opacity: 0.8,
+              backgroundColor: theme.colors.backgroundPrimary + "88",
+              width: 38,
+              height: 38,
               position: "absolute",
               left: 16,
               top: 60,
               zIndex: 3,
-            }}
-            onPress={async () => {
-              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              navigation.goBack();
-            }}
-          />
-          <CustomButton
-            iconCenter={
-              <Icon
-                name={"share-variant"}
-                type={"material-community"}
-                size={24}
-                color={theme.colors.textPrimary}
-                style={{ left: -1 }}
-              />
-            }
-            backgroundColor={theme.colors.backgroundPrimary}
-            width={42}
-            height={42}
-            borderRadius={100}
-            activeOpacity={0.8}
-            style={{
-              opacity: 0.8,
-              position: "absolute",
-              right: 68,
-              top: 60,
-              zIndex: 3,
-            }}
-            onPress={onShare}
-          />
-          <Favorite
-            resortId={resortId}
-            size={24}
-            top={60}
-            right={16}
-            position={"absolute"}
-            backgroundColor={theme.colors.backgroundPrimary + "b5"}
-            padding={8}
-            borderRadius={100}
-            style={{
-              width: 42,
-              height: 42,
+              borderRadius: 100,
+              overflow: "hidden",
               justifyContent: "center",
               alignItems: "center",
-              zIndex: 3,
             }}
-          />
+          >
+            <CustomButton
+              iconCenter={
+                <Icon
+                  name={Platform.OS === "ios" ? "chevron-back" : "arrow-back"}
+                  size={20}
+                  color={theme.colors.textPrimary}
+                  style={{ left: -1 }}
+                  type={"ionicon"}
+                />
+              }
+              backgroundColor={"transparent"}
+              width={38}
+              height={38}
+              borderRadius={100}
+              activeOpacity={0.8}
+              onPress={async () => {
+                await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                navigation.goBack();
+              }}
+              isBlur={true}
+            />
+          </BlurView>
+          <BlurView
+            intensity={50}
+            style={{
+              backgroundColor: theme.colors.backgroundPrimary + "88",
+              width: 38,
+              height: 38,
+              position: "absolute",
+              top: 60,
+              right: 62,
+              zIndex: 3,
+              borderRadius: 100,
+              overflow: "hidden",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <CustomButton
+              iconCenter={
+                <Icon
+                  name={"share-variant"}
+                  type={"material-community"}
+                  size={20}
+                  color={theme.colors.textPrimary}
+                  style={{ left: -1 }}
+                />
+              }
+              backgroundColor={"transparent"}
+              width={38}
+              height={38}
+              borderRadius={100}
+              activeOpacity={0.8}
+              onPress={onShare}
+            />
+          </BlurView>
+          <BlurView
+            intensity={50}
+            style={{
+              backgroundColor: theme.colors.backgroundPrimary + "88",
+              width: 38,
+              height: 38,
+              position: "absolute",
+              top: 60,
+              right: 16,
+              zIndex: 3,
+              borderRadius: 100,
+              overflow: "hidden",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Favorite
+              resortId={resortId}
+              size={20}
+              position={"absolute"}
+              backgroundColor={"transparent"}
+              padding={8}
+              borderRadius={100}
+            />
+          </BlurView>
           <View>
             <ResortProfileCarousel
               resortId={resortId}
@@ -203,18 +233,26 @@ const ResortScreen = ({ route }) => {
               >
                 {resortDetails?.name}
               </Text>
-              <View style={{ paddingTop: 4 }}>
+              <View
+                style={{
+                  paddingTop: 4,
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <Icon
+                  name={"map-marker"}
+                  size={16}
+                  type={"material-community"}
+                  color={theme.colors.textSecondary}
+                  style={{ marginBottom: 1, marginLeft: -2 }}
+                />
                 <Text
                   style={{
                     color: theme.colors.textSecondary,
                     marginLeft: -2,
                   }}
                 >
-                  <Icon
-                    name={"map-marker"}
-                    size={16}
-                    type={"material-community"}
-                  />
                   {resortDetails?.city}, {resortDetails?.state},{" "}
                   {resortDetails?.country}
                 </Text>

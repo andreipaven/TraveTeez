@@ -1,14 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import {
-  View,
-  FlatList,
-  Platform,
-  ActivityIndicator,
-  Keyboard,
-  Text,
-} from "react-native";
+import { View, FlatList, ActivityIndicator, Text } from "react-native";
 import CustomResortCard from "../Cards/CustomResortCard";
-import { NativeViewGestureHandler } from "react-native-gesture-handler";
+
 import APIService from "../../services/APIService";
 import { config } from "../../services/config";
 import { useTranslation } from "react-i18next";
@@ -22,12 +15,12 @@ export default function NewResortsList({ refreshing }) {
   const [state, setState] = useState({
     resorts: [],
     offset: 0,
-    limit: 3,
+    limit: 10,
   });
-
+  const newResortsListRef = useRef(null);
   const renderItem = useCallback(
-    ({ item }) => <CustomResortCard item={item} />,
-    [],
+    ({ item }) => <CustomResortCard item={item} refreshing={refreshing} />,
+    [refreshing],
   );
 
   const fetchNewResorts = (reset = false) => {
@@ -65,6 +58,10 @@ export default function NewResortsList({ refreshing }) {
 
   useEffect(() => {
     if (refreshing) {
+      newResortsListRef.current?.scrollToOffset({
+        offset: 0,
+        animated: false,
+      });
       fetchNewResorts(true);
     }
   }, [refreshing]);
@@ -102,6 +99,8 @@ export default function NewResortsList({ refreshing }) {
       )}
 
       <FlatList
+        ref={newResortsListRef}
+        refreshing={fetchLoading}
         horizontal
         data={state.resorts}
         keyExtractor={(item) => item.resort_id.toString()}

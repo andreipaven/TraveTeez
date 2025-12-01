@@ -1,32 +1,24 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  Platform,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, FlatList, Text, View } from "react-native";
 
 import { Icon } from "react-native-elements";
 import { useTheme } from "../../Theme/themeContext";
 import APIService from "../../services/APIService";
 import { config } from "../../services/config";
 import CustomResortCard from "../Cards/CustomResortCard";
-import {
-  NativeViewGestureHandler,
-  TapGestureHandler,
-} from "react-native-gesture-handler";
+import { TapGestureHandler } from "react-native-gesture-handler";
 
 const CategoryResortsBar = ({ refreshing }) => {
   const { theme } = useTheme();
   const [selectedCategory, setSelectedCategory] = useState("nature");
   const [fetchLoading, setFetchLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const categoryResortsListRef = useRef(null);
 
   const [state, setState] = useState({
     resorts: [],
     offset: 0,
-    limit: 3,
+    limit: 10,
   });
 
   const fetchData = (category, reset = false) => {
@@ -68,6 +60,10 @@ const CategoryResortsBar = ({ refreshing }) => {
 
   useEffect(() => {
     if (refreshing) {
+      categoryResortsListRef.current?.scrollToOffset({
+        offset: 0,
+        animated: false,
+      });
       fetchData(selectedCategory, true);
     }
   }, [refreshing]);
@@ -76,8 +72,8 @@ const CategoryResortsBar = ({ refreshing }) => {
     fetchData(selectedCategory, true);
   }, [selectedCategory]);
   const renderItem = useCallback(
-    ({ item }) => <CustomResortCard item={item} />,
-    [],
+    ({ item }) => <CustomResortCard item={item} refreshing={refreshing} />,
+    [refreshing],
   );
 
   const onEndReachedHandler = () => {
@@ -96,8 +92,12 @@ const CategoryResortsBar = ({ refreshing }) => {
         }}
       >
         {[
-          { key: "nature", icon: "image-filter-hdr", color: "brown" },
-          { key: "relax", icon: "surfing", color: "gold" },
+          {
+            key: "nature",
+            icon: "image-filter-hdr",
+            color: theme.colors.textPrimary,
+          },
+          { key: "relax", icon: "surfing", color: theme.colors.primary },
           { key: "urban", icon: "city", color: theme.colors.textPrimary },
           { key: "special", icon: "shimmer", color: theme.colors.primary },
         ].map((cat) => (
@@ -140,23 +140,23 @@ const CategoryResortsBar = ({ refreshing }) => {
           resorts
         </Text>
 
-        <View>
-          <FlatList
-            horizontal
-            data={state.resorts}
-            keyExtractor={(item) => item.resort_id.toString()}
-            renderItem={renderItem}
-            contentContainerStyle={{
-              paddingVertical: 8,
-              paddingHorizontal: 8,
-            }}
-            showsHorizontalScrollIndicator={false}
-            keyboardShouldPersistTaps="handled"
-            ListFooterComponent={fetchLoading ? <ActivityIndicator /> : null}
-            onEndReachedThreshold={0.5}
-            onEndReached={onEndReachedHandler}
-          />
-        </View>
+        <FlatList
+          ref={categoryResortsListRef}
+          refreshing={fetchLoading}
+          horizontal
+          data={state.resorts}
+          keyExtractor={(item) => item.resort_id.toString()}
+          renderItem={renderItem}
+          contentContainerStyle={{
+            paddingVertical: 8,
+            paddingHorizontal: 8,
+          }}
+          showsHorizontalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          ListFooterComponent={fetchLoading ? <ActivityIndicator /> : null}
+          onEndReachedThreshold={0.5}
+          onEndReached={onEndReachedHandler}
+        />
       </View>
     </View>
   );

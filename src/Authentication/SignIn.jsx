@@ -13,7 +13,7 @@ import CustomButton from "../components/Buttons/CustomButton";
 import CustomDivider from "../components/Divider/CustomDivider";
 import Facebook from "../../assets/facebook.png";
 import Google from "../../assets/google.png";
-import { Ionicons } from "@expo/vector-icons";
+
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import APIService from "../services/APIService";
@@ -23,7 +23,7 @@ import { AuthContext } from "../Secure/AuthProvider";
 import { Icon } from "react-native-elements";
 import * as Haptics from "expo-haptics";
 import { SafeAreaView } from "react-native-safe-area-context";
-import loadingButton from "../components/Loading/LoadingButton";
+
 import LottieView from "lottie-react-native";
 
 export default function SignIn({ isOpen, setIsOpen }) {
@@ -177,9 +177,10 @@ export default function SignIn({ isOpen, setIsOpen }) {
             focusBorderColor={theme.colors.primary}
             backgroundColor={theme.colors.backgroundPrimary}
             iconLeft={
-              <Ionicons
-                name={"person"}
-                size={16}
+              <Icon
+                name={"account"}
+                type={"material-community"}
+                size={20}
                 color={theme.colors.textSecondary}
               />
             }
@@ -203,9 +204,10 @@ export default function SignIn({ isOpen, setIsOpen }) {
             error={errors.password}
             secureTextEntry={true}
             iconLeft={
-              <Ionicons
-                name={"lock-closed"}
-                size={16}
+              <Icon
+                name={"lock"}
+                type={"material-community"}
+                size={20}
                 color={theme.colors.textSecondary}
               />
             }

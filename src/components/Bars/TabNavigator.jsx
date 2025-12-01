@@ -18,13 +18,13 @@ import { Icon } from "react-native-elements";
 import MapScreen from "../../screens/Map/MapScreen";
 import Step4Gallery from "../AddNewResortSteps/Step4Gallery";
 import AddResort from "../../screens/Profile/AddResort";
+import FavoriteScreen from "../../screens/Favorite/FavoriteScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 // Main stack
 function MainStackGroup() {
-  const { t } = useTranslation();
   const { theme } = useTheme();
   return (
     <Stack.Navigator
@@ -81,22 +81,32 @@ function TabGroup() {
       <Tab.Screen
         name="MapScreen"
         component={MapScreen}
-        options={({ route }) => ({
+        options={{
           tabBarLabel: "Map",
-          tabBarIconActive: "map",
-          tabBarIconInactive: "map-outline",
+          tabBarIconActive: "map-marker",
+          tabBarIconInactive: "map-marker-outline",
           headerShown: false,
-        })}
+        }}
+      />
+      <Tab.Screen
+        name="FavoriteScreen"
+        component={FavoriteScreen}
+        options={{
+          tabBarLabel: "Favorite",
+          tabBarIconActive: "heart",
+          tabBarIconInactive: "heart-outline",
+          headerShown: false,
+        }}
       />
       <Tab.Screen
         name="HomeScreen"
         component={HomeScreen}
-        options={({ route }) => ({
+        options={{
           tabBarLabel: "Home",
           tabBarIconActive: "home",
           tabBarIconInactive: "home-outline",
           headerShown: false,
-        })}
+        }}
       />
       <Tab.Screen
         name="SearchScreen"

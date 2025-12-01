@@ -37,7 +37,13 @@
   },
   "containerGuestProfile": {
     "title": "Profile",
-    "mainButton": "Sign in or sign up"
+    "mainButton": "Sign in ",
+    "message": "Sign in to access your profile, view and update your personal information, and manage your account settings."
+  },
+  "containerGuestFavorite": {
+    "title": "Favorite resorts",
+    "mainButton": "Sign in ",
+    "message": "Sign in to view and save your favorite resorts. Once logged in, you can easily manage your personal list anytime."
   },
   "resortScreen": {
     "about": "About",
@@ -94,6 +100,9 @@
   "home": {
     "searchButtonInput": "Search a resort... ",
     "newResortsTitle": "New resorts"
+  },
+  "favoriteScreen": {
+    "title": "Favorite resorts"
   },
   "app": {
     "addNewResortTitle": "Add New Resort",

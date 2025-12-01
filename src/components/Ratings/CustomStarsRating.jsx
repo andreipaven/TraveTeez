@@ -1,8 +1,10 @@
 import React from "react";
 import { View } from "react-native";
 import Svg, { Rect, Polygon, ClipPath, Defs } from "react-native-svg";
+import { useTheme } from "../../Theme/themeContext";
 
 const Star = ({ size = 30, fillPercent = 1 }) => {
+  const { theme } = useTheme();
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24">
       <Defs>
@@ -21,7 +23,7 @@ const Star = ({ size = 30, fillPercent = 1 }) => {
         y="0"
         width={`${fillPercent * 24}`} // fraction of star
         height="24"
-        fill="gold"
+        fill={theme.colors.primary}
         clipPath="url(#starClip)"
       />
     </Svg>

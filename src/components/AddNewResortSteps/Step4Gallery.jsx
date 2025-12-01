@@ -363,9 +363,9 @@ const Step4Gallery = ({
         ) : !resort.mainImage?.uri ? (
           <View style={{ alignItems: "center" }}>
             <Icon
-              type={"font-awesome"}
+              type={"material-community"}
               name={"image"}
-              size={32}
+              size={36}
               color={
                 errors.mainImage ? theme.colors.error : theme.colors.primary
               }
@@ -387,12 +387,12 @@ const Step4Gallery = ({
             />
             <CustomButton
               onPress={() => {
-                removeImage(resort.mainImage?.uri);
+                removeImage(resort.mainImage?.uri).then(() => {});
               }}
               style={{
                 position: "absolute",
-                bottom: 8,
-                right: 8,
+                bottom: 0,
+                right: 0,
                 borderRadius: 12,
               }}
               width={"fit-content"}

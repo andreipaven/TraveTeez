@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -27,11 +27,12 @@ export default function HomeScreen() {
 
   const [refreshing, setRefreshing] = React.useState(false);
   const navigation = useNavigation();
-  const [newResorts, setNewResorts] = useState([]);
+
   const { user, loading } = useContext(AuthContext);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
+
     setTimeout(() => {
       setRefreshing(false);
     }, 500);

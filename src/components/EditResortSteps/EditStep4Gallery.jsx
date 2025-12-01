@@ -285,7 +285,7 @@ const EditStep4Gallery = ({
         : setLoadingImages((prev) => ({ ...prev, galleryImages: false }));
     }
   };
-
+  console.log(resort.images);
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
@@ -431,7 +431,7 @@ const EditStep4Gallery = ({
 
       <FlatList
         data={resort.images}
-        keyExtractor={(item) => item.uri}
+        keyExtractor={(item) => item.uri || item.image_url}
         numColumns={2}
         renderItem={({ item }) => (
           <View

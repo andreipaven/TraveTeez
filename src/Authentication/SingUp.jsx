@@ -7,7 +7,7 @@ import {
   View,
 } from "react-native";
 import { useTheme } from "../Theme/themeContext";
-import { Ionicons } from "@expo/vector-icons";
+
 import CustomTextInput from "../components/Inputs/CustomTextInput";
 import CustomDivider from "../components/Divider/CustomDivider";
 import CustomButton from "../components/Buttons/CustomButton";
@@ -253,10 +253,11 @@ const SingUp = ({ isOpen, setIsOpen }) => {
               borderColor={theme.colors.primary}
               backgroundColor={theme.colors.backgroundPrimary}
               iconLeft={
-                <Ionicons
-                  name={"person"}
-                  size={16}
+                <Icon
+                  name={"account"}
+                  size={20}
                   color={theme.colors.textSecondary}
+                  type={"material-community"}
                 />
               }
               textColor={theme.colors.textSecondary}
@@ -274,10 +275,11 @@ const SingUp = ({ isOpen, setIsOpen }) => {
               backgroundColor={theme.colors.backgroundPrimary}
               borderWidth={1.5}
               iconLeft={
-                <Ionicons
-                  name={"person"}
-                  size={16}
+                <Icon
+                  name={"account"}
+                  size={20}
                   color={theme.colors.textSecondary}
+                  type={"material-community"}
                 />
               }
               textColor={theme.colors.textSecondary}
@@ -295,10 +297,11 @@ const SingUp = ({ isOpen, setIsOpen }) => {
               borderWidth={1.5}
               borderRadius={100}
               iconLeft={
-                <Ionicons
-                  name={"mail"}
-                  size={16}
+                <Icon
+                  name={"email"}
+                  size={20}
                   color={theme.colors.textSecondary}
+                  type={"material-community"}
                 />
               }
               textColor={theme.colors.textSecondary}
@@ -318,9 +321,10 @@ const SingUp = ({ isOpen, setIsOpen }) => {
               borderWidth={1.5}
               borderRadius={100}
               iconLeft={
-                <Ionicons
-                  name={"lock-closed"}
-                  size={16}
+                <Icon
+                  name={"lock"}
+                  type={"material-community"}
+                  size={20}
                   color={theme.colors.textSecondary}
                 />
               }
@@ -339,9 +343,10 @@ const SingUp = ({ isOpen, setIsOpen }) => {
               borderWidth={1.5}
               borderRadius={100}
               iconLeft={
-                <Ionicons
-                  name={"lock-closed"}
-                  size={16}
+                <Icon
+                  name={"lock"}
+                  type={"material-community"}
+                  size={20}
                   color={theme.colors.textSecondary}
                 />
               }

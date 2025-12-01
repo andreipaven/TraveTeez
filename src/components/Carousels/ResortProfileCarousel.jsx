@@ -11,6 +11,7 @@ import { useTheme } from "../../Theme/themeContext";
 
 import RatingAllStars from "../Ratings/RatingAllStars";
 import PaginationDot from "react-native-animated-pagination-dot";
+import { BlurView } from "expo-blur";
 
 //main function
 const ResortProfileCarousel = ({ resortId, images, width, height }) => {
@@ -22,8 +23,8 @@ const ResortProfileCarousel = ({ resortId, images, width, height }) => {
     <View style={{ width, height }}>
       <Carousel
         autoPlay={true}
-        autoPlayInterval={2000}
-        scrollAnimationDuration={1000}
+        autoPlayInterval={1500}
+        scrollAnimationDuration={300}
         vertical={false}
         loop={false}
         ref={ref}
@@ -63,28 +64,29 @@ const ResortProfileCarousel = ({ resortId, images, width, height }) => {
           sizeRatio={1}
         />
       </View>
-      <View
+      <BlurView
         style={{
           position: "absolute",
-          bottom: 10,
-          right: 10,
+          bottom: 8,
+          right: 16,
           alignSelf: "flex-end",
-          backgroundColor: theme.colors.backgroundPrimary + "b5",
+          backgroundColor: theme.colors.backgroundPrimary + "88",
           padding: 4,
           borderRadius: 100,
           width: 50,
           alignItems: "center",
+          overflow: "hidden",
         }}
       >
         <Text style={{ fontWeight: "500" }}>
           {curPage + 1}/{images.length}
         </Text>
-      </View>
+      </BlurView>
 
       <RatingAllStars
         position={"absolute"}
-        left={10}
-        bottom={30}
+        left={16}
+        bottom={8}
         resortId={resortId}
       />
     </View>

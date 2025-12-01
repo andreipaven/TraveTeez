@@ -1,13 +1,13 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../Theme/themeContext";
-import CustomButton from "../Buttons/CustomButton";
 import { useTranslation } from "react-i18next";
-import * as Haptics from "expo-haptics";
 import { useNavigation } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import CustomButton from "../Buttons/CustomButton";
+import * as Haptics from "expo-haptics";
 
-const ContainerGuestProfile = () => {
+function ContainerGuestFavorite() {
   const { theme } = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation();
@@ -24,19 +24,13 @@ const ContainerGuestProfile = () => {
         }}
       >
         <Text style={{ fontWeight: "bold", fontSize: 24 }}>
-          {t("containerGuestProfile.title")}
+          {t("containerGuestFavorite.title")}
         </Text>
-        <Text
-          style={{
-            fontSize: 16,
-            color: theme.colors.textSecondary,
-            lineHeight: 22,
-          }}
-        >
-          {t("containerGuestProfile.message")}
+        <Text style={{ fontSize: 16, color: theme.colors.textSecondary }}>
+          {t("containerGuestFavorite.message")}
         </Text>
         <CustomButton
-          title={t("containerGuestProfile.mainButton")}
+          title={t("containerGuestFavorite.mainButton")}
           backgroundColor={theme.colors.primary}
           textColor={theme.colors.primaryContrast}
           maxHeight={46}
@@ -51,6 +45,6 @@ const ContainerGuestProfile = () => {
       </View>
     </SafeAreaView>
   );
-};
+}
 
-export default ContainerGuestProfile;
+export default ContainerGuestFavorite;

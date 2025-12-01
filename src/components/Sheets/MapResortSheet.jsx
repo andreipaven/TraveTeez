@@ -28,12 +28,12 @@ import CustomButton from "../Buttons/CustomButton";
 import * as Haptics from "expo-haptics";
 import Favorite from "../Favorite/Favorite";
 import { Easing } from "react-native-reanimated";
+import { BlurView } from "expo-blur";
 
 const { width, height } = Dimensions.get("window");
 
 const MapResortSheet = ({ resortId, ref }) => {
   const { theme } = useTheme();
-  const { t } = useTranslation();
   const navigation = useNavigation();
   const [resort, setResort] = useState(null);
   const tapRef = useRef(null);
@@ -119,49 +119,63 @@ const MapResortSheet = ({ resortId, ref }) => {
             borderRadius: 24,
           }}
         >
-          <CustomButton
-            iconCenter={
-              <Icon
-                name={"window-close"}
-                type={"material-community"}
-                size={20}
-                color={theme.colors.textPrimary}
-                style={{ alignSelf: "center" }}
-              />
-            }
-            backgroundColor={theme.colors.backgroundPrimary}
-            width={32}
-            height={32}
-            borderRadius={100}
-            activeOpacity={0.5}
+          <BlurView
+            intensity={50}
             style={{
-              opacity: 0.7,
+              backgroundColor: theme.colors.backgroundPrimary + "88",
               position: "absolute",
               left: 8,
               top: 8,
               zIndex: 3,
+              borderRadius: 100,
+              overflow: "hidden",
             }}
-            onPress={async () => {
-              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
-              onClose();
-            }}
-          />
-          <Favorite
-            right={8}
-            top={8}
+          >
+            <CustomButton
+              iconCenter={
+                <Icon
+                  name={"window-close"}
+                  type={"material-community"}
+                  size={20}
+                  color={theme.colors.textPrimary}
+                  style={{ alignSelf: "center" }}
+                />
+              }
+              backgroundColor={"transparent"}
+              width={32}
+              height={32}
+              borderRadius={100}
+              activeOpacity={0.5}
+              onPress={async () => {
+                await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+                onClose();
+              }}
+            />
+          </BlurView>
+          <BlurView
+            intensity={50}
             style={{
+              backgroundColor: theme.colors.backgroundPrimary + "88",
               zIndex: 3,
-              opacity: 0.8,
               height: 32,
               width: 32,
               alignItems: "center",
               justifyContent: "center",
+              borderRadius: 100,
+              overflow: "hidden",
+              position: "absolute",
+              top: 8,
+              right: 8,
             }}
-            backgroundColor={theme.colors.backgroundPrimary}
-            borderRadius={100}
-            padding={6}
-            size={20}
-          />
+          >
+            <Favorite
+              right={0}
+              top={0}
+              backgroundColor={"transparent"}
+              padding={6}
+              size={20}
+            />
+          </BlurView>
           <PanGestureHandler
             ref={panRef}
             simultaneousHandlers={tapRef}

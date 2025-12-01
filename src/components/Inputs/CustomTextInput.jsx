@@ -5,10 +5,10 @@ import {
   TouchableOpacity,
   View,
   Animated,
-  Pressable,
 } from "react-native";
 import { useTheme } from "../../Theme/themeContext";
-import { Ionicons } from "@expo/vector-icons";
+
+import { Icon } from "react-native-elements";
 
 export default function CustomTextInput({
   label,
@@ -61,7 +61,7 @@ export default function CustomTextInput({
     left: iconLeft
       ? animatedLabel.interpolate({
           inputRange: [0, 1],
-          outputRange: [36, 20],
+          outputRange: [40, 22],
         })
       : animatedLabel.interpolate({
           inputRange: [0, 1],
@@ -158,10 +158,11 @@ export default function CustomTextInput({
             onPress={() => setHidePassword(!hidePassword)}
             style={{ paddingHorizontal: 12 }}
           >
-            <Ionicons
+            <Icon
               name={hidePassword ? "eye-off" : "eye"}
               size={22}
               color={textColor || theme.colors.textSecondary}
+              type={"material-community"}
             />
           </TouchableOpacity>
         ) : (
