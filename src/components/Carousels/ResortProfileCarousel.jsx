@@ -70,15 +70,19 @@ const ResortProfileCarousel = ({ resortId, images, width, height }) => {
           bottom: 8,
           right: 16,
           alignSelf: "flex-end",
-          backgroundColor: theme.colors.backgroundPrimary + "88",
+          backgroundColor:
+            theme.mode === "light"
+              ? theme.colors.backgroundPrimary + "88"
+              : theme.colors.backgroundPrimary,
           padding: 4,
           borderRadius: 100,
           width: 50,
           alignItems: "center",
           overflow: "hidden",
         }}
+        intensity={theme.mode === "light" ? 50 : 10}
       >
-        <Text style={{ fontWeight: "500" }}>
+        <Text style={{ fontWeight: "500", color: theme.colors.textPrimary }}>
           {curPage + 1}/{images.length}
         </Text>
       </BlurView>

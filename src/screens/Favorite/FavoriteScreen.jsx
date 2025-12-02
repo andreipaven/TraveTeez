@@ -6,6 +6,7 @@ import {
   FlatList,
   Keyboard,
   ActivityIndicator,
+  Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import APIService from "../../services/APIService";
@@ -17,6 +18,8 @@ import { useTheme } from "../../Theme/themeContext";
 import { useTranslation } from "react-i18next";
 import ContainerGuestProfile from "../../components/Containers/ContainerGuestProfile";
 import ContainerGuestFavorite from "../../components/Containers/ContainerGuestFavorite";
+
+const width = Dimensions.get("window").width;
 
 const FavoriteScreen = () => {
   const { user } = useContext(AuthContext);
@@ -66,7 +69,13 @@ const FavoriteScreen = () => {
       });
   };
   const renderItem = useCallback(
-    ({ item }) => <CustomResortCard item={item} marginHorizontal={0} />,
+    ({ item }) => (
+      <CustomResortCard
+        item={item}
+        marginHorizontal={0}
+        width={width / 2 - 22}
+      />
+    ),
     [],
   );
 

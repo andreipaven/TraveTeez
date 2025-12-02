@@ -25,7 +25,7 @@ export default function HomeScreen() {
   const { theme } = useTheme();
   const { t } = useTranslation();
 
-  const [refreshing, setRefreshing] = React.useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
 
   const { user, loading } = useContext(AuthContext);

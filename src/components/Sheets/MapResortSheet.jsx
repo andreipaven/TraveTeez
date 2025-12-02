@@ -169,8 +169,8 @@ const MapResortSheet = ({ resortId, ref }) => {
             }}
           >
             <Favorite
-              right={0}
-              top={0}
+              secondTop={6}
+              secondRight={6}
               backgroundColor={"transparent"}
               padding={6}
               size={20}

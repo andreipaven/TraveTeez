@@ -24,6 +24,8 @@ export const lightTheme = {
 
     shadowPrimary: "#000000",
     error: "#ff0000",
+
+    white: "#ffffff",
   },
 };
 
@@ -52,5 +54,7 @@ export const darkTheme = {
 
     shadowPrimary: "#ffffff",
     error: "#ff0000",
+
+    white: "#ffffff",
   },
 };

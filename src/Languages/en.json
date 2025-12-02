@@ -184,5 +184,8 @@
   },
   "error": {
     "catchError": "Something went wrong. Please try again."
+  },
+  "categoryResortsBar": {
+    "title": "resorts"
   }
 }

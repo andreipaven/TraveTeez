@@ -12,26 +12,30 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { ResortProvider } from "./src/components/Hooks/useEditResort";
 import { KeyboardProvider } from "react-native-keyboard-controller";
+import { Provider } from "react-redux";
+import { store } from "./src/Redux/Store/store";
 
 export default function App() {
   return (
     <SafeAreaProvider>
-      <KeyboardProvider>
-        <ThemeProvider>
-          <ResortProvider>
-            <GestureHandlerRootView style={{ flex: 1 }}>
-              <BottomSheetModalProvider>
-                <I18nextProvider i18n={i18n}>
-                  <AuthProvider>
-                    <AppNavigator />
-                  </AuthProvider>
-                </I18nextProvider>
-              </BottomSheetModalProvider>
-            </GestureHandlerRootView>
-            <Toast config={{ custom: CustomToast }} />
-          </ResortProvider>
-        </ThemeProvider>
-      </KeyboardProvider>
+      <Provider store={store}>
+        <KeyboardProvider>
+          <ThemeProvider>
+            <ResortProvider>
+              <GestureHandlerRootView style={{ flex: 1 }}>
+                <BottomSheetModalProvider>
+                  <I18nextProvider i18n={i18n}>
+                    <AuthProvider>
+                      <AppNavigator />
+                    </AuthProvider>
+                  </I18nextProvider>
+                </BottomSheetModalProvider>
+              </GestureHandlerRootView>
+              <Toast config={{ custom: CustomToast }} />
+            </ResortProvider>
+          </ThemeProvider>
+        </KeyboardProvider>
+      </Provider>
     </SafeAreaProvider>
   );
 }

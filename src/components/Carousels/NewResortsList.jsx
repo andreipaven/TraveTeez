@@ -1,5 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { View, FlatList, ActivityIndicator, Text } from "react-native";
+import {
+  View,
+  FlatList,
+  ActivityIndicator,
+  Text,
+  Animated,
+} from "react-native";
 import CustomResortCard from "../Cards/CustomResortCard";
 
 import APIService from "../../services/APIService";

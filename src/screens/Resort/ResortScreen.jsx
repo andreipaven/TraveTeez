@@ -110,9 +110,12 @@ const ResortScreen = ({ route }) => {
       ) : (
         <View style={{ flex: 1 }}>
           <BlurView
-            intensity={50}
+            intensity={theme.mode === "light" ? 50 : 10}
             style={{
-              backgroundColor: theme.colors.backgroundPrimary + "88",
+              backgroundColor:
+                theme.mode === "light"
+                  ? theme.colors.backgroundPrimary + "88"
+                  : theme.colors.backgroundPrimary,
               width: 38,
               height: 38,
               position: "absolute",
@@ -148,9 +151,12 @@ const ResortScreen = ({ route }) => {
             />
           </BlurView>
           <BlurView
-            intensity={50}
+            intensity={theme.mode === "light" ? 50 : 10}
             style={{
-              backgroundColor: theme.colors.backgroundPrimary + "88",
+              backgroundColor:
+                theme.mode === "light"
+                  ? theme.colors.backgroundPrimary + "88"
+                  : theme.colors.backgroundPrimary,
               width: 38,
               height: 38,
               position: "absolute",
@@ -182,9 +188,12 @@ const ResortScreen = ({ route }) => {
             />
           </BlurView>
           <BlurView
-            intensity={50}
+            intensity={theme.mode === "light" ? 50 : 10}
             style={{
-              backgroundColor: theme.colors.backgroundPrimary + "88",
+              backgroundColor:
+                theme.mode === "light"
+                  ? theme.colors.backgroundPrimary + "88"
+                  : theme.colors.backgroundPrimary,
               width: 38,
               height: 38,
               position: "absolute",
@@ -199,11 +208,15 @@ const ResortScreen = ({ route }) => {
           >
             <Favorite
               resortId={resortId}
-              size={20}
+              size={22}
               position={"absolute"}
               backgroundColor={"transparent"}
               padding={8}
+              secondTop={8}
+              secondRight={8}
               borderRadius={100}
+              style={{ alignSelf: "center" }}
+              borderColor={theme.colors.textPrimary}
             />
           </BlurView>
           <View>

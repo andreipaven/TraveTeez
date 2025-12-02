@@ -1,11 +1,19 @@
-import React, { useEffect, useRef, useState } from "react";
-import { View, Text, StyleSheet, Pressable, Dimensions } from "react-native";
-import APIService from "../../services/APIService";
-import { config } from "../../services/config";
+import React, { useContext, useEffect } from "react";
+import { Pressable, View } from "react-native";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import { useTheme } from "../../Theme/themeContext";
-import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import { setFavorite, toggleFavorite } from "../../Redux/Slices/favoriteSlice";
+import APIService from "../../services/APIService";
+import { config } from "../../services/config";
 import * as Haptics from "expo-haptics";
+import { useNavigation } from "@react-navigation/native";
+import { AuthContext } from "../../Secure/AuthProvider";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 
 const Favorite = ({
   resortId,
@@ -19,72 +27,73 @@ const Favorite = ({
   backgroundColor,
   padding,
   borderRadius,
-  refreshing,
+  secondTop,
+  secondLeft,
+  secondBottom,
+  secondRight,
+  borderColor,
 }) => {
-  const [isFavorite, setIsFavorite] = useState(false);
   const { theme } = useTheme();
-  const isFocused = useIsFocused();
-  const [fetchLoading, setFetchLoading] = useState(false);
+  const dispatch = useDispatch();
   const navigation = useNavigation();
+  const { user } = useContext(AuthContext);
+
+  const isFavorite = useSelector(
+    (state) => state.favorites.favorites[resortId],
+  );
+
+  useEffect(() => {
+    if (!user) return;
+
+    APIService.post(config.endpoints.legacy.favorite.verifyFavorite, {
+      resortId,
+    })
+      .then((res) => {
+        if (!res?.data?.error) {
+          dispatch(setFavorite({ resortId, value: res.data }));
+        }
+      })
+      .catch(() => {});
+  }, [dispatch, resortId, user]);
 
   const onToggleFavorite = async () => {
-    const newValue = isFavorite;
-    setIsFavorite((prev) => !prev);
     try {
+      if (!user) {
+        navigation.navigate("SignIn");
+        return;
+      }
+
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      if (newValue) {
+      dispatch(toggleFavorite(resortId));
+
+      if (isFavorite) {
         await APIService.post(config.endpoints.legacy.favorite.deleteFavorite, {
-          resortId: resortId,
+          resortId,
         });
       } else {
+        scale.value = withTiming(1.2, { duration: 300 });
+        setTimeout(() => {
+          scale.value = withTiming(1, { duration: 300 });
+        }, 300);
         await APIService.post(config.endpoints.legacy.favorite.addFavorite, {
-          resortId: resortId,
+          resortId,
         });
       }
     } catch (err) {
-      navigation.navigate("SignIn");
       console.log("Error updating favorite", err);
-      setIsFavorite((prev) => !prev);
+      dispatch(toggleFavorite(resortId));
+      navigation.navigate("SignIn");
     }
   };
+  const scale = useSharedValue(1);
 
-  const fetchFavorites = () => {
-    if (fetchLoading) return;
-    setFetchLoading(true);
-    APIService.post(config.endpoints.legacy.favorite.verifyFavorite, {
-      resortId: resortId,
-    })
-      .then((response) => {
-        if (response?.data.error) {
-          console.log("Something wrong happened " + response.data.error);
-        } else {
-          setIsFavorite(response.data);
-        }
-      })
-      .catch((err) => {
-        console.log("An error occurred " + err);
-      })
-      .finally(() => {
-        setFetchLoading(false);
-      });
-  };
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
 
-  useEffect(() => {
-    fetchFavorites();
-  }, [isFocused]);
-
-  useEffect(() => {
-    if (!refreshing) return;
-    fetchFavorites();
-  }, [refreshing]);
-
-  return fetchLoading ? (
-    <></>
-  ) : (
+  return (
     <Pressable
-      onPress={() => {
-        onToggleFavorite();
-      }}
+      onPress={onToggleFavorite}
       style={[
         {
           position: position || "absolute",
@@ -99,13 +108,45 @@ const Favorite = ({
         style,
       ]}
     >
-      <Icon
-        name={isFavorite ? "heart" : "heart-outline"}
-        size={size || 28}
-        color={isFavorite ? theme.colors.primary : theme.colors.textPrimary}
-        style={{ opacity: 1 }}
-      />
+      {!isFavorite && (
+        <Icon
+          name="heart"
+          size={size || 28}
+          color={theme.colors.primary + "44"}
+          style={{
+            position: "absolute",
+            top: secondTop,
+            bottom: secondBottom,
+            left: secondLeft,
+            right: secondRight,
+          }}
+        />
+      )}
+      <Animated.View
+        style={[
+          animatedStyle,
+          {
+            shadowColor: theme.colors.shadowPrimary,
+            shadowOffset: {
+              width: 0,
+              height: 1,
+            },
+            shadowOpacity: 0.3,
+            shadowRadius: 2.65,
+
+            elevation: 7,
+          },
+        ]}
+      >
+        <Icon
+          name={isFavorite ? "heart" : "heart-outline"}
+          type="material-community"
+          size={size}
+          color={isFavorite ? theme.colors.primary : borderColor}
+        />
+      </Animated.View>
     </Pressable>
   );
 };
+
 export default Favorite;

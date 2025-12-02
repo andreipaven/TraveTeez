@@ -7,9 +7,16 @@ import APIService from "../../services/APIService";
 import { config } from "../../services/config";
 import CustomResortCard from "../Cards/CustomResortCard";
 import { TapGestureHandler } from "react-native-gesture-handler";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 
 const CategoryResortsBar = ({ refreshing }) => {
   const { theme } = useTheme();
+  const { t } = useTranslation();
   const [selectedCategory, setSelectedCategory] = useState("nature");
   const [fetchLoading, setFetchLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -20,6 +27,17 @@ const CategoryResortsBar = ({ refreshing }) => {
     offset: 0,
     limit: 10,
   });
+
+  const categories = [
+    {
+      key: "nature",
+      icon: "image-filter-hdr",
+      color: theme.colors.textPrimary,
+    },
+    { key: "relax", icon: "surfing", color: theme.colors.primary },
+    { key: "urban", icon: "city", color: theme.colors.textPrimary },
+    { key: "special", icon: "shimmer", color: theme.colors.primary },
+  ];
 
   const fetchData = (category, reset = false) => {
     if (fetchLoading) return;
@@ -70,6 +88,12 @@ const CategoryResortsBar = ({ refreshing }) => {
 
   useEffect(() => {
     fetchData(selectedCategory, true);
+    categories.forEach((cat) => {
+      scaleValues[cat.key].value = withTiming(
+        cat.key === selectedCategory ? 1.1 : 1,
+        { duration: 200 },
+      );
+    });
   }, [selectedCategory]);
   const renderItem = useCallback(
     ({ item }) => <CustomResortCard item={item} refreshing={refreshing} />,
@@ -81,6 +105,12 @@ const CategoryResortsBar = ({ refreshing }) => {
       fetchData(selectedCategory);
     }
   };
+  const scaleValues = useRef(
+    categories.reduce((acc, cat) => {
+      acc[cat.key] = useSharedValue(cat.key === selectedCategory ? 1.1 : 1);
+      return acc;
+    }, {}),
+  ).current;
   return (
     <View>
       <View
@@ -91,53 +121,59 @@ const CategoryResortsBar = ({ refreshing }) => {
           paddingVertical: 8,
         }}
       >
-        {[
-          {
-            key: "nature",
-            icon: "image-filter-hdr",
-            color: theme.colors.textPrimary,
-          },
-          { key: "relax", icon: "surfing", color: theme.colors.primary },
-          { key: "urban", icon: "city", color: theme.colors.textPrimary },
-          { key: "special", icon: "shimmer", color: theme.colors.primary },
-        ].map((cat) => (
-          <TapGestureHandler
-            key={cat.key}
-            onActivated={() => setSelectedCategory(cat.key)}
-          >
-            <View
-              style={{
-                width: 60,
-                height: 60,
-                borderRadius: 30,
-                backgroundColor: theme.colors.backgroundPrimary,
-                alignItems: "center",
-                justifyContent: "center",
-                shadowColor: theme.colors.shadowPrimary,
-                shadowOffset: { width: 1, height: 2 },
-                shadowOpacity: 0.5,
-                shadowRadius: 3.84,
-                elevation: theme.mode === "light" ? 2 : 21,
-              }}
+        {categories.map((cat) => {
+          const animatedStyleCat = useAnimatedStyle(() => ({
+            transform: [{ scale: scaleValues[cat.key].value }],
+          }));
+          return (
+            <TapGestureHandler
+              key={cat.key}
+              onActivated={() => setSelectedCategory(cat.key)}
             >
-              <Icon
-                raised
-                name={cat.icon}
-                type="material-community"
-                color={theme.colors.backgroundPrimary}
-                reverse
-                reverseColor={cat.color}
-                size={30}
-              />
-            </View>
-          </TapGestureHandler>
-        ))}
+              <Animated.View
+                style={[
+                  animatedStyleCat,
+                  {
+                    width: 60,
+                    height: 60,
+                    borderRadius: 30,
+                    backgroundColor: theme.colors.backgroundPrimary,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    shadowColor: theme.colors.shadowPrimary,
+                    shadowOffset: { width: 1, height: 2 },
+                    shadowOpacity: 0.5,
+                    shadowRadius: 3.84,
+                    elevation: theme.mode === "light" ? 2 : 21,
+                  },
+                ]}
+              >
+                <Icon
+                  raised
+                  name={cat.icon}
+                  type="material-community"
+                  color={theme.colors.backgroundPrimary}
+                  reverse
+                  reverseColor={cat.color}
+                  size={30}
+                />
+              </Animated.View>
+            </TapGestureHandler>
+          );
+        })}
       </View>
 
       <View>
-        <Text style={{ fontWeight: 600, fontSize: 16, paddingHorizontal: 16 }}>
+        <Text
+          style={{
+            fontWeight: 600,
+            fontSize: 16,
+            paddingHorizontal: 16,
+            color: theme.colors.textPrimary,
+          }}
+        >
           {selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}{" "}
-          resorts
+          {t("categoryResortsBar.title")}
         </Text>
 
         <FlatList

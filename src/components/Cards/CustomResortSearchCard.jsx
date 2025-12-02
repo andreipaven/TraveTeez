@@ -71,6 +71,7 @@ const CustomResortSearchCard = React.memo(({ item }) => {
           style={{
             fontSize: 16,
             fontWeight: 500,
+            color: theme.colors.textPrimary,
           }}
         >
           {item.name}
