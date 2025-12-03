@@ -18,7 +18,7 @@ const CustomResortCard = React.memo(
     const { theme } = useTheme();
     const navigation = useNavigation();
 
-    const height = useSharedValue(40);
+    const height = useSharedValue(70);
 
     const animatedStyle = useAnimatedStyle(() => ({
       height: height.value,
@@ -69,6 +69,7 @@ const CustomResortCard = React.memo(
             backgroundColor: theme.colors.backgroundPrimary,
             paddingHorizontal: 6,
             paddingVertical: 4,
+            paddingBottom: 0,
             justifyContent: "flex-start",
             position: "absolute",
             opacity: 0,
@@ -112,6 +113,7 @@ const CustomResortCard = React.memo(
             style={{
               paddingHorizontal: 6,
               paddingVertical: 4,
+              paddingBottom: 0,
               justifyContent: "flex-start",
             }}
           >

@@ -62,33 +62,43 @@ const Favorite = ({
         navigation.navigate("SignIn");
         return;
       }
-
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      dispatch(toggleFavorite(resortId));
-
       if (isFavorite) {
-        await APIService.post(config.endpoints.legacy.favorite.deleteFavorite, {
-          resortId,
-        });
+        const res = await APIService.post(
+          config.endpoints.legacy.favorite.deleteFavorite,
+          { resortId },
+        );
+        if (res?.data.error) {
+          console.log("Something wrong happened " + res.data.error);
+        } else {
+          dispatch(setFavorite({ resortId, value: false }));
+        }
       } else {
-        scale.value = withTiming(1.2, { duration: 300 });
-        setTimeout(() => {
-          scale.value = withTiming(1, { duration: 300 });
-        }, 300);
-        await APIService.post(config.endpoints.legacy.favorite.addFavorite, {
-          resortId,
-        });
+        const res = await APIService.post(
+          config.endpoints.legacy.favorite.addFavorite,
+          { resortId },
+        );
+        if (res?.status === 200) {
+          dispatch(setFavorite({ resortId, value: true }));
+          scale.value = withTiming(1.2, { duration: 200 });
+          translateY.value = withTiming(-5, { duration: 200 });
+          setTimeout(() => {
+            scale.value = withTiming(1, { duration: 200 });
+            translateY.value = withTiming(0, { duration: 200 });
+          }, 200);
+        } else {
+          console.log("Something wrong happened " + res?.data.error);
+        }
       }
     } catch (err) {
       console.log("Error updating favorite", err);
-      dispatch(toggleFavorite(resortId));
-      navigation.navigate("SignIn");
     }
   };
   const scale = useSharedValue(1);
+  const translateY = useSharedValue(0);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
+    transform: [{ scale: scale.value }, { translateY: translateY.value }],
   }));
 
   return (
@@ -133,7 +143,6 @@ const Favorite = ({
             },
             shadowOpacity: 0.3,
             shadowRadius: 2.65,
-
             elevation: 7,
           },
         ]}

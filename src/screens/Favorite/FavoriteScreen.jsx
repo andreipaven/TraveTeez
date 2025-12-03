@@ -18,6 +18,13 @@ import { useTheme } from "../../Theme/themeContext";
 import { useTranslation } from "react-i18next";
 import ContainerGuestProfile from "../../components/Containers/ContainerGuestProfile";
 import ContainerGuestFavorite from "../../components/Containers/ContainerGuestFavorite";
+import { useDispatch, useSelector } from "react-redux";
+import Animated, {
+  CurvedTransition,
+  FadeOut,
+  Easing,
+  JumpingTransition,
+} from "react-native-reanimated";
 
 const width = Dimensions.get("window").width;
 
@@ -25,16 +32,28 @@ const FavoriteScreen = () => {
   const { user } = useContext(AuthContext);
   const { theme } = useTheme();
   const { t } = useTranslation();
-  const isFocused = useIsFocused();
   const [state, setState] = useState({
     resorts: [],
     offset: 0,
     limit: 10,
   });
-  const navigation = useNavigation();
+
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const isFocused = useIsFocused();
+
+  const favoritesFromRedux = useSelector((state) => state.favorites.favorites);
+
+  const filteredResorts = state.resorts.filter(
+    (resort) => favoritesFromRedux[resort.resort_id],
+  );
+
+  useEffect(() => {
+    if (!isFocused) {
+      fetchResorts(true);
+    }
+  }, [favoritesFromRedux]);
 
   const fetchResorts = (reset = false) => {
     if (isLoading) return;
@@ -70,11 +89,17 @@ const FavoriteScreen = () => {
   };
   const renderItem = useCallback(
     ({ item }) => (
-      <CustomResortCard
-        item={item}
-        marginHorizontal={0}
-        width={width / 2 - 22}
-      />
+      <Animated.View
+        layout={JumpingTransition}
+        exiting={FadeOut}
+        style={{ marginBottom: 8 }}
+      >
+        <CustomResortCard
+          item={item}
+          marginHorizontal={0}
+          width={width / 2 - 22}
+        />
+      </Animated.View>
     ),
     [],
   );
@@ -108,7 +133,7 @@ const FavoriteScreen = () => {
 
       <FlatList
         key={2}
-        data={state.resorts}
+        data={filteredResorts}
         keyExtractor={(item) => item.resort_id.toString()}
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
