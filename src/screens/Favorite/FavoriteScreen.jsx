@@ -11,19 +11,18 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import APIService from "../../services/APIService";
 import { config } from "../../services/config";
-import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { useIsFocused } from "@react-navigation/native";
 import { AuthContext } from "../../Secure/AuthProvider";
 import CustomResortCard from "../../components/Cards/CustomResortCard";
 import { useTheme } from "../../Theme/themeContext";
 import { useTranslation } from "react-i18next";
-import ContainerGuestProfile from "../../components/Containers/ContainerGuestProfile";
+
 import ContainerGuestFavorite from "../../components/Containers/ContainerGuestFavorite";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Animated, {
-  CurvedTransition,
   FadeOut,
-  Easing,
   JumpingTransition,
+  LinearTransition,
 } from "react-native-reanimated";
 
 const width = Dimensions.get("window").width;
@@ -89,11 +88,7 @@ const FavoriteScreen = () => {
   };
   const renderItem = useCallback(
     ({ item }) => (
-      <Animated.View
-        layout={JumpingTransition}
-        exiting={FadeOut}
-        style={{ marginBottom: 8 }}
-      >
+      <Animated.View exiting={FadeOut} layout={LinearTransition}>
         <CustomResortCard
           item={item}
           marginHorizontal={0}

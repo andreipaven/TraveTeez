@@ -104,7 +104,7 @@ const Step1Info = ({ ref, resort, setResort, errors, setErrors }) => {
           borderRadius={8}
           multiLine={true}
           minHeight={64}
-          maxLength={1000}
+          maxLength={10000}
           borderWidth={1.5}
           textColor={theme.colors.textPrimary}
         />
