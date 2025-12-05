@@ -46,10 +46,11 @@
     "message": "Sign in to view and save your favorite resorts. Once logged in, you can easily manage your personal list anytime."
   },
   "resortScreen": {
-    "about": "About",
+    "descriptionTitle": "About",
     "noDescription": "No description yet",
     "facilitiesTitle": "Facilities",
     "showMoreFacilitiesButton": "Show more",
+    "readMoreButton": "Read more",
     "mostAppreciatedResort": "This resort is one of the most favorited by our guests ({count}).",
     "topResort": "This resort is favorited by many guests ({count}) and ranks within the top resorts.",
     "firstResort": "This resort is the most favorited by our guests ({count})."

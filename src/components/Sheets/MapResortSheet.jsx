@@ -29,6 +29,7 @@ import * as Haptics from "expo-haptics";
 import Favorite from "../Favorite/Favorite";
 import { Easing } from "react-native-reanimated";
 import { BlurView } from "expo-blur";
+import RatingAllStars from "../Ratings/RatingAllStars";
 
 const { width, height } = Dimensions.get("window");
 
@@ -38,6 +39,7 @@ const MapResortSheet = ({ resortId, ref }) => {
   const [resort, setResort] = useState(null);
   const tapRef = useRef(null);
   const panRef = useRef(null);
+  const [carouselIndex, setCarouselIndex] = useState(1);
 
   const [opacity] = useState(new Animated.Value(0));
   const closeBottomSheet = useRef(false);
@@ -212,9 +214,45 @@ const MapResortSheet = ({ resortId, ref }) => {
                     images={resort?.images || []}
                     width={width - 32}
                     height={height / 4}
+                    setCarouselIndex={setCarouselIndex}
+                    autoPlay={false}
                   />
                 </View>
                 <View style={{ paddingHorizontal: 16 }}>
+                  <RatingAllStars
+                    position={"absolute"}
+                    left={8}
+                    top={-38}
+                    resortId={resortId}
+                    size={22}
+                  />
+                  <BlurView
+                    style={{
+                      position: "absolute",
+                      top: -40,
+                      right: 8,
+                      alignSelf: "flex-end",
+                      backgroundColor:
+                        theme.mode === "light"
+                          ? theme.colors.backgroundPrimary + "88"
+                          : theme.colors.backgroundPrimary,
+                      padding: 4,
+                      borderRadius: 100,
+                      width: 50,
+                      alignItems: "center",
+                      overflow: "hidden",
+                    }}
+                    intensity={theme.mode === "light" ? 50 : 10}
+                  >
+                    <Text
+                      style={{
+                        fontWeight: "500",
+                        color: theme.colors.textPrimary,
+                      }}
+                    >
+                      {carouselIndex + 1}/{resort?.images.length}
+                    </Text>
+                  </BlurView>
                   <Text style={{ fontSize: 16, fontWeight: 600 }}>
                     {resort?.name}
                   </Text>

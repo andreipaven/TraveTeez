@@ -26,6 +26,7 @@ export const lightTheme = {
     error: "#ff0000",
 
     white: "#ffffff",
+    divider: "#cccccc",
   },
 };
 
@@ -56,5 +57,6 @@ export const darkTheme = {
     error: "#ff0000",
 
     white: "#ffffff",
+    divider: "#cccccc",
   },
 };

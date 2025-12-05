@@ -1,5 +1,5 @@
-import React, { useCallback, useMemo } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React, { useCallback, useEffect, useMemo } from "react";
+import { View, Text, StyleSheet, Animated } from "react-native";
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetDraggableView,
@@ -11,6 +11,15 @@ import { useTheme } from "../../Theme/themeContext";
 import { Icon } from "react-native-elements";
 import CustomText from "../Widgets/CustomText";
 import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
+import { setBottomSheetsOpen } from "../../Redux/Slices/bottomSheetsSlice";
+import {
+  interpolate,
+  runOnJS,
+  useAnimatedReaction,
+  useAnimatedStyle,
+  useSharedValue,
+} from "react-native-reanimated";
 
 const ResortFacilitiesSheet = ({ facilities, ref }) => {
   const { theme } = useTheme();
@@ -84,6 +93,8 @@ const ResortFacilitiesSheet = ({ facilities, ref }) => {
     <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} />
   ));
 
+  const dispatch = useDispatch();
+
   const handleComponent = () => (
     <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
       <View
@@ -103,14 +114,48 @@ const ResortFacilitiesSheet = ({ facilities, ref }) => {
           style={{
             fontSize: 16,
             fontWeight: "600",
+            color: theme.colors.textPrimary,
           }}
         >
           {t("resortScreen.facilitiesTitle")}
         </CustomText>
-        <Icon name={"playlist-check"} type={"material-community"} size={20} />
+        <Icon
+          name={"creation"}
+          type={"material-community"}
+          size={20}
+          color={theme.colors.textPrimary}
+        />
       </View>
     </View>
   );
+  const animatedIndex = useSharedValue(0);
+
+  const headerAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(animatedIndex.value, [0, 1], [1, 0]),
+  }));
+
+  const ceva = (isOpen) => {
+    dispatch(setBottomSheetsOpen(isOpen));
+  };
+
+  useAnimatedReaction(
+    () => animatedIndex.value,
+    (index) => {
+      if (index < -0.7) {
+        runOnJS(ceva)(false);
+      } else {
+        // sheet deschis
+        runOnJS(ceva)(true);
+      }
+    },
+  );
+
+  // useAnimatedReaction(
+  //   () => animatedIndex.value,
+  //   (index) => {
+  //     runOnJS(dispatch)(setBottomSheetsOpen(index > -1));
+  //   },
+  // );
 
   return (
     <BottomSheet
@@ -122,6 +167,7 @@ const ResortFacilitiesSheet = ({ facilities, ref }) => {
       enableContentPanningGesture={true}
       enablePanDownToClose={true}
       enableDynamicSizing={false}
+      animatedIndex={animatedIndex}
       backgroundComponent={({ style }) => (
         <View
           style={[

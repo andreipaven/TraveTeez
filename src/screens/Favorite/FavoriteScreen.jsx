@@ -93,6 +93,7 @@ const FavoriteScreen = () => {
           item={item}
           marginHorizontal={0}
           width={width / 2 - 22}
+          animatedCard={false}
         />
       </Animated.View>
     ),

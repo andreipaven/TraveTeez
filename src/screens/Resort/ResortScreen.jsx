@@ -1,5 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, Platform, Dimensions, Share, ScrollView } from "react-native";
+import {
+  View,
+  Platform,
+  Dimensions,
+  Share,
+  Text,
+  StyleSheet,
+} from "react-native";
 import ResortProfileCarousel from "../../components/Carousels/ResortProfileCarousel";
 import { SafeAreaView } from "react-native-safe-area-context";
 import APIService from "../../services/APIService";
@@ -10,26 +17,33 @@ import FeedbackModal from "../../components/Modals/FeedbackModal";
 import CustomButton from "../../components/Buttons/CustomButton";
 import { useTranslation } from "react-i18next";
 import * as Haptics from "expo-haptics";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import Favorite from "../../components/Favorite/Favorite";
 
-import { Divider, Icon } from "react-native-elements";
+import { Icon } from "react-native-elements";
 
 import { BlurView } from "expo-blur";
 import CustomText from "../../components/Widgets/CustomText";
 
 import ResortFacilitiesSheet from "../../components/Sheets/ResortFacilitiesSheet";
 import Animated, {
+  interpolate,
+  useAnimatedRef,
   useAnimatedStyle,
+  useScrollViewOffset,
   useSharedValue,
   withRepeat,
   withSequence,
   withTiming,
 } from "react-native-reanimated";
-import Svg, { Path } from "react-native-svg";
+import ResortDescriptionSheet from "../../components/Sheets/ResortDescriptionSheet";
+import ResortProfileDivider from "../../components/Divider/ResortProfileDivider";
+import { Stack } from "expo-router";
+import RatingAllStars from "../../components/Ratings/RatingAllStars";
+import { useSelector } from "react-redux";
 
 const width = Dimensions.get("window").width;
-const height = Dimensions.get("window").height;
+const PARALLAX_HEIGHT = 360;
 
 const ResortScreen = ({ route }) => {
   const { state } = route.params;
@@ -40,11 +54,52 @@ const ResortScreen = ({ route }) => {
   const [fetchLoading, setFetchLoading] = useState({ resort: false });
   const [images, setImages] = useState([]);
   const [resortDetails, setResortDetails] = useState({});
+  const [descriptionTextLong, setDescriptionTextLong] = useState(false);
+  const [topResortMessage, setTopResortMessage] = useState("");
+  const [carouselIndex, setCarouselIndex] = useState(1);
 
+  //refs
   const facilitiesBottomShetRef = useRef(null);
-
-  //modals
+  const descriptionBottomShetRef = useRef(null);
   const bottomSheetModalRefFeedback = useRef(null);
+
+  //parallax animation
+  const scrollRef = useAnimatedRef();
+  const scrollOffset = useScrollViewOffset(scrollRef);
+
+  //redux
+  const bottomSheetsOpen = useSelector((state) => state.ui.bottomSheetsOpen);
+
+  const headerAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      opacity: interpolate(
+        scrollOffset.value,
+        [PARALLAX_HEIGHT * 0.4, PARALLAX_HEIGHT * 0.73],
+        [0, 1],
+      ),
+    };
+  });
+
+  const imageAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateY: interpolate(
+            scrollOffset.value,
+            [-PARALLAX_HEIGHT, 0, PARALLAX_HEIGHT],
+            [-PARALLAX_HEIGHT / 2, 0, PARALLAX_HEIGHT * 0.75],
+          ),
+        },
+        {
+          scale: interpolate(
+            scrollOffset.value,
+            [-PARALLAX_HEIGHT, 0, PARALLAX_HEIGHT],
+            [2, 1, 1],
+          ),
+        },
+      ],
+    };
+  });
 
   //modal functions
   const handlePresentPressFeedback = () =>
@@ -188,7 +243,6 @@ const ResortScreen = ({ route }) => {
     );
   }, []);
 
-  const [topResortMessage, setTopResortMessage] = useState("");
   useEffect(() => {
     if (resortDetails.rank === 1) {
       const message = t("resortScreen.firstResort").replace(
@@ -201,7 +255,6 @@ const ResortScreen = ({ route }) => {
         "{count}",
         resortDetails.favorites_count?.[0].count,
       );
-      console.log(message);
       setTopResortMessage(message);
     } else if (resortDetails.rank > 3) {
       const message = t("resortScreen.mostAppreciatedResort").replace(
@@ -217,133 +270,164 @@ const ResortScreen = ({ route }) => {
     <SafeAreaView
       style={{
         flex: 1,
-        flexDirection: "column",
         backgroundColor: theme.colors.backgroundPrimary,
       }}
       edges={["left", "right"]}
     >
+      <Stack.Screen
+        options={{
+          headerShown: !bottomSheetsOpen,
+          headerTransparent: true,
+          headerStyle: {
+            backgroundColor: "transparent",
+          },
+          headerTitle: () => <></>,
+          headerLeft: () => (
+            <BlurView
+              intensity={theme.mode === "light" ? 50 : 10}
+              style={{
+                backgroundColor:
+                  theme.mode === "light"
+                    ? theme.colors.backgroundPrimary + "88"
+                    : theme.colors.backgroundPrimary,
+                width: 38,
+                height: 38,
+                zIndex: 3,
+                borderRadius: 100,
+                overflow: "hidden",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <CustomButton
+                iconCenter={
+                  <Icon
+                    name={Platform.OS === "ios" ? "chevron-back" : "arrow-back"}
+                    size={20}
+                    color={theme.colors.textPrimary}
+                    style={{ left: -1 }}
+                    type={"ionicon"}
+                  />
+                }
+                backgroundColor={"transparent"}
+                width={38}
+                height={38}
+                borderRadius={100}
+                activeOpacity={0.8}
+                onPress={async () => {
+                  await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  navigation.goBack();
+                }}
+                isBlur={true}
+              />
+            </BlurView>
+          ),
+
+          headerRight: () => (
+            <View style={{ flexDirection: "row", gap: 8 }}>
+              <BlurView
+                intensity={theme.mode === "light" ? 50 : 10}
+                style={{
+                  backgroundColor:
+                    theme.mode === "light"
+                      ? theme.colors.backgroundPrimary + "88"
+                      : theme.colors.backgroundPrimary,
+                  width: 38,
+                  height: 38,
+                  zIndex: 3,
+                  borderRadius: 100,
+                  overflow: "hidden",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <CustomButton
+                  iconCenter={
+                    <Icon
+                      name={"share-variant"}
+                      type={"material-community"}
+                      size={20}
+                      color={theme.colors.textPrimary}
+                      style={{ left: -1 }}
+                    />
+                  }
+                  backgroundColor={"transparent"}
+                  width={38}
+                  height={38}
+                  borderRadius={100}
+                  activeOpacity={0.8}
+                  onPress={onShare}
+                />
+              </BlurView>
+              <BlurView
+                intensity={theme.mode === "light" ? 50 : 10}
+                style={{
+                  backgroundColor:
+                    theme.mode === "light"
+                      ? theme.colors.backgroundPrimary + "88"
+                      : theme.colors.backgroundPrimary,
+                  width: 38,
+                  height: 38,
+                  zIndex: 3,
+                  borderRadius: 100,
+                  overflow: "hidden",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Favorite
+                  resortId={resortId}
+                  size={22}
+                  position={"absolute"}
+                  backgroundColor={"transparent"}
+                  padding={8}
+                  secondTop={8}
+                  secondRight={8}
+                  borderRadius={100}
+                  style={{ alignSelf: "center" }}
+                  borderColor={theme.colors.textPrimary}
+                />
+              </BlurView>
+            </View>
+          ),
+          headerBackground: () => (
+            <Animated.View
+              style={[
+                headerAnimatedStyle,
+                {
+                  backgroundColor: theme.colors.backgroundPrimary,
+                  height: 100,
+                },
+              ]}
+            />
+          ),
+        }}
+      />
       {fetchLoading.resort ? (
         <Loading />
       ) : (
-        <ScrollView style={{ flex: 1 }}>
-          <BlurView
-            intensity={theme.mode === "light" ? 50 : 10}
-            style={{
-              backgroundColor:
-                theme.mode === "light"
-                  ? theme.colors.backgroundPrimary + "88"
-                  : theme.colors.backgroundPrimary,
-              width: 38,
-              height: 38,
-              position: "absolute",
-              left: 16,
-              top: 60,
-              zIndex: 3,
-              borderRadius: 100,
-              overflow: "hidden",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
+        <Animated.ScrollView
+          ref={scrollRef}
+          scrollEventThrottle={16}
+          showsVerticalScrollIndicator={false}
+        >
+          <Animated.View
+            style={[
+              {
+                width: width,
+                height: PARALLAX_HEIGHT,
+              },
+              imageAnimatedStyle,
+            ]}
           >
-            <CustomButton
-              iconCenter={
-                <Icon
-                  name={Platform.OS === "ios" ? "chevron-back" : "arrow-back"}
-                  size={20}
-                  color={theme.colors.textPrimary}
-                  style={{ left: -1 }}
-                  type={"ionicon"}
-                />
-              }
-              backgroundColor={"transparent"}
-              width={38}
-              height={38}
-              borderRadius={100}
-              activeOpacity={0.8}
-              onPress={async () => {
-                await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                navigation.goBack();
-              }}
-              isBlur={true}
-            />
-          </BlurView>
-          <BlurView
-            intensity={theme.mode === "light" ? 50 : 10}
-            style={{
-              backgroundColor:
-                theme.mode === "light"
-                  ? theme.colors.backgroundPrimary + "88"
-                  : theme.colors.backgroundPrimary,
-              width: 38,
-              height: 38,
-              position: "absolute",
-              top: 60,
-              right: 62,
-              zIndex: 3,
-              borderRadius: 100,
-              overflow: "hidden",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <CustomButton
-              iconCenter={
-                <Icon
-                  name={"share-variant"}
-                  type={"material-community"}
-                  size={20}
-                  color={theme.colors.textPrimary}
-                  style={{ left: -1 }}
-                />
-              }
-              backgroundColor={"transparent"}
-              width={38}
-              height={38}
-              borderRadius={100}
-              activeOpacity={0.8}
-              onPress={onShare}
-            />
-          </BlurView>
-          <BlurView
-            intensity={theme.mode === "light" ? 50 : 10}
-            style={{
-              backgroundColor:
-                theme.mode === "light"
-                  ? theme.colors.backgroundPrimary + "88"
-                  : theme.colors.backgroundPrimary,
-              width: 38,
-              height: 38,
-              position: "absolute",
-              top: 60,
-              right: 16,
-              zIndex: 3,
-              borderRadius: 100,
-              overflow: "hidden",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Favorite
-              resortId={resortId}
-              size={22}
-              position={"absolute"}
-              backgroundColor={"transparent"}
-              padding={8}
-              secondTop={8}
-              secondRight={8}
-              borderRadius={100}
-              style={{ alignSelf: "center" }}
-              borderColor={theme.colors.textPrimary}
-            />
-          </BlurView>
-          <View>
             <ResortProfileCarousel
               resortId={resortId}
               images={images}
               width={width}
-              height={height / 2.5}
+              height={PARALLAX_HEIGHT}
+              setCarouselIndex={setCarouselIndex}
             />
-          </View>
+          </Animated.View>
           <View
             style={{
               paddingHorizontal: 16,
@@ -351,9 +435,45 @@ const ResortScreen = ({ route }) => {
               justifyContent: "space-between",
               width: "100%",
               paddingTop: 8,
+              backgroundColor: theme.colors.backgroundPrimary,
             }}
           >
-            <View style={{ flex: 1 }}>
+            <RatingAllStars
+              position={"absolute"}
+              left={16}
+              top={-30}
+              resortId={resortId}
+            />
+            <BlurView
+              style={{
+                position: "absolute",
+                top: -30,
+                right: 16,
+                alignSelf: "flex-end",
+                backgroundColor:
+                  theme.mode === "light"
+                    ? theme.colors.backgroundPrimary + "88"
+                    : theme.colors.backgroundPrimary,
+                padding: 4,
+                borderRadius: 100,
+                width: 50,
+                alignItems: "center",
+                overflow: "hidden",
+              }}
+              intensity={theme.mode === "light" ? 50 : 10}
+            >
+              <Text
+                style={{ fontWeight: "500", color: theme.colors.textPrimary }}
+              >
+                {carouselIndex + 1}/{images.length}
+              </Text>
+            </BlurView>
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: theme.colors.backgroundPrimary,
+              }}
+            >
               <CustomText
                 style={{
                   fontWeight: "bold",
@@ -390,40 +510,69 @@ const ResortScreen = ({ route }) => {
               </View>
             </View>
           </View>
-          <Divider style={{ marginHorizontal: 16, marginVertical: 16 }} />
+          {/*<Divider style={{ marginHorizontal: 16, marginVertical: 16 }} />*/}
+          <View style={{ backgroundColor: theme.colors.backgroundPrimary }}>
+            <ResortProfileDivider />
+          </View>
+
           <View
             style={{
               paddingHorizontal: 16,
               paddingTop: 4,
+              backgroundColor: theme.colors.backgroundPrimary,
             }}
           >
-            {resortDetails.description ? (
-              <CustomText
-                style={{
-                  marginTop: -4,
-                  color: theme.colors.textSecondary,
-                  fontSize: 16,
-                  textAlign: "justify",
-                }}
-              >
-                {resortDetails.description}
-              </CustomText>
-            ) : (
-              <CustomText
-                style={{ marginTop: -4, color: theme.colors.textSecondary }}
-              >
-                {t("resortScreen.noDescription")}
-              </CustomText>
+            {resortDetails.description && (
+              <View>
+                <Text
+                  style={{
+                    marginTop: -4,
+                    color: theme.colors.textSecondary,
+                    fontSize: 16,
+                    textAlign: "justify",
+                  }}
+                  numberOfLines={descriptionTextLong ? 10 : undefined}
+                  onTextLayout={(event) => {
+                    if (
+                      event.nativeEvent.lines.length > 10 &&
+                      !descriptionTextLong
+                    ) {
+                      setDescriptionTextLong(true);
+                    }
+                  }}
+                >
+                  {resortDetails.description}
+                </Text>
+                <CustomButton
+                  title={t("resortScreen.readMoreButton")}
+                  fontWeight={400}
+                  textColor={theme.colors.textPrimary}
+                  style={{
+                    alignSelf: "flex-end",
+                    display: descriptionTextLong ? "flex" : "none",
+                  }}
+                  onPress={() =>
+                    descriptionBottomShetRef.current.snapToIndex(0)
+                  }
+                />
+              </View>
             )}
           </View>
-          <Divider style={{ marginHorizontal: 16, marginVertical: 16 }} />
-          <View style={{ paddingHorizontal: 16 }}>
+          <View style={{ backgroundColor: theme.colors.backgroundPrimary }}>
+            <ResortProfileDivider />
+          </View>
+          <View
+            style={{
+              paddingHorizontal: 16,
+              backgroundColor: theme.colors.backgroundPrimary,
+            }}
+          >
             <CustomText
               style={{ fontSize: 20, fontWeight: "600", paddingBottom: 8 }}
             >
               {t("resortScreen.facilitiesTitle")}
             </CustomText>
-            {resortDetails.facilities?.slice(1, 6).map((item) => {
+            {resortDetails.facilities?.slice(0, 5).map((item) => {
               const facility = facilityOptions.find((f) => f.value === item);
               if (facility) {
                 return (
@@ -459,6 +608,10 @@ const ResortScreen = ({ route }) => {
               height={46}
               borderRadius={100}
               textColor={theme.colors.primaryContrast}
+              style={{
+                display:
+                  resortDetails.facilities?.length - 1 > 5 ? "flex" : "none",
+              }}
               onPress={async () => {
                 await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
                 facilitiesBottomShetRef.current?.snapToIndex(0);
@@ -466,72 +619,96 @@ const ResortScreen = ({ route }) => {
             />
           </View>
 
-          <Divider style={{ marginHorizontal: 16, marginVertical: 16 }} />
+          <View style={{ backgroundColor: theme.colors.backgroundPrimary }}>
+            <ResortProfileDivider />
+          </View>
           <View
             style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              gap: 1,
-              paddingHorizontal: 16,
+              shadowColor: theme.colors.shadowPrimary,
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+              elevation: 5,
+              marginHorizontal: 16,
+              backgroundColor: theme.colors.backgroundPrimary,
+              borderRadius: 24,
+              padding: 8,
             }}
           >
-            <View style={{ flex: 1 / 3 }}>
-              <Animated.View style={shakeAnimatedStyle}>
-                <Icon
-                  name={"leaf"}
-                  type="material-community"
-                  size={72}
-                  style={{ alignSelf: "flex-end" }}
-                />
-              </Animated.View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                gap: 1,
+              }}
+            >
+              <View style={{ flex: 1 / 3 }}>
+                <Animated.View style={shakeAnimatedStyle}>
+                  <Icon
+                    name={"leaf"}
+                    type="material-community"
+                    size={72}
+                    style={{ alignSelf: "flex-end" }}
+                    color={theme.colors.textPrimary}
+                  />
+                </Animated.View>
+              </View>
+              <View style={{ flex: 1 / 3 }}>
+                <CustomText
+                  style={{
+                    alignSelf: "center",
+                    fontSize: 56,
+                    fontWeight: "bold",
+                    textShadowColor: theme.colors.shadowPrimary + "69",
+                    textShadowOffset: { width: 0, height: 2 },
+                    textShadowRadius: 4,
+
+                    color: theme.colors.textPrimary,
+                  }}
+                >
+                  {resortDetails.rank}
+                </CustomText>
+              </View>
+              <View style={{ flex: 1 / 3, transform: [{ scaleX: -1 }] }}>
+                <Animated.View style={shakeAnimatedStyle}>
+                  <Icon
+                    name={"leaf"}
+                    type="material-community"
+                    size={72}
+                    style={{ alignSelf: "flex-end" }}
+                    color={theme.colors.textPrimary}
+                  />
+                </Animated.View>
+              </View>
             </View>
-            <View style={{ flex: 1 / 3 }}>
+            <View style={{ flexDirection: "row" }}>
               <CustomText
                 style={{
                   alignSelf: "center",
-                  fontSize: 56,
-                  fontWeight: "bold",
-                  textShadowColor: theme.colors.shadowPrimary + "69",
-                  textShadowOffset: { width: 0, height: 2 },
-                  textShadowRadius: 4,
-
-                  color: theme.colors.textPrimary,
+                  paddingHorizontal: 32,
+                  textAlign: "center",
+                  color: theme.colors.textSecondary,
                 }}
               >
-                {resortDetails.rank}
+                {topResortMessage}
               </CustomText>
             </View>
-            <View style={{ flex: 1 / 3, transform: [{ scaleX: -1 }] }}>
-              <Animated.View style={shakeAnimatedStyle}>
-                <Icon
-                  name={"leaf"}
-                  type="material-community"
-                  size={72}
-                  style={{ alignSelf: "flex-end" }}
-                />
-              </Animated.View>
-            </View>
           </View>
-          <View style={{ flexDirection: "row" }}>
-            <CustomText
-              style={{
-                alignSelf: "center",
-                paddingHorizontal: 32,
-                textAlign: "center",
-              }}
-            >
-              {topResortMessage}
-            </CustomText>
-          </View>
-        </ScrollView>
+        </Animated.ScrollView>
       )}
       <ResortFacilitiesSheet
         ref={facilitiesBottomShetRef}
         facilities={resortDetails.facilities}
       />
+      <ResortDescriptionSheet
+        ref={descriptionBottomShetRef}
+        description={resortDetails.description}
+      />
       <FeedbackModal ref={bottomSheetModalRefFeedback} resortId={resortId} />
     </SafeAreaView>
   );
 };
-// {resortDetails?.favorites_count?.[0]?.count}
 export default ResortScreen;

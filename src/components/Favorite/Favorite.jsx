@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Pressable, View } from "react-native";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import { useTheme } from "../../Theme/themeContext";
@@ -37,6 +37,7 @@ const Favorite = ({
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const { user } = useContext(AuthContext);
+  const [fetchLoading, setFetchLoading] = useState(false);
 
   const isFavorite = useSelector(
     (state) => state.favorites.favorites[resortId],
@@ -57,11 +58,13 @@ const Favorite = ({
   }, [dispatch, resortId, user]);
 
   const onToggleFavorite = async () => {
+    if (!user) {
+      navigation.navigate("SignIn");
+      return;
+    }
+    if (fetchLoading) return;
+    setFetchLoading(true);
     try {
-      if (!user) {
-        navigation.navigate("SignIn");
-        return;
-      }
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       if (isFavorite) {
         const res = await APIService.post(
@@ -92,6 +95,8 @@ const Favorite = ({
       }
     } catch (err) {
       console.log("Error updating favorite", err);
+    } finally {
+      setFetchLoading(false);
     }
   };
   const scale = useSharedValue(1);

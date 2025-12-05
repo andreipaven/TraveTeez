@@ -14,7 +14,7 @@ import {
 import Animated from "react-native-reanimated";
 
 const CustomResortCard = React.memo(
-  ({ item, marginHorizontal = 8, refreshing, width }) => {
+  ({ item, marginHorizontal = 8, refreshing, width, animatedCard = true }) => {
     const { theme } = useTheme();
     const navigation = useNavigation();
 
@@ -108,7 +108,7 @@ const CustomResortCard = React.memo(
             </Text>
           </View>
         </View>
-        <Animated.View style={[animatedStyle]}>
+        <Animated.View style={[animatedCard ? animatedStyle : undefined]}>
           <View
             style={{
               paddingHorizontal: 6,

@@ -5,7 +5,14 @@ import { config } from "../../services/config";
 import { useTheme } from "../../Theme/themeContext";
 import CustomStarRatings from "./CustomStarsRating";
 
-const RatingAllStars = ({ top, left, position, bottom, resortId }) => {
+const RatingAllStars = ({
+  top,
+  left,
+  position,
+  bottom,
+  resortId,
+  size = 20,
+}) => {
   const [rating, setRating] = useState({});
   const { theme } = useTheme();
 
@@ -41,7 +48,7 @@ const RatingAllStars = ({ top, left, position, bottom, resortId }) => {
         width: "fit-content",
       }}
     >
-      <CustomStarRatings size={20} rating={rating.avg_rating_value} />
+      <CustomStarRatings size={size} rating={rating.avg_rating_value} />
 
       {/*<Text style={{ paddingLeft: 2, color: theme.colors.textPrimary }}>*/}
       {/*  {rating.total_ratings}*/}

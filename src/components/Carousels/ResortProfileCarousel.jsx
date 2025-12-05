@@ -1,20 +1,19 @@
 import React, { useRef, useState } from "react";
 import { View, ImageBackground, Text } from "react-native";
-import Carousel, { Pagination } from "react-native-reanimated-carousel";
-import {
-  Extrapolation,
-  interpolate,
-  useSharedValue,
-} from "react-native-reanimated";
+import Carousel from "react-native-reanimated-carousel";
 
 import { useTheme } from "../../Theme/themeContext";
 
-import RatingAllStars from "../Ratings/RatingAllStars";
 import PaginationDot from "react-native-animated-pagination-dot";
-import { BlurView } from "expo-blur";
 
 //main function
-const ResortProfileCarousel = ({ resortId, images, width, height }) => {
+const ResortProfileCarousel = ({
+  images,
+  width,
+  height,
+  setCarouselIndex,
+  autoPlay = true,
+}) => {
   const { theme } = useTheme();
   const ref = useRef(null);
 
@@ -22,7 +21,7 @@ const ResortProfileCarousel = ({ resortId, images, width, height }) => {
   return (
     <View style={{ width, height }}>
       <Carousel
-        autoPlay={true}
+        autoPlay={autoPlay}
         autoPlayInterval={1500}
         scrollAnimationDuration={300}
         vertical={false}
@@ -33,6 +32,7 @@ const ResortProfileCarousel = ({ resortId, images, width, height }) => {
         data={images}
         onProgressChange={(offsetProgress, absoluteProgress) => {
           setCurPage(Math.round(absoluteProgress));
+          setCarouselIndex(Math.round(absoluteProgress));
         }}
         onConfigurePanGesture={(gesture) =>
           gesture.activeOffsetX([-5, 5]).failOffsetY([-5, 5])
@@ -64,35 +64,6 @@ const ResortProfileCarousel = ({ resortId, images, width, height }) => {
           sizeRatio={1}
         />
       </View>
-      <BlurView
-        style={{
-          position: "absolute",
-          bottom: 8,
-          right: 16,
-          alignSelf: "flex-end",
-          backgroundColor:
-            theme.mode === "light"
-              ? theme.colors.backgroundPrimary + "88"
-              : theme.colors.backgroundPrimary,
-          padding: 4,
-          borderRadius: 100,
-          width: 50,
-          alignItems: "center",
-          overflow: "hidden",
-        }}
-        intensity={theme.mode === "light" ? 50 : 10}
-      >
-        <Text style={{ fontWeight: "500", color: theme.colors.textPrimary }}>
-          {curPage + 1}/{images.length}
-        </Text>
-      </BlurView>
-
-      <RatingAllStars
-        position={"absolute"}
-        left={16}
-        bottom={8}
-        resortId={resortId}
-      />
     </View>
   );
 };
