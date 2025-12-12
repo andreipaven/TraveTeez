@@ -1,7 +1,8 @@
-import React, { useContext, useLayoutEffect, useState } from "react";
+import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
 import {
   Image,
   Keyboard,
+  Platform,
   Text,
   TouchableWithoutFeedback,
   View,
@@ -12,7 +13,6 @@ import CustomTextInput from "../components/Inputs/CustomTextInput";
 import CustomDivider from "../components/Divider/CustomDivider";
 import CustomButton from "../components/Buttons/CustomButton";
 import Facebook from "../../assets/facebook.png";
-import Google from "../../assets/google.png";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import APIService from "../services/APIService";
@@ -24,17 +24,16 @@ import * as Haptics from "expo-haptics";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import LottieView from "lottie-react-native";
-import * as WebBrowser from "expo-web-browser";
-import * as Linking from "expo-linking";
 
-import { supabase } from "./utils/supabase";
+import GoogleSignInComponent from "./GoogleSignInComponent";
+import CustomText from "../components/Widgets/CustomText";
 
 const SingUp = ({ isOpen, setIsOpen }) => {
   const { theme } = useTheme();
   const navigation = useNavigation();
   const { t } = useTranslation();
 
-  const { setUser } = useContext(AuthContext);
+  const { setUser, user } = useContext(AuthContext);
 
   const [state, setState] = useState({
     firstName: "",
@@ -154,29 +153,6 @@ const SingUp = ({ isOpen, setIsOpen }) => {
     }
   };
 
-  const signUpWithGoogle = async () => {
-    try {
-      const redirectUrl = Linking.createURL("/auth");
-      console.log("1: " + redirectUrl);
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: { redirectTo: redirectUrl },
-      });
-      console.log("2: " + error);
-      if (error) {
-        console.log("Supabase OAuth error:", error.message);
-        return;
-      }
-
-      if (data.url) {
-        console.log("3: " + redirectUrl);
-        await WebBrowser.openAuthSessionAsync(data.url, redirectUrl);
-      }
-    } catch (err) {
-      console.log("Unexpected error during Google sign-in:", err);
-    }
-  };
-
   const submitSignUp = async () => {
     setFirstVerify(false);
     if (validate()) {
@@ -244,7 +220,6 @@ const SingUp = ({ isOpen, setIsOpen }) => {
             >
               {t("signUp.title")}
             </Text>
-
             <CustomTextInput
               name={"lastName"}
               label={t("signUp.lastName")}
@@ -355,9 +330,9 @@ const SingUp = ({ isOpen, setIsOpen }) => {
               secureTextEntry={true}
             />
             {signUpError && (
-              <Text style={{ color: "red" }}>
+              <CustomText style={{ color: "red" }}>
                 {t("signUp.errorEmailAlreadyUsed")}
-              </Text>
+              </CustomText>
             )}
             <CustomButton
               title={signUpLoading ? "" : t("signUp.button")}
@@ -401,28 +376,9 @@ const SingUp = ({ isOpen, setIsOpen }) => {
                 gap: 16,
               }}
             >
-              <CustomButton
-                backgroundColor={theme.colors.backgroundPaper}
-                iconCenter={
-                  <Image source={Facebook} style={{ height: 24, width: 24 }} />
-                }
-                paddingVertical={12}
-                paddingHorizontal={12}
-                borderRadius={50}
-                width={"fit-content"}
-              />
-              <CustomButton
-                backgroundColor={theme.colors.backgroundPaper}
-                iconCenter={
-                  <Image source={Google} style={{ height: 24, width: 24 }} />
-                }
-                paddingVertical={12}
-                paddingHorizontal={12}
-                borderRadius={50}
-                width={"fit-content"}
-                onPress={signUpWithGoogle}
-              />
+              <GoogleSignInComponent />
             </View>
+
             <View
               style={{
                 flexDirection: "row",

@@ -25,6 +25,8 @@ import * as Haptics from "expo-haptics";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import LottieView from "lottie-react-native";
+import { supabase } from "./utils/supabase";
+import CustomText from "../components/Widgets/CustomText";
 
 export default function SignIn({ isOpen, setIsOpen }) {
   const { theme } = useTheme();
@@ -115,6 +117,11 @@ export default function SignIn({ isOpen, setIsOpen }) {
             const { accessToken, refreshToken, user } = response.data;
             await saveAccessToken(accessToken);
             await saveRefreshToken(refreshToken);
+            const { data, error } = await supabase.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken,
+            });
+
             setUser(user);
             setSignInError(false);
             navigation.goBack();
@@ -217,7 +224,9 @@ export default function SignIn({ isOpen, setIsOpen }) {
             autoCorrect={false}
           />
           {signInError && (
-            <Text style={{ color: "red" }}>{t("signIn.errorInvalid")}</Text>
+            <CustomText style={{ color: "red" }}>
+              {t("signIn.errorInvalid")}
+            </CustomText>
           )}
           <CustomButton
             title={!signInLoading ? t("signIn.button") : ""}

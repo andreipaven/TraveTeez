@@ -2,17 +2,14 @@ import React, { useCallback, useEffect, useMemo } from "react";
 import { View, Text, StyleSheet, Animated } from "react-native";
 import BottomSheet, {
   BottomSheetBackdrop,
-  BottomSheetDraggableView,
   BottomSheetScrollView,
-  BottomSheetView,
-  useBottomSheetTimingConfigs,
 } from "@gorhom/bottom-sheet";
 import { useTheme } from "../../Theme/themeContext";
 import { Icon } from "react-native-elements";
 import CustomText from "../Widgets/CustomText";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { setBottomSheetsOpen } from "../../Redux/Slices/bottomSheetsSlice";
+import { setBottomSheetOpen } from "../../Redux/Slices/bottomSheetsSlice";
 import {
   interpolate,
   runOnJS,
@@ -120,7 +117,7 @@ const ResortFacilitiesSheet = ({ facilities, ref }) => {
           {t("resortScreen.facilitiesTitle")}
         </CustomText>
         <Icon
-          name={"creation"}
+          name={"creation-outline"}
           type={"material-community"}
           size={20}
           color={theme.colors.textPrimary}
@@ -128,34 +125,23 @@ const ResortFacilitiesSheet = ({ facilities, ref }) => {
       </View>
     </View>
   );
+
   const animatedIndex = useSharedValue(0);
 
-  const headerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(animatedIndex.value, [0, 1], [1, 0]),
-  }));
-
-  const ceva = (isOpen) => {
-    dispatch(setBottomSheetsOpen(isOpen));
+  const reduxBottomSheetUpdate = (isOpen) => {
+    dispatch(setBottomSheetOpen({ sheet: "facilities", isOpen }));
   };
 
   useAnimatedReaction(
     () => animatedIndex.value,
     (index) => {
       if (index < -0.7) {
-        runOnJS(ceva)(false);
+        runOnJS(reduxBottomSheetUpdate)(false);
       } else {
-        // sheet deschis
-        runOnJS(ceva)(true);
+        runOnJS(reduxBottomSheetUpdate)(true);
       }
     },
   );
-
-  // useAnimatedReaction(
-  //   () => animatedIndex.value,
-  //   (index) => {
-  //     runOnJS(dispatch)(setBottomSheetsOpen(index > -1));
-  //   },
-  // );
 
   return (
     <BottomSheet

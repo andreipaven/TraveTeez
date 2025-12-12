@@ -18,6 +18,7 @@ import ThemeSwitch from "../../components/Buttons/ThemeSwitch";
 import * as Haptics from "expo-haptics";
 import { saveAccessToken, saveRefreshToken } from "../../Secure/secureHub";
 import ContainerGuestProfile from "../../components/Containers/ContainerGuestProfile";
+import ContainerAccountInformation from "../../components/Containers/ContainerAccountInformation";
 
 const ProfileScreen = () => {
   const [fetchLoading, setFetchLoading] = useState(true);
@@ -89,7 +90,13 @@ const ProfileScreen = () => {
               borderRadius={64}
               style={{ width: 64, height: 64 }}
             />
-            <Text style={{ fontSize: 24, color: theme.colors.textPrimary }}>
+            <Text
+              style={{
+                fontSize: 24,
+                color: theme.colors.textPrimary,
+                fontWeight: "400",
+              }}
+            >
               {user.first_name} {user.last_name}
             </Text>
           </View>
@@ -138,22 +145,7 @@ const ProfileScreen = () => {
               navigation.navigate("AddResort");
             }}
           />
-          <ThemeSwitch />
-          <CustomButton
-            title={"switch accessToken"}
-            onPress={async () => {
-              await saveAccessToken("jfdklas");
-            }}
-            borderWidth={1}
-          />
-          <CustomButton
-            title={"switch refreshToken"}
-            onPress={async () => {
-              await saveRefreshToken("jfdklasfd");
-            }}
-            borderWidth={1}
-            style={{ marginTop: 32 }}
-          />
+          <ContainerAccountInformation />
         </View>
       )}
     </SafeAreaView>

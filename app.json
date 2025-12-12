@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "TraveTeez",
-    "slug": "traveteez229",
+    "name": "Traveteez",
+    "slug": "traveteezz",
     "scheme": "traveteez",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -14,7 +14,12 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.xtezii.traveteez",
+
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -23,7 +28,7 @@
       },
       "softwareKeyboardLayoutMode": "pan",
       "edgeToEdgeEnabled": true,
-      "package": "com.xtezii.TraveTeez",
+      "package": "com.xtezii.traveteez",
       "permissions": [
         "android.permission.RECORD_AUDIO",
         "android.permission.ACCESS_COARSE_LOCATION",
@@ -49,11 +54,18 @@
         }
       ],
       "expo-web-browser",
-      "expo-router"
+      "expo-router",
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.com.xtezii.traveteez"
+        }
+      ]
     ],
     "extra": {
+      "router": {},
       "eas": {
-        "projectId": "d6ac5e44-839f-43a9-9ea6-7819f26ecddb"
+        "projectId": "6622f3b5-819d-4b76-926e-719f5bffde0c"
       }
     },
     "owner": "xtezii"

@@ -137,7 +137,11 @@ const CustomResortCard = React.memo(
                 style={{ marginLeft: -2, marginTop: 1 }}
               />
               <Text
-                style={{ fontSize: 12, color: theme.colors.textSecondary }}
+                style={{
+                  fontSize: 12,
+                  color: theme.colors.textSecondary,
+                  fontWeight: "400",
+                }}
                 numberOfLines={2}
                 ellipsizeMode="tail"
               >

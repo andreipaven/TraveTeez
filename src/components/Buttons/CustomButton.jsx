@@ -26,6 +26,8 @@ export default function CustomButton({
   flex,
   height,
   minHeight,
+  textDecorationLine = "none",
+  disabled,
 }) {
   return (
     <TouchableOpacity
@@ -51,11 +53,16 @@ export default function CustomButton({
         },
         style,
       ]}
+      disabled={disabled}
     >
       {iconLeft && <View style={{ marginRight: 0 }}>{iconLeft}</View>}
       {iconCenter && <View>{iconCenter}</View>}
       {title && (
-        <Text style={{ color: textColor, fontSize, fontWeight }}>{title}</Text>
+        <Text
+          style={{ color: textColor, fontSize, fontWeight, textDecorationLine }}
+        >
+          {title}
+        </Text>
       )}
       {iconRight && <View style={{ marginLeft: 0 }}>{iconRight}</View>}
     </TouchableOpacity>

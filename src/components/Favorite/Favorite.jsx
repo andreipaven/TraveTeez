@@ -65,6 +65,7 @@ const Favorite = ({
     if (fetchLoading) return;
     setFetchLoading(true);
     try {
+      console.log(isFavorite);
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       if (isFavorite) {
         const res = await APIService.post(

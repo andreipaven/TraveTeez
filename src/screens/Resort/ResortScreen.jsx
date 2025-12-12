@@ -276,7 +276,8 @@ const ResortScreen = ({ route }) => {
     >
       <Stack.Screen
         options={{
-          headerShown: !bottomSheetsOpen,
+          headerShown:
+            !bottomSheetsOpen.description && !bottomSheetsOpen.facilities,
           headerTransparent: true,
           headerStyle: {
             backgroundColor: "transparent",
@@ -530,6 +531,7 @@ const ResortScreen = ({ route }) => {
                     color: theme.colors.textSecondary,
                     fontSize: 16,
                     textAlign: "justify",
+                    fontWeight: "400",
                   }}
                   numberOfLines={descriptionTextLong ? 10 : undefined}
                   onTextLayout={(event) => {
@@ -548,12 +550,13 @@ const ResortScreen = ({ route }) => {
                   fontWeight={400}
                   textColor={theme.colors.textPrimary}
                   style={{
-                    alignSelf: "flex-end",
+                    alignSelf: "flex-start",
                     display: descriptionTextLong ? "flex" : "none",
                   }}
                   onPress={() =>
                     descriptionBottomShetRef.current.snapToIndex(0)
                   }
+                  textDecorationLine={"underline"}
                 />
               </View>
             )}
@@ -636,6 +639,7 @@ const ResortScreen = ({ route }) => {
               backgroundColor: theme.colors.backgroundPrimary,
               borderRadius: 24,
               padding: 8,
+              display: resortDetails.rank ? "flex" : "none",
             }}
           >
             <View

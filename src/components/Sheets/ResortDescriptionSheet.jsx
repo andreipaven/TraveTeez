@@ -8,6 +8,16 @@ import { useTheme } from "../../Theme/themeContext";
 import { Icon } from "react-native-elements";
 import CustomText from "../Widgets/CustomText";
 import { useTranslation } from "react-i18next";
+import {
+  runOnJS,
+  useAnimatedReaction,
+  useSharedValue,
+} from "react-native-reanimated";
+import {
+  setBottomSheetOpen,
+  setBottomSheetsOpen,
+} from "../../Redux/Slices/bottomSheetsSlice";
+import { useDispatch } from "react-redux";
 
 const ResortDescriptionSheet = ({ description, ref }) => {
   const { theme } = useTheme();
@@ -18,6 +28,23 @@ const ResortDescriptionSheet = ({ description, ref }) => {
   const backDrop = useCallback((props) => (
     <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} />
   ));
+  const dispatch = useDispatch();
+  const animatedIndex = useSharedValue(0);
+
+  const reduxBottomSheetUpdate = (isOpen) => {
+    dispatch(setBottomSheetOpen({ sheet: "description", isOpen }));
+  };
+
+  useAnimatedReaction(
+    () => animatedIndex.value,
+    (index) => {
+      if (index < -0.7) {
+        runOnJS(reduxBottomSheetUpdate)(false);
+      } else {
+        runOnJS(reduxBottomSheetUpdate)(true);
+      }
+    },
+  );
 
   const handleComponent = () => (
     <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
@@ -61,6 +88,7 @@ const ResortDescriptionSheet = ({ description, ref }) => {
       enableContentPanningGesture={true}
       enablePanDownToClose={true}
       enableDynamicSizing={false}
+      animatedIndex={animatedIndex}
       backgroundComponent={({ style }) => (
         <View
           style={[

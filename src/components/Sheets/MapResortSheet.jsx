@@ -1,4 +1,10 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   View,
   Text,
@@ -9,6 +15,7 @@ import {
   Animated,
 } from "react-native";
 import BottomSheet, {
+  BottomSheetBackdrop,
   BottomSheetView,
   useBottomSheetTimingConfigs,
 } from "@gorhom/bottom-sheet";
@@ -45,6 +52,15 @@ const MapResortSheet = ({ resortId, ref }) => {
   const closeBottomSheet = useRef(false);
   // Snap points
   const snapPoints = useMemo(() => ["30%"], []);
+
+  const backDrop = useCallback((props) => (
+    <BottomSheetBackdrop
+      {...props}
+      appearsOnIndex={0}
+      disappearsOnIndex={-1}
+      style={{ backgroundColor: "transparent" }}
+    />
+  ));
 
   const onClose = () => {
     if (!closeBottomSheet.current) {
@@ -112,6 +128,7 @@ const MapResortSheet = ({ resortId, ref }) => {
       backgroundComponent={({ style }) => (
         <View style={[style, { backgroundColor: "transparent" }]} />
       )}
+      backdropComponent={backDrop}
     >
       <BottomSheetView style={{ backgroundColor: "transparent" }}>
         <Animated.View
@@ -171,6 +188,7 @@ const MapResortSheet = ({ resortId, ref }) => {
             }}
           >
             <Favorite
+              resortId={resortId}
               secondTop={6}
               secondRight={6}
               backgroundColor={"transparent"}
@@ -253,7 +271,7 @@ const MapResortSheet = ({ resortId, ref }) => {
                       {carouselIndex + 1}/{resort?.images.length}
                     </Text>
                   </BlurView>
-                  <Text style={{ fontSize: 16, fontWeight: 600 }}>
+                  <Text style={{ fontSize: 16, fontWeight: "600" }}>
                     {resort?.name}
                   </Text>
                   <View style={{ flexDirection: "row", alignItems: "center" }}>

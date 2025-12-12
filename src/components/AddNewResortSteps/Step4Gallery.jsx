@@ -57,7 +57,7 @@ const Step4Gallery = ({
 
   //modal functions
   const handlePresentPressFeedback = () =>
-    bottomSheetModalRefImages.current.present();
+    bottomSheetModalRefImages?.current.present();
 
   const compressImage = async (uri, compress = 0.6, maxWidth = 1080) => {
     try {
@@ -120,13 +120,13 @@ const Step4Gallery = ({
 
   const removeImage = async (uri) => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    await setResort((prev) => ({
+    setResort((prev) => ({
       ...prev,
       images: resort.images.filter((img) => img.uri !== uri),
     }));
 
     if (resort.mainImage?.uri === uri) {
-      await setResort((prev) => ({ ...prev, mainImage: null }));
+      setResort((prev) => ({ ...prev, mainImage: null }));
       validateImage({});
     } else {
       validateImage(resort.images.filter((img) => img.uri !== uri));
@@ -180,11 +180,11 @@ const Step4Gallery = ({
         const updatedImages = [...resort.images, imageToAdd];
 
         if (isFirstImage) {
-          await setResort((prev) => ({ ...prev, mainImage: imageToAdd }));
+          setResort((prev) => ({ ...prev, mainImage: imageToAdd }));
           setIsFirstImage(false);
           validateImage(imageToAdd);
         } else {
-          await setResort((prev) => ({ ...prev, images: updatedImages }));
+          setResort((prev) => ({ ...prev, images: updatedImages }));
           validateImage(updatedImages);
         }
       } else {
@@ -225,6 +225,7 @@ const Step4Gallery = ({
       allowsMultipleSelection: !isFirstImage,
       base64: true,
       quality: 0.7,
+      presentationStyle: "fullScreen",
     });
     if (!result.canceled) {
       const selectedImages = result.assets || [result];
@@ -267,14 +268,14 @@ const Step4Gallery = ({
         const updatedImages = [...resort.images, ...compressedImages];
 
         if (isFirstImage) {
-          await setResort((prev) => ({
+          setResort((prev) => ({
             ...prev,
             mainImage: compressedImages[0],
           }));
           setIsFirstImage(false);
           validateImage(compressedImages[0]);
         } else {
-          await setResort((prev) => ({
+          setResort((prev) => ({
             ...prev,
             images: updatedImages,
           }));

@@ -7,7 +7,10 @@ import {
   ActivityIndicator,
   Animated,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import CustomTextInput from "../../components/Inputs/CustomTextInput";
 import { useTheme } from "../../Theme/themeContext";
 import { useTranslation } from "react-i18next";
@@ -126,7 +129,10 @@ const SearchScreen = () => {
 
   return (
     <SafeAreaView
-      style={{ flex: 1, backgroundColor: theme.colors.backgroundPrimary }}
+      style={{
+        flex: 1,
+        backgroundColor: theme.colors.backgroundPrimary,
+      }}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View

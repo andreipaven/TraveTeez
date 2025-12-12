@@ -12,6 +12,7 @@ import { useTheme } from "../../Theme/themeContext";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import { BlurView } from "expo-blur";
 import { Icon } from "react-native-elements";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const CustomTabBar = ({ state, descriptors, navigation }) => {
   const { theme } = useTheme();
@@ -54,7 +55,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
       }
     }, [state]),
   );
-
+  const insets = useSafeAreaInsets();
   return (
     <Animated.View
       style={{

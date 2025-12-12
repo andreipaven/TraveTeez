@@ -115,13 +115,13 @@ const Step2Type = ({ ref, resort, setResort, errors, setErrors }) => {
 
   //change input
   const handleChange = async (name, value) => {
-    await setResort((prev) => ({ ...prev, [name]: value }));
+    setResort((prev) => ({ ...prev, [name]: value }));
 
     validate({ [name]: value });
   };
 
   const handleMultiSelectChange = async (name, value) => {
-    await setResort((prev) => ({ ...prev, [name]: value }));
+    setResort((prev) => ({ ...prev, [name]: value }));
 
     validate({ [name]: value });
   };

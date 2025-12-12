@@ -101,6 +101,7 @@ const MultiSelectComponent = ({
     paddingHorizontal: 4,
     zIndex: 10,
     borderRadius: 100,
+    pointerEvents: "none",
   };
 
   useEffect(() => {

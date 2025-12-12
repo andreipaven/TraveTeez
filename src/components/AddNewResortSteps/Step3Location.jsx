@@ -71,12 +71,12 @@ const Step3Location = ({ ref, resort, setResort, errors, setErrors }) => {
 
   //change inputs
   const handleChange = async (name, value, label) => {
-    await setResort((prev) => ({ ...prev, latitude: null, longitude: null }));
+    setResort((prev) => ({ ...prev, latitude: null, longitude: null }));
     setMapButtonIsVisible(false);
     if (name === "country") {
       getStatesByCountry(value);
       setLocation((prev) => ({ ...prev, cities: [] }));
-      await setResort((prev) => ({
+      setResort((prev) => ({
         ...prev,
         state: "",
         stateValue: null,
@@ -88,7 +88,7 @@ const Step3Location = ({ ref, resort, setResort, errors, setErrors }) => {
       getCitiesByState(resort.countryValue, value);
       geocode("", label, resort.country);
 
-      await setResort((prev) => ({
+      setResort((prev) => ({
         ...prev,
         city: "",
         cityValue: null,
@@ -99,7 +99,7 @@ const Step3Location = ({ ref, resort, setResort, errors, setErrors }) => {
 
     validate({ [name]: value });
 
-    await setResort((prev) => ({
+    setResort((prev) => ({
       ...prev,
       [name]: label,
       [`${name}Value`]: value,
@@ -139,7 +139,7 @@ const Step3Location = ({ ref, resort, setResort, errors, setErrors }) => {
     if (gesture?.isGesture) {
       if (resort.pinVerified) {
         const newResort = { ...resort, latitude: null, longitude: null };
-        await setResort((prev) => ({
+        setResort((prev) => ({
           ...prev,
           latitude: null,
           longitude: null,
@@ -385,7 +385,7 @@ const Step3Location = ({ ref, resort, setResort, errors, setErrors }) => {
               });
               setMapButtonIsVisible(false);
 
-              await setResort((prev) => ({
+              setResort((prev) => ({
                 ...prev,
                 latitude: pinLocation.latitude,
                 longitude: pinLocation.longitude,

@@ -37,7 +37,7 @@ const Step1Info = ({ ref, resort, setResort, errors, setErrors }) => {
 
   //change inputs
   const handleChange = async (name, value) => {
-    await setResort((prev) => ({ ...prev, [name]: value }));
+    setResort((prev) => ({ ...prev, [name]: value }));
     validate({ [name]: value });
   };
 

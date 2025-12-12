@@ -1,18 +1,22 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  bottomSheetsOpen: false,
+  bottomSheetsOpen: {
+    facilities: false,
+    description: false,
+  },
 };
 
 const uiSlice = createSlice({
   name: "ui",
   initialState,
   reducers: {
-    setBottomSheetsOpen: (state, action) => {
-      state.bottomSheetsOpen = action.payload;
+    setBottomSheetOpen: (state, action) => {
+      const { sheet, isOpen } = action.payload;
+      state.bottomSheetsOpen[sheet] = isOpen;
     },
   },
 });
 
-export const { setBottomSheetsOpen } = uiSlice.actions;
+export const { setBottomSheetOpen } = uiSlice.actions;
 export default uiSlice.reducer;

@@ -26,7 +26,13 @@ function ContainerGuestFavorite() {
         <Text style={{ fontWeight: "bold", fontSize: 24 }}>
           {t("containerGuestFavorite.title")}
         </Text>
-        <Text style={{ fontSize: 16, color: theme.colors.textSecondary }}>
+        <Text
+          style={{
+            fontSize: 16,
+            color: theme.colors.textSecondary,
+            fontWeight: "400",
+          }}
+        >
           {t("containerGuestFavorite.message")}
         </Text>
         <CustomButton
